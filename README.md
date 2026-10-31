@@ -1,56 +1,40 @@
-# Welcome to your Expo app 👋
+# Swipeshop
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Swipe through products from many retailers. Right to keep, left to skip. The app learns your taste as you go.
 
-## Get started
+See `CLAUDE.md` for the product brief, architecture rules and phase plan.
 
-1. Install dependencies
+## Run it on your phone (Windows)
 
-   ```bash
-   npm install
-   ```
+You need [Node.js LTS](https://nodejs.org) and the **Expo Go** app on your phone (App Store / Google Play).
 
-2. Start the app
+In PowerShell, in this folder:
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Scan the QR code with your phone's camera (iPhone) or with Expo Go (Android). Your phone and PC must be on the same Wi-Fi. If it can't connect, stop the server (Ctrl+C) and run `npx expo start --tunnel`.
 
-### Other setup steps
+## Checks
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```powershell
+npm run check     # typecheck + unit tests
+npx expo lint     # lint
+```
 
-## Learn more
+## Where things live
 
-To learn more about developing your project with Expo, look at the following resources:
+| Folder | What's in it |
+| --- | --- |
+| `src/app/` | Screens (Discover, swipe deck, Kept, product detail) |
+| `src/components/` | Reusable UI: swipe card, buttons, tiles |
+| `src/hooks/` | Glue between data, store and recommender (`useDeck`) |
+| `src/recommendation/` | The ranking engine. Pure TypeScript, unit-tested |
+| `src/data/` | `ProductRepository` + the local sample catalog |
+| `src/store/` | On-device swipe log and kept list |
+| `src/theme/tokens.ts` | All colors, fonts, spacing |
+| `supabase/migrations/` | Database schema + row-level security (not connected yet) |
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+All sample data is fictional: made-up stores on `*.example.com`, placeholder photos.
