@@ -2,6 +2,13 @@ import type { PriceBands } from '@/recommendation';
 import type { SearchFilters } from '@/domain/filters';
 import type { Category, CategoryId, Product, Retailer } from '@/domain/types';
 
+/** A style tag with how many products have it and a photo to represent it. */
+export interface StyleOption {
+  tag: string;
+  count: number;
+  coverUrl?: string;
+}
+
 export interface ProductQuery {
   categoryId?: CategoryId;
   /** Free text matched against title, brand, retailer, style, material and color. */
@@ -29,4 +36,6 @@ export interface ProductRepository {
   listRetailers(): Promise<Retailer[]>;
   /** Low/mid/high price boundaries per category, used by the recommender. */
   getPriceBands(): Promise<PriceBands>;
+  /** Style tags across the catalog, most common first (for the taste picker). */
+  listStyles(): Promise<StyleOption[]>;
 }

@@ -117,3 +117,8 @@ export function useRetailerNames() {
   }, []);
   return result.status === 'ready' ? result.data : new Map<string, string>();
 }
+
+/** Style tags with cover photos, for the taste picker. */
+export function useStyleOptions() {
+  return useAsync(() => getProductRepository().listStyles(), []);
+}

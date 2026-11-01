@@ -1,7 +1,7 @@
 import { matchesFilters } from '@/domain/filters';
 import { computePriceBands, type PriceBands } from '@/recommendation';
 import { CATEGORY_IDS, type Category, type CategoryId, type Product, type Retailer } from '@/domain/types';
-import type { ProductQuery, ProductRepository } from './ProductRepository';
+import type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
 
 /** In-memory repository over a fixed catalog (the bundled sample data). */
 export class LocalProductRepository implements ProductRepository {
@@ -77,5 +77,19 @@ export class LocalProductRepository implements ProductRepository {
 
   async getPriceBands(): Promise<PriceBands> {
     return this.bands;
+  }
+
+  async listStyles(): Promise<StyleOption[]> {
+    const byTag = new Map<string, StyleOption>();
+    for (const p of this.products) {
+      p.styleTags.forEach((tag, i) => {
+        const o = byTag.get(tag) ?? { tag, count: 0 };
+        o.count++;
+        // Prefer a product where this is the main style for the cover photo.
+        if (!o.coverUrl && i === 0) o.coverUrl = p.imageUrls[0];
+        byTag.set(tag, o);
+      });
+    }
+    return [...byTag.values()].sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
   }
 }

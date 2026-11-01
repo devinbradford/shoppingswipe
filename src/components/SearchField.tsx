@@ -9,11 +9,7 @@ interface SearchFieldProps {
   placeholder?: string;
 }
 
-export function SearchField({
-  value,
-  onChangeText,
-  placeholder = 'Search products',
-}: SearchFieldProps) {
+export function SearchField({ value, onChangeText, placeholder = 'Search products' }: SearchFieldProps) {
   return (
     <View style={styles.field}>
       <Icon name="search" size={18} color={colors.inkMuted} />

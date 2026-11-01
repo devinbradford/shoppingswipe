@@ -39,6 +39,7 @@ export default function RootLayout() {
           animation: 'slide_from_right',
         }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
         <Stack.Screen name="deck/[category]" />
         <Stack.Screen name="kept" />
         <Stack.Screen name="lists/[id]" />

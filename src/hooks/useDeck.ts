@@ -12,6 +12,7 @@ import {
   type PriceBands,
   type RankedProduct,
 } from '@/recommendation';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 
@@ -34,6 +35,9 @@ export interface Deck {
   canUndo: boolean;
   retry: () => void;
 }
+
+/** Styles picked on first launch. */
+const picks = () => usePreferencesStore.getState().stylePicks;
 
 function toCard(r: RankedProduct): DeckCard {
   return { ...r, reasonText: formatReasons(r.reasons) };
@@ -76,7 +80,7 @@ export function useDeck(categoryId: CategoryId): Deck {
       if (cancelled) return;
       for (const p of [...candidates, ...swipedProducts]) known.current.set(p.id, p);
       bands.current = priceBands;
-      const profile = buildTasteProfile(swipes, known.current, priceBands);
+      const profile = buildTasteProfile(swipes, known.current, priceBands, undefined, picks());
       const ranked = rankProducts(candidates, profile, {
         bands: priceBands,
         seed: hashSeed(`${categoryId}:${swipes.length}`),
@@ -102,7 +106,7 @@ export function useDeck(categoryId: CategoryId): Deck {
       if (!top) return;
       recordSwipe({ productId: top.product.id, categoryId, direction, swipedAt: Date.now() });
       const { swipes } = useSwipeStore.getState();
-      const profile = buildTasteProfile(swipes, known.current, bands.current);
+      const profile = buildTasteProfile(swipes, known.current, bands.current, undefined, picks());
       const next = rerankQueue(rest, profile, {
         bands: bands.current,
         seed: hashSeed(`${categoryId}:${swipes.length}`),
@@ -126,7 +130,13 @@ export function useDeck(categoryId: CategoryId): Deck {
       return;
     }
     undoLastSwipe();
-    const profile = buildTasteProfile(useSwipeStore.getState().swipes, known.current, bands.current);
+    const profile = buildTasteProfile(
+      useSwipeStore.getState().swipes,
+      known.current,
+      bands.current,
+      undefined,
+      picks(),
+    );
     setCards((c) => [lastInSession, ...c]);
     setColdStart(isColdStart(profile));
     setHistory((h) => h.slice(0, -1));

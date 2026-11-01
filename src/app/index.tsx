@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +16,9 @@ import { countActiveFilters, EMPTY_FILTERS, type SearchFilters } from '@/domain/
 import type { CategorySummary, Product } from '@/domain/types';
 import { useCategorySummaries, useFilterOptions, useProductSearch, useRetailerNames } from '@/hooks/useCatalog';
 import { formatPrice, pluralize } from '@/lib/format';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSwipeStore } from '@/store/swipeStore';
+import { useHydrated } from '@/store/useHydrated';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, space } from '@/theme/tokens';
 
@@ -35,6 +37,9 @@ export default function DiscoverScreen() {
   const retailers = useRetailerNames();
   const activeFilters = countActiveFilters(filters);
   const searching = query.trim().length > 0 || activeFilters > 0;
+  const hydrated = useHydrated();
+  const onboarded = usePreferencesStore((s) => s.onboarded);
+  const hasSwipes = useSwipeStore((s) => s.swipes.length > 0);
 
   // One list for both modes, so the search box is never rebuilt (and the keyboard stays up).
   const rows: Row[] = searching
@@ -113,6 +118,10 @@ export default function DiscoverScreen() {
     <LoadingView label="Loading categories" />
   );
 
+  // First launch: send new users to the style picker.
+  if (!hydrated) return <SafeAreaView style={styles.screen} />;
+  if (!onboarded && !hasSwipes) return <Redirect href="/welcome" />;
+
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <FlatList
@@ -143,7 +152,7 @@ export default function DiscoverScreen() {
           )
         }
         ListEmptyComponent={empty}
-        ListFooterComponent={searching ? undefined : <ResetLink />}
+        ListFooterComponent={searching ? undefined : <DiscoverFooter />}
       />
       <FilterSheet
         visible={showFilters}
@@ -215,10 +224,28 @@ function ActiveFilters({
   );
 }
 
+function DiscoverFooter() {
+  return (
+    <View style={styles.footer}>
+      <Pressable
+        onPress={() => router.push('/welcome')}
+        accessibilityRole="button"
+        accessibilityLabel="Change your style picks"
+        style={styles.reset}>
+        <AppText variant="caption" color={colors.inkMuted}>
+          Change your style picks
+        </AppText>
+      </Pressable>
+      <ResetLink />
+    </View>
+  );
+}
+
 /** Small reset so the sample deck can be replayed. */
 function ResetLink() {
   const resetSwipes = useSwipeStore((s) => s.resetAll);
   const resetLists = useWishlistStore((s) => s.resetAll);
+  const resetPrefs = usePreferencesStore((s) => s.resetAll);
   const hasHistory = useSwipeStore((s) => s.swipes.length > 0);
   const [confirm, setConfirm] = useState(false);
   if (!hasHistory) return null;
@@ -236,12 +263,13 @@ function ResetLink() {
       <ConfirmSheet
         visible={confirm}
         title="Reset everything?"
-        message="This clears your swipes, kept items, lists and learned taste on this phone."
+        message="This clears your swipes, kept items, lists, style picks and learned taste on this phone."
         confirmLabel="Reset"
         onClose={() => setConfirm(false)}
         onConfirm={() => {
           resetSwipes();
           resetLists();
+          resetPrefs();
         }}
       />
     </>
@@ -259,5 +287,6 @@ const styles = StyleSheet.create({
   cell: { width: '50%' },
   left: { paddingRight: space.md / 2 },
   right: { paddingLeft: space.md / 2 },
+  footer: { alignItems: 'center', paddingTop: space.md },
   reset: { alignSelf: 'center', padding: space.lg, minHeight: 48, justifyContent: 'center' },
 });

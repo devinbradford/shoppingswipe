@@ -68,6 +68,8 @@ export interface TasteProfile {
   weights: Record<string, number>;
   keepCount: number;
   swipeCount: number;
+  /** True when the user picked enough styles on first launch to skip the cold start. */
+  seeded: boolean;
 }
 
 export interface RankedProduct {
@@ -79,7 +81,7 @@ export interface RankedProduct {
   explored: boolean;
 }
 
-export const EMPTY_PROFILE: TasteProfile = { weights: {}, keepCount: 0, swipeCount: 0 };
+export const EMPTY_PROFILE: TasteProfile = { weights: {}, keepCount: 0, swipeCount: 0, seeded: false };
 
 function feature(kind: FeatureKind, value: string): Feature {
   const v = value.toLowerCase();
@@ -131,6 +133,8 @@ export function buildTasteProfile(
   productsById: ReadonlyMap<string, Product>,
   bands: PriceBands,
   options: RecommenderOptions = DEFAULT_OPTIONS,
+  /** Styles picked on first launch. Each counts like one keep of that style, older than any real swipe. */
+  seedStyles: readonly string[] = [],
 ): TasteProfile {
   const newestFirst = [...swipes].sort((a, b) => b.swipedAt - a.swipedAt);
   const raw: Record<string, number> = {};
@@ -151,15 +155,24 @@ export function buildTasteProfile(
     }
   }
 
+  // Picks sit behind every real swipe, so they fade as real taste builds up.
+  const seedDecay = Math.pow(0.5, index / options.halfLifeSwipes);
+  const seeds = [...new Set(seedStyles.map((s) => s.toLowerCase()))];
+  for (const style of seeds) {
+    const key = feature('style', style).key;
+    raw[key] = (raw[key] ?? 0) + seedDecay;
+    totalWeight += seedDecay;
+  }
+
   const weights: Record<string, number> = {};
   if (totalWeight > 0) {
     for (const key of Object.keys(raw)) weights[key] = raw[key] / totalWeight;
   }
-  return { weights, keepCount, swipeCount: index };
+  return { weights, keepCount, swipeCount: index, seeded: seeds.length >= options.coldStartKeeps };
 }
 
 export function isColdStart(profile: TasteProfile, options: RecommenderOptions = DEFAULT_OPTIONS): boolean {
-  return profile.keepCount < options.coldStartKeeps;
+  return profile.keepCount < options.coldStartKeeps && !profile.seeded;
 }
 
 export function scoreProduct(

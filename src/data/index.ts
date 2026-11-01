@@ -2,7 +2,7 @@ import { CATEGORIES, generateCatalog, RETAILERS } from './sample/catalog';
 import { LocalProductRepository } from './LocalProductRepository';
 import type { ProductRepository } from './ProductRepository';
 
-export type { ProductQuery, ProductRepository } from './ProductRepository';
+export type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
 
 let instance: ProductRepository | null = null;
 
