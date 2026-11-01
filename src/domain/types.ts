@@ -71,3 +71,20 @@ export interface CategorySummary extends Category {
   totalCount: number;
   remainingCount: number;
 }
+
+/** Row in `wishlist_items`. */
+export interface WishlistItem {
+  productId: string;
+  /** Epoch milliseconds. */
+  addedAt: number;
+}
+
+/** Row in `wishlists` (with its items). A named list the user organises kept items into. */
+export interface Wishlist {
+  id: string;
+  name: string;
+  /** Epoch milliseconds. */
+  createdAt: number;
+  /** Newest first. */
+  items: WishlistItem[];
+}

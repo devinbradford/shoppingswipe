@@ -41,6 +41,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="deck/[category]" />
         <Stack.Screen name="kept" />
+        <Stack.Screen name="lists/[id]" />
         <Stack.Screen name="product/[id]" options={{ animation: 'slide_from_bottom' }} />
       </Stack>
     </GestureHandlerRootView>

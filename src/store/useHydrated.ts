@@ -1,11 +1,17 @@
 import { useSyncExternalStore } from 'react';
 
 import { useSwipeStore } from './swipeStore';
+import { useWishlistStore } from './wishlistStore';
 
-const subscribe = (onChange: () => void) => useSwipeStore.persist.onFinishHydration(onChange);
-const getSnapshot = () => useSwipeStore.persist.hasHydrated();
+const stores = [useSwipeStore, useWishlistStore];
 
-/** True once the saved swipe log has been loaded from device storage. */
+const subscribe = (onChange: () => void) => {
+  const unsubs = stores.map((s) => s.persist.onFinishHydration(onChange));
+  return () => unsubs.forEach((u) => u());
+};
+const getSnapshot = () => stores.every((s) => s.persist.hasHydrated());
+
+/** True once everything saved on this device (swipes, kept items, lists) has loaded. */
 export function useHydrated(): boolean {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }

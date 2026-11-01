@@ -14,12 +14,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { Button, IconButton } from '@/components/Button';
 import { ProductImage } from '@/components/ProductImage';
+import { ListPickerSheet } from '@/components/ListPickerSheet';
 import { LoadingView, StateView } from '@/components/StateView';
 import type { Product, Retailer } from '@/domain/types';
 import { useProduct } from '@/hooks/useCatalog';
+import { useListsForProduct } from '@/hooks/useWishlists';
 import { formatPrice } from '@/lib/format';
 import { outboundUrl } from '@/lib/outboundLink';
 import { useSwipeStore } from '@/store/swipeStore';
+import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, radii, space } from '@/theme/tokens';
 
 export default function ProductScreen() {
@@ -64,6 +67,9 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   const isKept = useSwipeStore((s) => s.saved.some((i) => i.productId === product.id));
   const addSaved = useSwipeStore((s) => s.addSaved);
   const removeSaved = useSwipeStore((s) => s.removeSaved);
+  const addToList = useWishlistStore((s) => s.add);
+  const inLists = useListsForProduct(product.id);
+  const [picking, setPicking] = useState(false);
   const price = formatPrice(product.priceCents, product.currency);
   const retailerName = retailer?.name ?? 'the retailer';
 
@@ -130,8 +136,23 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
             <Fact label="Style" value={product.styleTags.join(', ')} />
             {retailer ? <Fact label="Sold by" value={`${retailer.name} (${retailer.domain})`} /> : null}
           </View>
+
+          <View style={styles.lists}>
+            <AppText variant="bodySmall" color={colors.inkMuted} style={styles.listsText}>
+              {inLists.length === 0 ? 'Not in any list yet.' : `In ${inLists.map((l) => l.name).join(', ')}`}
+            </AppText>
+            <Button label="Add to list" variant="secondary" onPress={() => setPicking(true)} />
+          </View>
         </View>
       </ScrollView>
+
+      <ListPickerSheet
+        visible={picking}
+        title="Add to list"
+        checkedIds={new Set(inLists.map((l) => l.id))}
+        onClose={() => setPicking(false)}
+        onPick={(listId) => addToList(listId, [product.id])}
+      />
 
       <SafeAreaView edges={['bottom']} style={styles.bar}>
         <Button
@@ -185,6 +206,13 @@ const styles = StyleSheet.create({
   dotActive: { backgroundColor: colors.pipActive, width: 18 },
   body: { padding: space.xl, gap: space.sm },
   description: { marginTop: space.sm },
+  lists: {
+    marginTop: space.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+  },
+  listsText: { flex: 1 },
   facts: {
     marginTop: space.lg,
     borderRadius: radii.md,
