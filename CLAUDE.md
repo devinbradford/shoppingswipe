@@ -55,15 +55,23 @@ supabase/migrations/  SQL schema + row-level security.
 
 Stone background (`#ECEEEA`), graphite ink (`#22283A`), bottle-green for Keep (`#2E6A4F`), oxblood for Skip (`#9E3B36`). Bricolage Grotesque for headings and prices, system font for body text. The product photo is the hero, and the price is set big and bold on the card. Keep the UI quiet everywhere else. Sentence-case copy; buttons say exactly what they do ("Keep", "Buy now").
 
-## Current state: Phase 1 is done
+## Current state: Phase 2 is done (awaiting Devin's go-ahead for Phase 3)
 
+Phase 1:
 - Discover screen: category tiles with remaining-item counts, plus search
 - Swipe deck: drag and button swipes, Keep/Skip stamps, photo tapping, undo, haptics
 - Recommender: content-based (style tags, material, color, brand, retailer, price band), skips weighted 0.6×, recency decay, 15% exploration, cold start until 3 keeps, taste carries across categories, re-ranks after every swipe behind the two visible cards, "Matches your taste for…" reasons
 - Kept list, product detail with outbound buy link
 - Supabase schema with RLS (not yet connected)
 - 144-product sample catalog (generator can make 10k+ for load testing)
-- Checks passing: typecheck, lint, 17 unit tests (recommender, swipe store, catalog/search)
+
+Phase 2:
+- Named wishlists: Lists row on Kept, Select → Copy/Move to list, list screen (rename, delete, remove items), Add to list on product page. Rules in `src/domain/wishlists.ts`; migration `20261101000000_wishlists.sql`
+- Search filters: category, store, price presets + min/max, live result count, removable chips (`src/domain/filters.ts`)
+- First-launch taste picker (`/welcome`): 3–5 styles seed the taste profile as virtual keeps older than any real swipe
+- Offline strip (expo-network), offline-aware Buy now, root ErrorBoundary, not-found screen
+- Accessibility: reduce-motion support, card Keep/Skip screen-reader actions and swipe announcements, sheet Close buttons, 44pt+ tap targets, capped display-text scaling, WCAG contrast test
+- Checks passing: typecheck, lint, 48 unit tests
 - Sample photos are random placeholders from picsum.photos until real feeds arrive (Phase 4)
 
 ## Phase plan
