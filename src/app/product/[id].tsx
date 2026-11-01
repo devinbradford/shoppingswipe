@@ -18,6 +18,7 @@ import { ListPickerSheet } from '@/components/ListPickerSheet';
 import { LoadingView, StateView } from '@/components/StateView';
 import type { Product, Retailer } from '@/domain/types';
 import { useProduct } from '@/hooks/useCatalog';
+import { useOnline } from '@/hooks/useOnline';
 import { useListsForProduct } from '@/hooks/useWishlists';
 import { formatPrice } from '@/lib/format';
 import { outboundUrl } from '@/lib/outboundLink';
@@ -70,6 +71,8 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   const addToList = useWishlistStore((s) => s.add);
   const inLists = useListsForProduct(product.id);
   const [picking, setPicking] = useState(false);
+  const online = useOnline();
+  const [buyError, setBuyError] = useState<string | null>(null);
   const price = formatPrice(product.priceCents, product.currency);
   const retailerName = retailer?.name ?? 'the retailer';
 
@@ -78,9 +81,16 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   };
 
   const buy = async () => {
+    setBuyError(null);
+    if (!online) {
+      setBuyError(`You're offline. Connect to the internet to open ${retailerName}.`);
+      return;
+    }
     setOpening(true);
     try {
       await WebBrowser.openBrowserAsync(outboundUrl(product));
+    } catch {
+      setBuyError(`Couldn't open ${retailerName}. Try again in a moment.`);
     } finally {
       setOpening(false);
     }
@@ -154,6 +164,13 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
         onPick={(listId) => addToList(listId, [product.id])}
       />
 
+      {buyError ? (
+        <View style={styles.buyError} accessibilityRole="alert" accessibilityLiveRegion="polite">
+          <AppText variant="bodySmall" color={colors.skip}>
+            {buyError}
+          </AppText>
+        </View>
+      ) : null}
       <SafeAreaView edges={['bottom']} style={styles.bar}>
         <Button
           label={isKept ? 'Kept' : 'Keep'}
@@ -238,4 +255,5 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
   },
   buy: { flex: 1 },
+  buyError: { paddingHorizontal: space.lg, paddingVertical: space.sm, backgroundColor: colors.skipSoft },
 });
