@@ -9,6 +9,11 @@ interface AppTextProps extends TextProps {
   color?: string;
 }
 
+/** Big display text grows less with the phone's text size so it can't overflow cards. */
+const MAX_SCALE: Partial<Record<Variant, number>> = { hero: 1.3, price: 1.3, title: 1.4, heading: 1.6 };
+
 export function AppText({ variant = 'body', color = colors.ink, style, ...rest }: AppTextProps) {
-  return <Text {...rest} style={[typeScale[variant], { color }, style]} />;
+  return (
+    <Text maxFontSizeMultiplier={MAX_SCALE[variant] ?? 2} {...rest} style={[typeScale[variant], { color }, style]} />
+  );
 }

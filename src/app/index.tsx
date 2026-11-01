@@ -256,7 +256,7 @@ function ResetLink() {
         accessibilityRole="button"
         accessibilityLabel="Reset swipes, kept items and lists"
         style={styles.reset}>
-        <AppText variant="caption" color={colors.inkSubtle}>
+        <AppText variant="caption" color={colors.inkMuted}>
           Reset swipes, kept items and lists
         </AppText>
       </Pressable>

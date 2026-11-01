@@ -20,7 +20,6 @@ export function Chip({ label, selected = false, onPress, removable, accessibilit
       accessibilityRole={removable ? 'button' : 'checkbox'}
       accessibilityState={removable ? undefined : { checked: selected }}
       accessibilityLabel={accessibilityLabel ?? label}
-      hitSlop={{ top: 6, bottom: 6 }}
       style={({ pressed }) => [styles.chip, selected && styles.on, pressed && styles.pressed]}>
       <AppText variant="bodySmall" color={selected ? colors.onInk : colors.ink}>
         {label}
@@ -35,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.xs,
-    minHeight: 36,
+    minHeight: 44,
     paddingHorizontal: space.md,
     borderRadius: radii.pill,
     backgroundColor: colors.surface,

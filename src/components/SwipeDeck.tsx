@@ -21,11 +21,12 @@ interface SwipeDeckProps {
   retailerNames: ReadonlyMap<string, string>;
   onSwipe: (direction: SwipeDirection) => void;
   onOpen: (product: Product) => void;
+  reduceMotion?: boolean;
   ref?: Ref<SwipeDeckHandle>;
 }
 
 /** Shows the top two cards; the one behind grows as the top is dragged away. */
-export function SwipeDeck({ cards, retailerNames, onSwipe, onOpen, ref }: SwipeDeckProps) {
+export function SwipeDeck({ cards, retailerNames, onSwipe, onOpen, reduceMotion, ref }: SwipeDeckProps) {
   const progress = useSharedValue(0);
   const topApi = useRef<SwipeCardApi | null>(null);
   const busy = useRef(false);
@@ -66,6 +67,7 @@ export function SwipeDeck({ cards, retailerNames, onSwipe, onOpen, ref }: SwipeD
             progress={progress}
             retailerName={retailerNames.get(card.product.retailerId) ?? ''}
             onSwiped={onSwipe}
+            reduceMotion={reduceMotion}
             onOpen={() => onOpen(card.product)}
             registerApi={
               isTop

@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
@@ -8,9 +8,11 @@ import { Button, IconButton } from '@/components/Button';
 import { Header } from '@/components/Header';
 import { LoadingView, StateView } from '@/components/StateView';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/SwipeDeck';
-import { CATEGORY_IDS, type CategoryId } from '@/domain/types';
+import { CATEGORY_IDS, type CategoryId, type SwipeDirection } from '@/domain/types';
 import { useCategorySummaries, useRetailerNames } from '@/hooks/useCatalog';
 import { useDeck } from '@/hooks/useDeck';
+import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { formatPrice } from '@/lib/format';
 import { useSwipeStore } from '@/store/swipeStore';
 import { colors, space } from '@/theme/tokens';
 
@@ -42,6 +44,23 @@ function Deck({ categoryId }: { categoryId: CategoryId }) {
   const retailers = useRetailerNames();
   const keptCount = useSwipeStore((s) => s.saved.length);
   const deckRef = useRef<SwipeDeckHandle>(null);
+  const reduceMotion = useReduceMotion();
+
+  // Tell screen reader users what happened and what's next.
+  const onSwipe = (direction: SwipeDirection) => {
+    const [current, next] = deck.cards;
+    deck.swipe(direction);
+    if (!current) return;
+    const what = `${direction === 'keep' ? 'Kept' : 'Skipped'} ${current.product.title}.`;
+    const then = next
+      ? ` Next: ${next.product.title}, ${formatPrice(next.product.priceCents, next.product.currency)}.`
+      : ' That was the last one.';
+    AccessibilityInfo.announceForAccessibility(what + then);
+  };
+  const onUndo = () => {
+    deck.undo();
+    AccessibilityInfo.announceForAccessibility('Undid last swipe.');
+  };
   const empty = deck.status === 'ready' && deck.cards.length === 0;
 
   return (
@@ -83,7 +102,8 @@ function Deck({ categoryId }: { categoryId: CategoryId }) {
             ref={deckRef}
             cards={deck.cards}
             retailerNames={retailers}
-            onSwipe={deck.swipe}
+            onSwipe={onSwipe}
+            reduceMotion={reduceMotion}
             onOpen={(p) => router.push({ pathname: '/product/[id]', params: { id: p.id } })}
           />
         ) : null}
@@ -105,7 +125,7 @@ function Deck({ categoryId }: { categoryId: CategoryId }) {
             disabled={deck.status !== 'ready' || empty}
             onPress={() => deckRef.current?.swipe('skip')}
           />
-          <IconButton icon="undo" label="Undo last swipe" onPress={deck.undo} disabled={!deck.canUndo} />
+          <IconButton icon="undo" label="Undo last swipe" onPress={onUndo} disabled={!deck.canUndo} />
           <Button
             label="Keep"
             icon="keep"

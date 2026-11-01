@@ -2,8 +2,10 @@ import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { colors, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
+import { IconButton } from './Button';
 
 interface SheetProps {
   visible: boolean;
@@ -15,23 +17,28 @@ interface SheetProps {
 /** Bottom sheet for short tasks: pick a list, name a list, confirm a delete. */
 export function Sheet({ visible, onClose, title, children }: SheetProps) {
   const insets = useSafeAreaInsets();
+  const reduceMotion = useReduceMotion();
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
+    <Modal
+      visible={visible}
+      transparent
+      animationType={reduceMotion ? 'fade' : 'slide'}
+      onRequestClose={onClose}
+      statusBarTranslucent>
       <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Pressable
-          style={styles.backdrop}
-          onPress={onClose}
-          accessibilityRole="button"
-          accessibilityLabel="Close"
-          importantForAccessibility="no"
-        />
+        {/* Tapping outside closes; screen readers use the Close button instead. */}
+        <Pressable style={styles.backdrop} onPress={onClose} accessible={false} importantForAccessibility="no" />
         <View
           style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, space.lg) + space.sm }]}
-          accessibilityViewIsModal>
+          accessibilityViewIsModal
+          onAccessibilityEscape={onClose}>
           <View style={styles.grabber} />
-          <AppText variant="heading" accessibilityRole="header" style={styles.title}>
-            {title}
-          </AppText>
+          <View style={styles.titleRow}>
+            <AppText variant="heading" accessibilityRole="header" style={styles.title}>
+              {title}
+            </AppText>
+            <IconButton icon="close" label="Close" onPress={onClose} />
+          </View>
           {children}
         </View>
       </KeyboardAvoidingView>
@@ -59,5 +66,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     marginBottom: space.sm,
   },
-  title: { marginBottom: space.xs },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: space.md, marginBottom: space.xs },
+  title: { flex: 1 },
 });

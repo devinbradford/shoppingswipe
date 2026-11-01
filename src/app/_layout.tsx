@@ -14,6 +14,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { StateView } from '@/components/StateView';
 import { useOnline } from '@/hooks/useOnline';
+import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { colors } from '@/theme/tokens';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -25,6 +26,7 @@ export default function RootLayout() {
     BricolageGrotesque_800ExtraBold,
   });
   const online = useOnline();
+  const reduceMotion = useReduceMotion();
   // If fonts fail we still start, falling back to the system font.
   const ready = loaded || !!error;
 
@@ -43,14 +45,14 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
-            animation: 'slide_from_right',
+            animation: reduceMotion ? 'fade' : 'slide_from_right',
           }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="kept" />
           <Stack.Screen name="lists/[id]" />
-          <Stack.Screen name="product/[id]" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="product/[id]" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
         </Stack>
       </View>
     </GestureHandlerRootView>

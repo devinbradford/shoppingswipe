@@ -33,7 +33,7 @@ export function ProductImage({ uri, style, accessibilityLabel, priority = 'norma
         />
       ) : (
         <View style={styles.fallback}>
-          <Icon name="bag" size={28} color={colors.inkSubtle} />
+          <Icon name="bag" size={28} color={colors.inkMuted} />
         </View>
       )}
     </View>

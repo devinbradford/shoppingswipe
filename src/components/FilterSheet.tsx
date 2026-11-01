@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
   },
-  priceInput: { flex: 1, minWidth: 0, ...typeScale.body, color: colors.ink, paddingVertical: space.sm },
+  priceInput: { flex: 1, minWidth: 0, minHeight: hitTarget, ...typeScale.body, color: colors.ink },
   actions: { flexDirection: 'row', gap: space.sm, paddingTop: space.sm },
   apply: { flex: 1 },
 });

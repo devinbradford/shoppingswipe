@@ -35,14 +35,27 @@ interface SwipeCardProps {
   onSwiped: (direction: SwipeDirection) => void;
   onOpen: () => void;
   registerApi?: (api: SwipeCardApi | null) => void;
+  /** "Reduce motion" is on: no tilt, no springy settle, quicker exit. */
+  reduceMotion?: boolean;
 }
 
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
 
-export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpen, registerApi }: SwipeCardProps) {
+export function SwipeCard({
+  card,
+  isTop,
+  progress,
+  retailerName,
+  onSwiped,
+  onOpen,
+  registerApi,
+  reduceMotion = false,
+}: SwipeCardProps) {
   const { width: screenWidth } = useWindowDimensions();
   const threshold = screenWidth * motion.swipeThreshold;
   const flyDistance = screenWidth * 1.4;
+  const flyMs = reduceMotion ? 90 : motion.flyOutMs;
+  const tilt = reduceMotion ? 0 : 12;
 
   const tx = useSharedValue(0);
   const ty = useSharedValue(0);
@@ -68,9 +81,9 @@ export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpe
   const flyOut = (direction: SwipeDirection) => {
     'worklet';
     const sign = direction === 'keep' ? 1 : -1;
-    progress.set(withTiming(1, { duration: motion.flyOutMs }));
+    progress.set(withTiming(1, { duration: flyMs }));
     tx.set(
-      withTiming(sign * flyDistance, { duration: motion.flyOutMs }, (done) => {
+      withTiming(sign * flyDistance, { duration: flyMs }, (done) => {
         if (done) scheduleOnRN(finish, direction);
       }),
     );
@@ -88,7 +101,7 @@ export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpe
     onUpdate: (e) => {
       'worklet';
       tx.set(e.translationX);
-      ty.set(e.translationY * 0.35);
+      ty.set(reduceMotion ? 0 : e.translationY * 0.35);
       progress.set(Math.min(1, Math.abs(e.translationX) / threshold));
       const past = Math.abs(e.translationX) > threshold;
       if (past !== pastThreshold.get()) {
@@ -103,9 +116,10 @@ export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpe
       if (Math.abs(e.translationX) > threshold || fling) {
         flyOut(e.translationX > 0 ? 'keep' : 'skip');
       } else {
-        tx.set(withSpring(0, SPRING));
-        ty.set(withSpring(0, SPRING));
-        progress.set(withSpring(0, SPRING));
+        const settle = (v: number) => (reduceMotion ? withTiming(v, { duration: 120 }) : withSpring(v, SPRING));
+        tx.set(settle(0));
+        ty.set(settle(0));
+        progress.set(settle(0));
       }
       pastThreshold.set(false);
     },
@@ -140,7 +154,7 @@ export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpe
       transform: [
         { translateX: x },
         { translateY: ty.get() },
-        { rotate: `${interpolate(x, [-screenWidth, screenWidth], [-12, 12], Extrapolation.CLAMP)}deg` },
+        { rotate: `${interpolate(x, [-screenWidth, screenWidth], [-tilt, tilt], Extrapolation.CLAMP)}deg` },
       ],
     };
   });
@@ -167,13 +181,17 @@ export function SwipeCard({ card, isTop, progress, retailerName, onSwiped, onOpe
         pointerEvents={isTop ? 'auto' : 'none'}
         accessible={isTop}
         accessibilityLabel={`${product.title}, ${price}, ${product.brand} at ${retailerName}`}
-        accessibilityHint="Use the Keep and Skip buttons below, or swipe right to keep and left to skip."
+        accessibilityHint="Swipe up or down for Keep, Skip and more actions. Double tap for details."
         accessibilityActions={[
+          { name: 'keep', label: 'Keep' },
+          { name: 'skip', label: 'Skip' },
           { name: 'activate', label: 'Open details' },
           { name: 'increment', label: 'Next photo' },
           { name: 'decrement', label: 'Previous photo' },
         ]}
         onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === 'keep') flyOut('keep');
+          if (e.nativeEvent.actionName === 'skip') flyOut('skip');
           if (e.nativeEvent.actionName === 'activate') onOpen();
           if (e.nativeEvent.actionName === 'increment') setPhoto((p) => Math.min(photos.length - 1, p + 1));
           if (e.nativeEvent.actionName === 'decrement') setPhoto((p) => Math.max(0, p - 1));
