@@ -1,3 +1,4 @@
+import { matchesFilters } from '@/domain/filters';
 import { computePriceBands, type PriceBands } from '@/recommendation';
 import { CATEGORY_IDS, type Category, type CategoryId, type Product, type Retailer } from '@/domain/types';
 import type { ProductQuery, ProductRepository } from './ProductRepository';
@@ -45,12 +46,13 @@ export class LocalProductRepository implements ProductRepository {
     return counts;
   }
 
-  async listProducts({ categoryId, search, excludeIds, limit }: ProductQuery = {}): Promise<Product[]> {
+  async listProducts({ categoryId, search, excludeIds, filters, limit }: ProductQuery = {}): Promise<Product[]> {
     const terms = (search ?? '').toLowerCase().split(/\s+/).filter(Boolean);
     const out: Product[] = [];
     for (const p of this.products) {
       if (categoryId && p.categoryId !== categoryId) continue;
       if (excludeIds?.has(p.id)) continue;
+      if (filters && !matchesFilters(p, filters)) continue;
       if (terms.length > 0) {
         const text = this.searchText.get(p.id)!;
         if (!terms.every((t) => text.includes(t))) continue;

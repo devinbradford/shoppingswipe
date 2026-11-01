@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getProductRepository } from '@/data';
+import { countActiveFilters, EMPTY_FILTERS, matchesFilters, type SearchFilters } from '@/domain/filters';
 import type { CategoryId, CategorySummary, Product } from '@/domain/types';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
@@ -68,19 +69,44 @@ export function useProduct(id: string | undefined) {
   }, [id]);
 }
 
-/** Search the whole catalog. Debounced so typing stays smooth. */
-export function useProductSearch(query: string, delayMs = 160) {
+/** Search the whole catalog by text and/or filters. Debounced so typing stays smooth. */
+export function useProductSearch(query: string, filters: SearchFilters = EMPTY_FILTERS, delayMs = 160) {
   const [debounced, setDebounced] = useState(query.trim());
   useEffect(() => {
     const t = setTimeout(() => setDebounced(query.trim()), delayMs);
     return () => clearTimeout(t);
   }, [query, delayMs]);
 
+  const active = debounced.length > 0 || countActiveFilters(filters) > 0;
   const result = useAsync<Product[]>(
-    () => (debounced ? getProductRepository().listProducts({ search: debounced, limit: 60 }) : Promise.resolve([])),
-    [debounced],
+    () =>
+      active ? getProductRepository().listProducts({ search: debounced, filters, limit: 200 }) : Promise.resolve([]),
+    [debounced, filters],
   );
   return { ...result, query: debounced, pending: debounced !== query.trim() };
+}
+
+/** Categories and retailers to offer as filters, plus a live result counter. */
+export function useFilterOptions(query: string) {
+  const options = useAsync(async () => {
+    const repo = getProductRepository();
+    const [categories, retailers, all] = await Promise.all([
+      repo.listCategories(),
+      repo.listRetailers(),
+      repo.listProducts({ search: query.trim() }),
+    ]);
+    return { categories, retailers, all };
+  }, [query.trim()]);
+  const all = options.data?.all;
+  const countFor = useCallback(
+    (draft: SearchFilters) => (all ? all.filter((p) => matchesFilters(p, draft)).length : null),
+    [all],
+  );
+  return {
+    categories: options.data?.categories ?? [],
+    retailers: options.data?.retailers ?? [],
+    countFor,
+  };
 }
 
 /** Retailer id -> display name. */

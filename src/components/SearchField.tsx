@@ -12,7 +12,7 @@ interface SearchFieldProps {
 export function SearchField({
   value,
   onChangeText,
-  placeholder = 'Search products, brands, styles',
+  placeholder = 'Search products',
 }: SearchFieldProps) {
   return (
     <View style={styles.field}>
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
   },
-  input: { flex: 1, ...typeScale.body, color: colors.ink, paddingVertical: space.md },
+  input: { flex: 1, minWidth: 0, ...typeScale.body, color: colors.ink, paddingVertical: space.md },
   clear: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 });

@@ -1,4 +1,5 @@
 import type { PriceBands } from '@/recommendation';
+import type { SearchFilters } from '@/domain/filters';
 import type { Category, CategoryId, Product, Retailer } from '@/domain/types';
 
 export interface ProductQuery {
@@ -7,6 +8,8 @@ export interface ProductQuery {
   search?: string;
   /** Product ids to leave out (e.g. already swiped). */
   excludeIds?: ReadonlySet<string>;
+  /** Category, retailer and price filters from search. */
+  filters?: SearchFilters;
   limit?: number;
 }
 
