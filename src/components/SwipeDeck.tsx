@@ -10,6 +10,7 @@ import { SwipeCard, type SwipeCardApi } from './SwipeCard';
 export interface DeckCardData {
   product: Product;
   reasonText: string | null;
+  forYou: string | null;
 }
 
 export interface SwipeDeckHandle {
@@ -22,11 +23,26 @@ interface SwipeDeckProps {
   onSwipe: (direction: SwipeDirection) => void;
   onOpen: (product: Product) => void;
   reduceMotion?: boolean;
+  /** Layout around the full-screen card: where the photo lines and price sit. */
+  pipsTop?: number;
+  infoBottom?: number;
+  /** Shown in the "For you" spot while the deck is still learning. */
+  hint?: string | null;
   ref?: Ref<SwipeDeckHandle>;
 }
 
 /** Shows the top two cards; the one behind grows as the top is dragged away. */
-export function SwipeDeck({ cards, retailerNames, onSwipe, onOpen, reduceMotion, ref }: SwipeDeckProps) {
+export function SwipeDeck({
+  cards,
+  retailerNames,
+  onSwipe,
+  onOpen,
+  reduceMotion,
+  pipsTop,
+  infoBottom,
+  hint,
+  ref,
+}: SwipeDeckProps) {
   const progress = useSharedValue(0);
   const topApi = useRef<SwipeCardApi | null>(null);
   const busy = useRef(false);
@@ -68,6 +84,9 @@ export function SwipeDeck({ cards, retailerNames, onSwipe, onOpen, reduceMotion,
             retailerName={retailerNames.get(card.product.retailerId) ?? ''}
             onSwiped={onSwipe}
             reduceMotion={reduceMotion}
+            pipsTop={pipsTop}
+            infoBottom={infoBottom}
+            hint={hint}
             onOpen={() => onOpen(card.product)}
             registerApi={
               isTop

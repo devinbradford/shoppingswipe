@@ -287,8 +287,12 @@ const PRICE_LABEL: Record<PriceBand, string> = {
 };
 
 /** "Matches your taste for walnut and mid-century", or null if no strong reason. */
+/** Short display labels for reasons, e.g. ["mid-century", "walnut"]. */
+export function reasonLabels(reasons: readonly Feature[]): string[] {
+  return reasons.map((r) => (r.kind === 'price' ? PRICE_LABEL[r.value as PriceBand] : r.label));
+}
+
 export function formatReasons(reasons: readonly Feature[]): string | null {
   if (reasons.length === 0) return null;
-  const labels = reasons.map((r) => (r.kind === 'price' ? PRICE_LABEL[r.value as PriceBand] : r.label));
-  return `Matches your taste for ${labels.join(' and ')}`;
+  return `Matches your taste for ${reasonLabels(reasons).join(' and ')}`;
 }

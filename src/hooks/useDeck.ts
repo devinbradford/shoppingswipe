@@ -5,6 +5,7 @@ import type { CategoryId, Product, SwipeDirection } from '@/domain/types';
 import {
   buildTasteProfile,
   formatReasons,
+  reasonLabels,
   hashSeed,
   isColdStart,
   rankProducts,
@@ -21,6 +22,8 @@ export type DeckStatus = 'loading' | 'ready' | 'error';
 export interface DeckCard extends RankedProduct {
   /** "Matches your taste for walnut and mid-century", or null. */
   reasonText: string | null;
+  /** Short reasons for the "For you" bubble, e.g. "mid-century, walnut", or null. */
+  forYou: string | null;
 }
 
 export interface Deck {
@@ -40,7 +43,8 @@ export interface Deck {
 const picks = () => usePreferencesStore.getState().stylePicks;
 
 function toCard(r: RankedProduct): DeckCard {
-  return { ...r, reasonText: formatReasons(r.reasons) };
+  const labels = reasonLabels(r.reasons);
+  return { ...r, reasonText: formatReasons(r.reasons), forYou: labels.length ? labels.join(', ') : null };
 }
 
 /**

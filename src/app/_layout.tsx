@@ -1,9 +1,6 @@
-import {
-  BricolageGrotesque_600SemiBold,
-  BricolageGrotesque_700Bold,
-  BricolageGrotesque_800ExtraBold,
-  useFonts,
-} from '@expo-google-fonts/bricolage-grotesque';
+import { Geist_400Regular, Geist_500Medium, Geist_600SemiBold } from '@expo-google-fonts/geist';
+import { InstrumentSerif_400Regular, InstrumentSerif_400Regular_Italic } from '@expo-google-fonts/instrument-serif';
+import { useFonts } from 'expo-font';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -21,9 +18,11 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    BricolageGrotesque_600SemiBold,
-    BricolageGrotesque_700Bold,
-    BricolageGrotesque_800ExtraBold,
+    InstrumentSerif_400Regular,
+    InstrumentSerif_400Regular_Italic,
+    Geist_400Regular,
+    Geist_500Medium,
+    Geist_600SemiBold,
   });
   const online = useOnline();
   const reduceMotion = useReduceMotion();
@@ -38,7 +37,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <OfflineBanner visible={!online} />
       <View style={{ flex: 1 }}>
         <Stack

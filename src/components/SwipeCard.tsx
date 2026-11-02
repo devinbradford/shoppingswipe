@@ -37,6 +37,12 @@ interface SwipeCardProps {
   registerApi?: (api: SwipeCardApi | null) => void;
   /** "Reduce motion" is on: no tilt, no springy settle, quicker exit. */
   reduceMotion?: boolean;
+  /** Distance from the card's top to the photo progress lines (clears the status bar). */
+  pipsTop?: number;
+  /** Distance from the card's bottom to the price block (clears the buttons). */
+  infoBottom?: number;
+  /** Shown in the "For you" bubble's place when there is no reason yet. */
+  hint?: string | null;
 }
 
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
@@ -50,6 +56,9 @@ export function SwipeCard({
   onOpen,
   registerApi,
   reduceMotion = false,
+  pipsTop = space.md,
+  infoBottom = space.xl,
+  hint = null,
 }: SwipeCardProps) {
   const { width: screenWidth } = useWindowDimensions();
   const threshold = screenWidth * motion.swipeThreshold;
@@ -62,7 +71,7 @@ export function SwipeCard({
   const pastThreshold = useSharedValue(false);
   const [photo, setPhoto] = useState(0);
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
-  const { product, reasonText } = card;
+  const { product, forYou } = card;
   const photos = product.imageUrls;
 
   // A card that just became the top one resets the shared progress.
@@ -130,7 +139,7 @@ export function SwipeCard({
     runOnJS: true,
     onActivate: (e) => {
       // Bottom info area opens details; left/right of the photo flips through images.
-      if (e.y > cardSize.height * 0.68) {
+      if (e.y > cardSize.height * 0.58) {
         onOpen();
       } else if (e.x < cardSize.width * 0.4) {
         setPhoto((p) => Math.max(0, p - 1));
@@ -202,8 +211,13 @@ export function SwipeCard({
           <ProductImage uri={photos[photo]} style={StyleSheet.absoluteFill} priority={isTop ? 'high' : 'normal'} />
         </View>
 
+        <LinearGradient
+          colors={[colors.scrimMid, colors.scrimLight]}
+          style={[styles.topScrim, { height: pipsTop + 120 }]}
+          pointerEvents="none"
+        />
         {photos.length > 1 ? (
-          <View style={styles.pips} pointerEvents="none">
+          <View style={[styles.pips, { top: pipsTop }]} pointerEvents="none">
             {photos.map((uri, i) => (
               <View key={uri} style={[styles.pip, i === photo && styles.pipActive]} />
             ))}
@@ -221,23 +235,38 @@ export function SwipeCard({
           </AppText>
         </Animated.View>
 
-        <LinearGradient colors={[colors.scrimLight, colors.scrim]} style={styles.scrim} pointerEvents="none" />
-        <View style={styles.info} pointerEvents="none">
-          {reasonText ? (
-            <View style={styles.reason}>
-              <AppText variant="caption" color={colors.onInk} numberOfLines={1}>
-                {reasonText}
-              </AppText>
+        <LinearGradient
+          colors={[colors.scrimLight, colors.scrimMid, colors.scrim, colors.background]}
+          locations={[0, 0.35, 0.72, 1]}
+          style={styles.scrim}
+          pointerEvents="none"
+        />
+        <View style={[styles.info, { bottom: infoBottom }]} pointerEvents="none">
+          {forYou || hint ? (
+            <View style={styles.forYou}>
+              <View style={styles.dot} />
+              {forYou ? (
+                <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>
+                  For you ·{' '}
+                  <AppText variant="italic" color={colors.accentText}>
+                    {forYou}
+                  </AppText>
+                </AppText>
+              ) : (
+                <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>
+                  {hint}
+                </AppText>
+              )}
             </View>
           ) : null}
-          <AppText variant="price" color={colors.onInk}>
+          <AppText variant="price" color={colors.onPhoto}>
             {price}
           </AppText>
-          <AppText variant="heading" color={colors.onInk} numberOfLines={2}>
+          <AppText variant="title" color={colors.onPhoto} numberOfLines={2}>
             {product.title}
           </AppText>
-          <AppText variant="bodySmall" color={colors.onInk} style={styles.meta} numberOfLines={1}>
-            {product.brand} · {retailerName}
+          <AppText variant="eyebrow" color={colors.inkMuted} numberOfLines={1} style={styles.meta}>
+            {`${product.brand} · ${retailerName}`.toUpperCase()}
           </AppText>
         </View>
       </Animated.View>
@@ -251,38 +280,45 @@ const styles = StyleSheet.create({
     borderRadius: radii.card,
     overflow: 'hidden',
     backgroundColor: colors.placeholder,
-    boxShadow: `0 10px 30px ${colors.shadow}22`,
   },
+  topScrim: { position: 'absolute', left: 0, right: 0, top: 0 },
   pips: {
     position: 'absolute',
-    top: space.md,
-    left: space.md,
-    right: space.md,
+    left: space.xl,
+    right: space.xl,
     flexDirection: 'row',
     gap: space.xs,
   },
-  pip: { flex: 1, height: 3, borderRadius: 2, backgroundColor: colors.pip },
+  pip: { flex: 1, height: 2, backgroundColor: colors.pip },
   pipActive: { backgroundColor: colors.pipActive },
   stamp: {
     position: 'absolute',
-    top: space.xxl + space.md,
-    paddingHorizontal: space.lg,
-    paddingVertical: space.xs,
-    borderWidth: 3,
-    borderRadius: radii.md,
-    backgroundColor: colors.surface,
-  },
-  keepStamp: { left: space.xl, borderColor: colors.keep, transform: [{ rotate: '-12deg' }] },
-  skipStamp: { right: space.xl, borderColor: colors.skip, transform: [{ rotate: '12deg' }] },
-  scrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '48%' },
-  info: { position: 'absolute', left: space.xl, right: space.xl, bottom: space.xl, gap: space.xs },
-  reason: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.keep,
-    paddingHorizontal: space.md,
-    paddingVertical: space.xs,
+    top: '30%',
+    paddingHorizontal: space.xl,
+    paddingVertical: space.sm,
+    borderWidth: 1,
     borderRadius: radii.pill,
-    marginBottom: space.sm,
+    backgroundColor: colors.glass,
   },
-  meta: { opacity: 0.85 },
+  keepStamp: { left: space.xl, borderColor: colors.keep, transform: [{ rotate: '-8deg' }] },
+  skipStamp: { right: space.xl, borderColor: colors.skip, transform: [{ rotate: '8deg' }] },
+  scrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '62%' },
+  info: { position: 'absolute', left: space.xl, right: space.xl, gap: space.sm },
+  forYou: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    maxWidth: '100%',
+    paddingHorizontal: space.md + 2,
+    paddingVertical: space.sm,
+    borderRadius: radii.pill,
+    backgroundColor: colors.accentGlass,
+    borderWidth: 1,
+    borderColor: colors.accentGlassBorder,
+    marginBottom: space.xs,
+  },
+  forYouText: { flexShrink: 1 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.keep },
+  meta: { marginTop: space.xs },
 });

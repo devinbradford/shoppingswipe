@@ -16,17 +16,19 @@ function contrast(a: string, b: string): number {
 
 // Text pairs actually used in the app. 4.5:1 is the WCAG AA minimum for normal text.
 const TEXT_PAIRS: [string, string, string][] = [
-  ['ink on background', colors.ink, colors.background],
-  ['ink on surface', colors.ink, colors.surface],
+  ['text on background', colors.ink, colors.background],
+  ['text on surface', colors.ink, colors.surface],
   ['muted text on background', colors.inkMuted, colors.background],
   ['muted text on surface', colors.inkMuted, colors.surface],
-  ['button text on ink', colors.onInk, colors.ink],
-  ['button text on keep', colors.onInk, colors.keep],
-  ['button text on skip', colors.onInk, colors.skip],
-  ['keep text on keepSoft', colors.keep, colors.keepSoft],
-  ['skip text on skipSoft', colors.skip, colors.skipSoft],
-  ['skip text on background', colors.skip, colors.background],
-  ['keep text on background', colors.keep, colors.background],
+  ['text on photos over the dark fade', colors.onPhoto, colors.background],
+  ['button text on light button', colors.onInk, colors.ink],
+  ['button text on champagne', colors.onInk, colors.keep],
+  ['button text on rose', colors.onInk, colors.skip],
+  ['champagne on its soft panel', colors.keep, colors.keepSoft],
+  ['accent text on soft panel', colors.accentText, colors.keepSoft],
+  ['rose text on its soft panel', colors.skip, colors.skipSoft],
+  ['rose text on background', colors.skip, colors.background],
+  ['champagne text on background', colors.keep, colors.background],
 ];
 
 describe('color contrast (WCAG AA)', () => {

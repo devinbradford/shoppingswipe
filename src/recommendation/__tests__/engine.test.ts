@@ -6,6 +6,7 @@ import {
   DEFAULT_OPTIONS,
   EMPTY_PROFILE,
   formatReasons,
+  reasonLabels,
   isColdStart,
   rankProducts,
   rerankQueue,
@@ -192,5 +193,13 @@ describe('ranking', () => {
 describe('formatReasons', () => {
   it('returns null with no reasons', () => {
     expect(formatReasons([])).toBeNull();
+  });
+
+  it('gives short labels for the "For you" bubble', () => {
+    const reasons = [
+      { kind: 'style' as const, value: 'mid-century', label: 'mid-century', key: 'style:mid-century' },
+      { kind: 'price' as const, value: 'high', label: 'high', key: 'price:high' },
+    ];
+    expect(reasonLabels(reasons)).toEqual(['mid-century', 'premium pieces']);
   });
 });

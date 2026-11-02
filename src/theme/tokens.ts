@@ -1,56 +1,75 @@
 /**
  * Design tokens. Every color, font, size, space and radius used in the UI
  * lives here. Components must not contain raw hex values.
+ *
+ * Look: "D · Mix". Warm espresso dark, full-bleed photography, champagne
+ * accent, Instrument Serif for names and prices, Geist for everything else.
  */
 
 export const colors = {
-  /** Stone: app background. */
-  background: '#ECEEEA',
-  /** Slightly raised surface (tiles, inputs). */
-  surface: '#F6F7F4',
+  /** Espresso: app background. */
+  background: '#12110F',
+  /** Slightly raised surface (sheets, inputs, list rows). */
+  surface: '#1C1B18',
   /** Hairline borders and dividers. */
-  border: '#D9DCD5',
-  /** Graphite: primary text and icons. */
-  ink: '#22283A',
-  inkMuted: '#5C6272',
-  inkSubtle: '#8A8F9B',
-  /** Text and icons placed on a dark or colored fill. */
-  onInk: '#F6F7F4',
-  /** Bottle-green: keep. */
-  keep: '#2E6A4F',
-  keepSoft: '#DCE8E1',
-  /** Oxblood: skip. */
-  skip: '#9E3B36',
-  skipSoft: '#F1DEDC',
+  border: '#33312C',
+  /** Primary text and icons (warm off-white). */
+  ink: '#F3F2EF',
+  inkMuted: '#B8B4AC',
+  /** Placeholders and decoration only (not for readable text). */
+  inkSubtle: '#8C887F',
+  /** Text and icons on a light fill (ink- or keep-filled buttons, selected chips). */
+  onInk: '#12110F',
+  /** Text and icons placed over a photo. */
+  onPhoto: '#F3F2EF',
+  /** Champagne: keep, selection, the one accent. */
+  keep: '#D8C29D',
+  keepSoft: '#2A261F',
+  /** Rose: skip and errors (readable on the dark background). */
+  skip: '#E0A39A',
+  skipSoft: '#2E1F1C',
+  /** Frosted controls floating over photos. */
+  glass: 'rgba(18, 17, 15, 0.34)',
+  glassBorder: 'rgba(243, 242, 239, 0.24)',
+  glassStrongBorder: 'rgba(243, 242, 239, 0.42)',
+  /** Accent-tinted glass for the "For you" bubble. */
+  accentGlass: 'rgba(216, 194, 157, 0.16)',
+  accentGlassBorder: 'rgba(216, 194, 157, 0.5)',
+  accentText: '#EADCC0',
   /** Scrim drawn over photos so text stays legible. */
-  scrim: 'rgba(16, 19, 28, 0.62)',
-  scrimLight: 'rgba(16, 19, 28, 0)',
-  /** Photo progress pips. */
-  pip: 'rgba(246, 247, 244, 0.45)',
-  pipActive: '#F6F7F4',
-  shadow: '#10131C',
+  scrim: 'rgba(18, 17, 15, 0.88)',
+  scrimMid: 'rgba(18, 17, 15, 0.55)',
+  scrimLight: 'rgba(18, 17, 15, 0)',
+  /** Photo progress lines. */
+  pip: 'rgba(243, 242, 239, 0.32)',
+  pipActive: '#F3F2EF',
+  shadow: '#000000',
   /** Placeholder fill while photos load. */
-  placeholder: '#DDE0D9',
+  placeholder: '#24221F',
 } as const;
 
 export const fonts = {
-  /** Bricolage Grotesque: headings and prices. Loaded in the root layout. */
-  display: 'BricolageGrotesque_700Bold',
-  displayMedium: 'BricolageGrotesque_600SemiBold',
-  displayExtra: 'BricolageGrotesque_800ExtraBold',
-  /** `undefined` means the platform system font. */
-  body: undefined,
+  /** Instrument Serif: names, prices, headings. Loaded in the root layout. */
+  serif: 'InstrumentSerif_400Regular',
+  serifItalic: 'InstrumentSerif_400Regular_Italic',
+  /** Geist: everything else. */
+  body: 'Geist_400Regular',
+  bodyMedium: 'Geist_500Medium',
+  bodySemiBold: 'Geist_600SemiBold',
 } as const;
 
 export const type = {
-  hero: { fontFamily: fonts.displayExtra, fontSize: 40, lineHeight: 44, letterSpacing: -0.8 },
-  price: { fontFamily: fonts.displayExtra, fontSize: 34, lineHeight: 38, letterSpacing: -0.6 },
-  title: { fontFamily: fonts.display, fontSize: 26, lineHeight: 30, letterSpacing: -0.4 },
-  heading: { fontFamily: fonts.display, fontSize: 20, lineHeight: 24, letterSpacing: -0.2 },
-  label: { fontFamily: fonts.displayMedium, fontSize: 16, lineHeight: 20 },
-  body: { fontSize: 16, lineHeight: 22 },
-  bodySmall: { fontSize: 14, lineHeight: 19 },
-  caption: { fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
+  hero: { fontFamily: fonts.serif, fontSize: 46, lineHeight: 48, letterSpacing: -0.4 },
+  price: { fontFamily: fonts.serif, fontSize: 52, lineHeight: 54, letterSpacing: -0.4 },
+  title: { fontFamily: fonts.serif, fontSize: 30, lineHeight: 34 },
+  heading: { fontFamily: fonts.serif, fontSize: 24, lineHeight: 28 },
+  italic: { fontFamily: fonts.serifItalic, fontSize: 16, lineHeight: 20 },
+  label: { fontFamily: fonts.bodyMedium, fontSize: 15, lineHeight: 20 },
+  body: { fontFamily: fonts.body, fontSize: 16, lineHeight: 23 },
+  bodySmall: { fontFamily: fonts.body, fontSize: 14, lineHeight: 19 },
+  caption: { fontFamily: fonts.body, fontSize: 12, lineHeight: 16, letterSpacing: 0.2 },
+  /** Small spaced-out capitals: FURNITURE · 18 LEFT. Write the text in capitals. */
+  eyebrow: { fontFamily: fonts.bodyMedium, fontSize: 11, lineHeight: 14, letterSpacing: 2.2 },
 } as const;
 
 export const space = {
@@ -66,9 +85,9 @@ export const space = {
 
 export const radii = {
   sm: 8,
-  md: 14,
+  md: 16,
   lg: 22,
-  card: 28,
+  card: 0,
   pill: 999,
 } as const;
 

@@ -24,10 +24,10 @@ export function CategoryTile({ label, remaining, coverUrl, onPress }: CategoryTi
       <ProductImage uri={coverUrl} style={StyleSheet.absoluteFill} />
       <LinearGradient colors={[colors.scrimLight, colors.scrim]} style={styles.scrim} />
       <View style={styles.text}>
-        <AppText variant="heading" color={colors.onInk}>
+        <AppText variant="heading" color={colors.onPhoto}>
           {label}
         </AppText>
-        <AppText variant="caption" color={colors.onInk} style={styles.count}>
+        <AppText variant="caption" color={colors.onPhoto} style={styles.count}>
           {countText}
         </AppText>
       </View>
