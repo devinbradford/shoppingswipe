@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * Writes supabase/seed.sql: the rooms, product types, fictional retailers and
  * sample products, ready to paste into the Supabase SQL editor (or run with
