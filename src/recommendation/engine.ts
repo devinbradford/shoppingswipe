@@ -89,7 +89,7 @@ function feature(kind: FeatureKind, value: string): Feature {
 }
 
 /** Low / mid / high price boundaries (terciles) for each product type. */
-export function computePriceBands(products: readonly Product[]): PriceBands {
+export function computePriceBands(products: readonly Pick<Product, 'subcategoryId' | 'priceCents'>[]): PriceBands {
   const byType = new Map<SubcategoryId, number[]>();
   for (const p of products) {
     const list = byType.get(p.subcategoryId) ?? [];

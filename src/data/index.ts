@@ -1,5 +1,7 @@
 import { CATEGORIES, generateCatalog, RETAILERS, SUBCATEGORIES } from './sample/catalog';
+import { getSupabase } from '@/lib/supabase';
 import { LocalProductRepository } from './LocalProductRepository';
+import { SupabaseProductRepository } from './SupabaseProductRepository';
 import type { ProductRepository } from './ProductRepository';
 
 export type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
@@ -7,12 +9,15 @@ export type { ProductQuery, ProductRepository, StyleOption } from './ProductRepo
 let instance: ProductRepository | null = null;
 
 /**
- * The app-wide repository. Phase 3 swaps this for a SupabaseProductRepository
- * when the backend is configured; nothing else needs to change.
+ * The app-wide repository: the Supabase catalog when the backend is configured
+ * (a `.env` with the project URL and key), otherwise the built-in sample data.
  */
 export function getProductRepository(): ProductRepository {
   if (!instance) {
-    instance = new LocalProductRepository(generateCatalog(), CATEGORIES, SUBCATEGORIES, RETAILERS);
+    const db = getSupabase();
+    instance = db
+      ? new SupabaseProductRepository(db)
+      : new LocalProductRepository(generateCatalog(), CATEGORIES, SUBCATEGORIES, RETAILERS);
   }
   return instance;
 }

@@ -20,6 +20,8 @@ export function getSupabase(): SupabaseClient | null {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
+        // PKCE: the sign-in page hands back a one-time code that only this phone can redeem.
+        flowType: 'pkce',
       },
     });
   }

@@ -44,6 +44,7 @@
     "eslint": "^9.39.5",
     "jest": "^30.5.2",
     "jest-expo": "~58.0.13",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -54,7 +55,8 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "seed": "tsx scripts/generate-seed.ts"
   },
   "private": true,
   "jest": {
