@@ -5,6 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Wishlist } from '@/domain/types';
 import { addToList, createList, deleteList, removeFromList, renameList } from '@/domain/wishlists';
 import { isUuid, newId } from '@/lib/ids';
+import { recordOps } from '@/sync/record';
 
 type Result = { ok: true; id: string } | { ok: false; error: string };
 
@@ -27,17 +28,37 @@ export const useWishlistStore = create<WishlistState>()(
         const r = createList(get().lists, name, newId(), Date.now());
         if (!r.ok) return r;
         set({ lists: r.lists });
+        const list = r.lists.find((l) => l.id === r.id)!;
+        recordOps([{ type: 'list.upsert', list: { id: list.id, name: list.name, createdAt: list.createdAt } }]);
         return { ok: true, id: r.id };
       },
       rename: (id, name) => {
         const r = renameList(get().lists, id, name);
         if (!r.ok) return r;
         set({ lists: r.lists });
+        const list = r.lists.find((l) => l.id === id)!;
+        recordOps([{ type: 'list.upsert', list: { id: list.id, name: list.name, createdAt: list.createdAt } }]);
         return { ok: true, id };
       },
-      remove: (id) => set((s) => ({ lists: deleteList(s.lists, id) })),
-      add: (id, productIds) => set((s) => ({ lists: addToList(s.lists, id, productIds, Date.now()) })),
-      removeItems: (id, productIds) => set((s) => ({ lists: removeFromList(s.lists, id, productIds) })),
+      remove: (id) => {
+        set((s) => ({ lists: deleteList(s.lists, id) }));
+        recordOps([{ type: 'list.remove', listId: id }]);
+      },
+      add: (id, productIds) => {
+        const before = new Set(
+          get()
+            .lists.find((l) => l.id === id)
+            ?.items.map((i) => i.productId),
+        );
+        const lists = addToList(get().lists, id, productIds, Date.now());
+        set({ lists });
+        const added = lists.find((l) => l.id === id)?.items.filter((i) => !before.has(i.productId)) ?? [];
+        if (added.length) recordOps([{ type: 'listItems.add', listId: id, items: added }]);
+      },
+      removeItems: (id, productIds) => {
+        set((s) => ({ lists: removeFromList(s.lists, id, productIds) }));
+        recordOps([{ type: 'listItems.remove', listId: id, productIds: [...productIds] }]);
+      },
       resetAll: () => set({ lists: [] }),
     }),
     {

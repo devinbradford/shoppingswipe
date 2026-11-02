@@ -4,6 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { SavedItem, SwipeEvent } from '@/domain/types';
 import { newId } from '@/lib/ids';
+import { recordOps } from '@/sync/record';
+import type { SyncOp } from '@/sync/types';
 
 /**
  * On-device record of what the user did. Facts only: the swipe log and the
@@ -28,17 +30,20 @@ export const useSwipeStore = create<SwipeState>()(
     (set, get) => ({
       swipes: [],
       saved: [],
-      recordSwipe: (event) =>
-        set((s) => ({
-          swipes: [...s.swipes, event],
-          saved:
-            event.direction === 'keep' && !s.saved.some((i) => i.productId === event.productId)
-              ? [{ productId: event.productId, savedAt: event.swipedAt }, ...s.saved]
-              : s.saved,
-        })),
+      recordSwipe: (event) => {
+        const newlyKept = event.direction === 'keep' && !get().saved.some((i) => i.productId === event.productId);
+        const item = { productId: event.productId, savedAt: event.swipedAt };
+        set((s) => ({ swipes: [...s.swipes, event], saved: newlyKept ? [item, ...s.saved] : s.saved }));
+        const ops: SyncOp[] = [{ type: 'swipe.add', swipe: event }];
+        if (newlyKept) ops.push({ type: 'saved.add', item });
+        recordOps(ops);
+      },
       undoLastSwipe: () => {
         const last = get().swipes.at(-1);
         if (!last) return undefined;
+        const unkeeps =
+          last.direction === 'keep' &&
+          get().saved.some((i) => i.productId === last.productId && i.savedAt === last.swipedAt);
         set((s) => ({
           swipes: s.swipes.slice(0, -1),
           saved:
@@ -46,15 +51,21 @@ export const useSwipeStore = create<SwipeState>()(
               ? s.saved.filter((i) => !(i.productId === last.productId && i.savedAt === last.swipedAt))
               : s.saved,
         }));
+        const ops: SyncOp[] = [{ type: 'swipe.remove', swipeId: last.id }];
+        if (unkeeps) ops.push({ type: 'saved.remove', productId: last.productId });
+        recordOps(ops);
         return last;
       },
-      removeSaved: (productId) => set((s) => ({ saved: s.saved.filter((i) => i.productId !== productId) })),
-      addSaved: (productId) =>
-        set((s) =>
-          s.saved.some((i) => i.productId === productId)
-            ? s
-            : { saved: [{ productId, savedAt: Date.now() }, ...s.saved] },
-        ),
+      removeSaved: (productId) => {
+        set((s) => ({ saved: s.saved.filter((i) => i.productId !== productId) }));
+        recordOps([{ type: 'saved.remove', productId }]);
+      },
+      addSaved: (productId) => {
+        if (get().saved.some((i) => i.productId === productId)) return;
+        const item = { productId, savedAt: Date.now() };
+        set((s) => ({ saved: [item, ...s.saved] }));
+        recordOps([{ type: 'saved.add', item }]);
+      },
       resetAll: () => set({ swipes: [], saved: [] }),
     }),
     {

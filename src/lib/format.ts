@@ -20,3 +20,15 @@ export function formatPrice(priceCents: number, currency = 'USD'): string {
 export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : plural}`;
 }
+
+/** "just now", "5 min ago", "2 h ago", "3 days ago". */
+export function timeAgo(then: number, now = Date.now()): string {
+  const s = Math.max(0, Math.round((now - then) / 1000));
+  if (s < 45) return 'just now';
+  const m = Math.round(s / 60);
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h} h ago`;
+  const d = Math.round(h / 24);
+  return d === 1 ? 'yesterday' : `${d} days ago`;
+}

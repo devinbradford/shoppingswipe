@@ -11,6 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { StateView } from '@/components/StateView';
 import { useOnline } from '@/hooks/useOnline';
+import { startAuth } from '@/lib/auth';
+import { startSyncTriggers } from '@/sync/appSync';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { colors } from '@/theme/tokens';
 
@@ -33,6 +35,16 @@ export default function RootLayout() {
     if (ready) SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
 
+  // Accounts and sync run for the whole life of the app.
+  useEffect(() => {
+    const stopAuth = startAuth();
+    const stopSync = startSyncTriggers();
+    return () => {
+      stopAuth();
+      stopSync();
+    };
+  }, []);
+
   if (!ready) return null;
 
   return (
@@ -51,6 +63,8 @@ export default function RootLayout() {
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="kept" />
           <Stack.Screen name="lists/[id]" />
+          <Stack.Screen name="account" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
+          <Stack.Screen name="auth-callback" />
           <Stack.Screen name="product/[id]" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
         </Stack>
       </View>

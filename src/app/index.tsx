@@ -4,7 +4,7 @@ import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
-import { Button } from '@/components/Button';
+import { Button, IconButton } from '@/components/Button';
 import { Chip } from '@/components/Chip';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { FilterSheet } from '@/components/FilterSheet';
@@ -16,6 +16,7 @@ import { countActiveFilters, EMPTY_FILTERS, type SearchFilters } from '@/domain/
 import type { Product } from '@/domain/types';
 import { useCategorySummaries, useFilterOptions, useProductSearch, useRetailerNames } from '@/hooks/useCatalog';
 import { formatPrice, pluralize } from '@/lib/format';
+import { useAuthStore } from '@/store/authStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
@@ -27,6 +28,7 @@ export default function DiscoverScreen() {
   const [filters, setFilters] = useState<SearchFilters>(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
   const keptCount = useSwipeStore((s) => s.saved.length);
+  const signedIn = useAuthStore((s) => s.status === 'signedIn');
   const categories = useCategorySummaries();
   const search = useProductSearch(query, filters);
   const options = useFilterOptions(query);
@@ -47,13 +49,16 @@ export default function DiscoverScreen() {
         <AppText variant="hero" accessibilityRole="header">
           Discover
         </AppText>
-        <Button
-          label={keptCount > 0 ? `Kept ${keptCount}` : 'Kept'}
-          variant="secondary"
-          icon="keep"
-          onPress={() => router.push('/kept')}
-          accessibilityHint="Opens the things you kept"
-        />
+        <View style={styles.headerActions}>
+          <Button
+            label={keptCount > 0 ? `Kept ${keptCount}` : 'Kept'}
+            variant="secondary"
+            icon="keep"
+            onPress={() => router.push('/kept')}
+            accessibilityHint="Opens the things you kept"
+          />
+          <IconButton icon="person" label={signedIn ? 'Account' : 'Sign in'} onPress={() => router.push('/account')} />
+        </View>
       </View>
       <AppText variant="body" color={colors.inkMuted}>
         Pick a room or a piece of furniture and swipe. Right to keep, left to skip.
@@ -289,6 +294,7 @@ const styles = StyleSheet.create({
   header: { gap: space.md, paddingTop: space.lg, paddingBottom: space.sm },
   rooms: { gap: space.xxl, paddingTop: space.lg },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   searchRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   flex: { flex: 1 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },

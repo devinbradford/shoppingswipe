@@ -19,6 +19,10 @@ const ICONS = {
   bag: { ios: 'bag', android: 'shopping_bag' },
   check: { ios: 'checkmark', android: 'check' },
   info: { ios: 'info.circle', android: 'info' },
+  person: { ios: 'person.crop.circle', android: 'account_circle' },
+  sync: { ios: 'arrow.triangle.2.circlepath', android: 'sync' },
+  cloud: { ios: 'checkmark.icloud', android: 'cloud_done' },
+  cloudOff: { ios: 'icloud.slash', android: 'cloud_off' },
 } satisfies Record<string, { ios: SFSymbol; android: AndroidSymbol }>;
 
 export type IconName = keyof typeof ICONS;

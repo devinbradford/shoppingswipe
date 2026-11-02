@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { recordOps } from '@/sync/record';
+
 interface PreferencesState {
   /** Styles picked on first launch (3–5). Fed into the taste profile. */
   stylePicks: string[];
@@ -14,11 +16,17 @@ interface PreferencesState {
 
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       stylePicks: [],
       onboarded: false,
-      setStylePicks: (stylePicks) => set({ stylePicks, onboarded: true }),
-      skipOnboarding: () => set({ onboarded: true }),
+      setStylePicks: (stylePicks) => {
+        set({ stylePicks, onboarded: true });
+        recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
+      },
+      skipOnboarding: () => {
+        set({ onboarded: true });
+        recordOps([{ type: 'profile.set', profile: { stylePicks: get().stylePicks, onboarded: true } }]);
+      },
       resetAll: () => set({ stylePicks: [], onboarded: false }),
     }),
     {
