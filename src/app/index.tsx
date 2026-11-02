@@ -5,15 +5,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
-import { CategoryTile } from '@/components/CategoryTile';
 import { Chip } from '@/components/Chip';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { FilterSheet } from '@/components/FilterSheet';
 import { ProductGridItem } from '@/components/ProductGridItem';
+import { RoomSection } from '@/components/RoomSection';
 import { SearchField } from '@/components/SearchField';
 import { LoadingView, StateView } from '@/components/StateView';
 import { countActiveFilters, EMPTY_FILTERS, type SearchFilters } from '@/domain/filters';
-import type { CategorySummary, Product } from '@/domain/types';
+import type { Product } from '@/domain/types';
 import { useCategorySummaries, useFilterOptions, useProductSearch, useRetailerNames } from '@/hooks/useCatalog';
 import { formatPrice, pluralize } from '@/lib/format';
 import { usePreferencesStore } from '@/store/preferencesStore';
@@ -21,10 +21,6 @@ import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, space } from '@/theme/tokens';
-
-type Row =
-  | { kind: 'category'; category: CategorySummary & { coverUrl?: string } }
-  | { kind: 'product'; product: Product };
 
 export default function DiscoverScreen() {
   const [query, setQuery] = useState('');
@@ -42,11 +38,8 @@ export default function DiscoverScreen() {
   const hasSwipes = useSwipeStore((s) => s.swipes.length > 0);
 
   // One list for both modes, so the search box is never rebuilt (and the keyboard stays up).
-  const rows: Row[] = searching
-    ? search.status === 'ready'
-      ? search.data.map((product) => ({ kind: 'product', product }))
-      : []
-    : categories.summaries.map((category) => ({ kind: 'category', category }));
+  // Browsing shows the rooms inside the list header; searching fills the list with results.
+  const rows: Product[] = searching && search.status === 'ready' ? search.data : [];
 
   const header = (
     <View style={styles.header}>
@@ -63,7 +56,7 @@ export default function DiscoverScreen() {
         />
       </View>
       <AppText variant="body" color={colors.inkMuted}>
-        Pick a category and swipe. Right to keep, left to skip.
+        Pick a room or a piece of furniture and swipe. Right to keep, left to skip.
       </AppText>
       <View style={styles.searchRow}>
         <View style={styles.flex}>
@@ -73,7 +66,7 @@ export default function DiscoverScreen() {
           label={activeFilters > 0 ? `Filters ${activeFilters}` : 'Filters'}
           variant={activeFilters > 0 ? 'primary' : 'secondary'}
           onPress={() => setShowFilters(true)}
-          accessibilityHint="Filter by category, price and store"
+          accessibilityHint="Filter by room, type, price and store"
         />
       </View>
       {activeFilters > 0 ? <ActiveFilters filters={filters} onChange={setFilters} options={options} /> : null}
@@ -82,40 +75,55 @@ export default function DiscoverScreen() {
           {pluralize(rows.length, 'result')}
         </AppText>
       ) : null}
+      {!searching ? (
+        categories.status === 'ready' ? (
+          <View style={styles.rooms}>
+            {categories.summaries.map((room) => (
+              <RoomSection
+                key={room.id}
+                room={room}
+                gutter={space.lg}
+                onOpenRoom={() => router.push({ pathname: '/deck/[category]', params: { category: room.id } })}
+                onOpenType={(type) =>
+                  router.push({ pathname: '/deck/[category]', params: { category: room.id, type } })
+                }
+              />
+            ))}
+          </View>
+        ) : categories.status === 'error' ? (
+          <StateView
+            icon="refresh"
+            title="Couldn't load rooms"
+            message="Something went wrong on our side."
+            primary={{ label: 'Try again', onPress: categories.reload }}
+          />
+        ) : (
+          <LoadingView label="Loading rooms" />
+        )
+      ) : null}
     </View>
   );
 
-  const empty = searching ? (
-    search.status === 'error' ? (
-      <StateView
-        icon="refresh"
-        title="Search didn't work"
-        message="Something went wrong. Try again."
-        primary={{ label: 'Try again', onPress: search.reload }}
-      />
-    ) : search.status === 'loading' || search.pending ? (
-      <LoadingView label="Searching" />
-    ) : (
-      <StateView
-        icon="search"
-        title="No matches"
-        message={
-          activeFilters > 0
-            ? 'Nothing matches these filters. Try loosening them.'
-            : `Nothing found for "${search.query}". Try a brand, color or style.`
-        }
-        primary={activeFilters > 0 ? { label: 'Clear filters', onPress: () => setFilters(EMPTY_FILTERS) } : undefined}
-      />
-    )
-  ) : categories.status === 'error' ? (
+  const empty = !searching ? null : search.status === 'error' ? (
     <StateView
       icon="refresh"
-      title="Couldn't load categories"
-      message="Something went wrong on our side."
-      primary={{ label: 'Try again', onPress: categories.reload }}
+      title="Search didn't work"
+      message="Something went wrong. Try again."
+      primary={{ label: 'Try again', onPress: search.reload }}
     />
+  ) : search.status === 'loading' || search.pending ? (
+    <LoadingView label="Searching" />
   ) : (
-    <LoadingView label="Loading categories" />
+    <StateView
+      icon="search"
+      title="No matches"
+      message={
+        activeFilters > 0
+          ? 'Nothing matches these filters. Try loosening them.'
+          : `Nothing found for "${search.query}". Try a type, color or style.`
+      }
+      primary={activeFilters > 0 ? { label: 'Clear filters', onPress: () => setFilters(EMPTY_FILTERS) } : undefined}
+    />
   );
 
   // First launch: send new users to the style picker.
@@ -126,38 +134,28 @@ export default function DiscoverScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <FlatList
         data={rows}
-        keyExtractor={(r) => (r.kind === 'category' ? `c:${r.category.id}` : `p:${r.product.id}`)}
+        keyExtractor={(p) => p.id}
         numColumns={2}
         ListHeaderComponent={header}
         contentContainerStyle={styles.content}
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item, index }) =>
-          item.kind === 'category' ? (
-            <View style={[styles.cell, index % 2 === 0 ? styles.left : styles.right]}>
-              <CategoryTile
-                label={item.category.label}
-                remaining={item.category.remainingCount}
-                coverUrl={item.category.coverUrl}
-                onPress={() => router.push({ pathname: '/deck/[category]', params: { category: item.category.id } })}
-              />
-            </View>
-          ) : (
-            <ProductGridItem
-              index={index}
-              product={item.product}
-              retailerName={retailers.get(item.product.retailerId)}
-              onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.product.id } })}
-            />
-          )
-        }
-        ListEmptyComponent={empty}
+        renderItem={({ item, index }) => (
+          <ProductGridItem
+            index={index}
+            product={item}
+            retailerName={retailers.get(item.retailerId)}
+            onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.id } })}
+          />
+        )}
+        ListEmptyComponent={empty ?? undefined}
         ListFooterComponent={searching ? undefined : <DiscoverFooter />}
       />
       <FilterSheet
         visible={showFilters}
         value={filters}
         categories={options.categories}
+        subcategories={options.subcategories}
         retailers={options.retailers}
         countFor={options.countFor}
         onApply={setFilters}
@@ -198,8 +196,17 @@ function ActiveFilters({
           label={names(filters.categoryIds, options.categories)}
           selected
           removable
-          accessibilityLabel={`Remove category filter: ${names(filters.categoryIds, options.categories)}`}
+          accessibilityLabel={`Remove room filter: ${names(filters.categoryIds, options.categories)}`}
           onPress={() => onChange({ ...filters, categoryIds: [] })}
+        />
+      ) : null}
+      {filters.subcategoryIds.length > 0 ? (
+        <Chip
+          label={names(filters.subcategoryIds, options.subcategories)}
+          selected
+          removable
+          accessibilityLabel={`Remove type filter: ${names(filters.subcategoryIds, options.subcategories)}`}
+          onPress={() => onChange({ ...filters, subcategoryIds: [] })}
         />
       ) : null}
       {price ? (
@@ -280,13 +287,11 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: space.lg, paddingBottom: space.xxxl, gap: space.md, flexGrow: 1 },
   header: { gap: space.md, paddingTop: space.lg, paddingBottom: space.sm },
+  rooms: { gap: space.xxl, paddingTop: space.lg },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   searchRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   flex: { flex: 1 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
-  cell: { width: '50%' },
-  left: { paddingRight: space.md / 2 },
-  right: { paddingLeft: space.md / 2 },
   footer: { alignItems: 'center', paddingTop: space.md },
   reset: { alignSelf: 'center', padding: space.lg, minHeight: 48, justifyContent: 'center' },
 });

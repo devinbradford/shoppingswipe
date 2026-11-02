@@ -57,13 +57,20 @@ Warm espresso dark (`#12110F`) with off-white text (`#F3F2EF`) and one champagne
 
 ## Current state: Phase 2 is done (awaiting Devin's go-ahead for Phase 3)
 
+**MVP scope (Devin's call): furniture only.** Rooms → product types:
+- Bedroom: bed frames, nightstands, dressers
+- Living room: sofas, accent chairs, coffee tables, TV stands, rugs
+- Kitchen & dining: bar stools, dining tables, dining chairs
+
+In code, "category" = room (`CATEGORY_IDS`) and "subcategory" = product type (`SUBCATEGORY_IDS`). Discover shows each room with a row of product types; the deck takes `/deck/<room>?type=<type>`. Product photos use the "showcase" fit (whole product visible over a blurred copy of itself) so store photos are never cropped.
+
 Phase 1:
 - Discover screen: category tiles with remaining-item counts, plus search
 - Swipe deck: drag and button swipes, Keep/Skip stamps, photo tapping, undo, haptics
 - Recommender: content-based (style tags, material, color, brand, retailer, price band), skips weighted 0.6×, recency decay, 15% exploration, cold start until 3 keeps, taste carries across categories, re-ranks after every swipe behind the two visible cards, "Matches your taste for…" reasons
 - Kept list, product detail with outbound buy link
 - Supabase schema with RLS (not yet connected)
-- 144-product sample catalog (generator can make 10k+ for load testing)
+- Fictional sample catalog: 176 furniture products, 16 per type (generator can make 10k+ for load testing)
 
 Phase 2:
 - Named wishlists: Lists row on Kept, Select → Copy/Move to list, list screen (rename, delete, remove items), Add to list on product page. Rules in `src/domain/wishlists.ts`; migration `20261101000000_wishlists.sql`
@@ -71,7 +78,7 @@ Phase 2:
 - First-launch taste picker (`/welcome`): 3–5 styles seed the taste profile as virtual keeps older than any real swipe
 - Offline strip (expo-network), offline-aware Buy now, root ErrorBoundary, not-found screen
 - Accessibility: reduce-motion support, card Keep/Skip screen-reader actions and swipe announcements, sheet Close buttons, 44pt+ tap targets, capped display-text scaling, WCAG contrast test
-- Checks passing: typecheck, lint, 48 unit tests
+- Checks passing: typecheck, lint, 53 unit tests
 - Sample photos are random placeholders from picsum.photos until real feeds arrive (Phase 4)
 
 ## Phase plan

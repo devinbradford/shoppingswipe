@@ -42,7 +42,12 @@ export function ProductGridItem({
           accessibilityHint={selected === undefined ? 'Opens product details' : undefined}
           style={({ pressed }) => [pressed && styles.pressed]}>
           <View>
-            <ProductImage uri={product.imageUrls[0]} style={[styles.image, selected && styles.imageSelected]} />
+            <ProductImage
+              uri={product.imageUrls[0]}
+              style={[styles.image, selected && styles.imageSelected]}
+              fit="showcase"
+              insets={{ top: space.md, bottom: space.md, left: space.md, right: space.md }}
+            />
             {selected !== undefined ? (
               <View style={[styles.check, selected && styles.checkOn]} pointerEvents="none">
                 {selected ? <Icon name="check" size={16} color={colors.onInk} /> : null}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getProductRepository } from '@/data';
-import type { CategoryId, Product, SwipeDirection } from '@/domain/types';
+import type { CategoryId, Product, SubcategoryId, SwipeDirection } from '@/domain/types';
 import {
   buildTasteProfile,
   formatReasons,
@@ -52,7 +52,8 @@ function toCard(r: RankedProduct): DeckCard {
  * the taste profile (built from every swipe in every category), and re-ranks
  * everything behind the two visible cards after each swipe.
  */
-export function useDeck(categoryId: CategoryId): Deck {
+export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): Deck {
+  const deckKey = subcategoryId ?? categoryId;
   const hydrated = useHydrated();
   const recordSwipe = useSwipeStore((s) => s.recordSwipe);
   const undoLastSwipe = useSwipeStore((s) => s.undoLastSwipe);
@@ -77,7 +78,7 @@ export function useDeck(categoryId: CategoryId): Deck {
 
     (async () => {
       const [candidates, swipedProducts, priceBands] = await Promise.all([
-        repo.listProducts({ categoryId, excludeIds: swipedIds }),
+        repo.listProducts({ categoryId, subcategoryId, excludeIds: swipedIds }),
         repo.getProducts([...swipedIds]),
         repo.getPriceBands(),
       ]);
@@ -87,7 +88,7 @@ export function useDeck(categoryId: CategoryId): Deck {
       const profile = buildTasteProfile(swipes, known.current, priceBands, undefined, picks());
       const ranked = rankProducts(candidates, profile, {
         bands: priceBands,
-        seed: hashSeed(`${categoryId}:${swipes.length}`),
+        seed: hashSeed(`${deckKey}:${swipes.length}`),
       });
       setCards(ranked.map(toCard));
       setColdStart(isColdStart(profile));
@@ -102,7 +103,7 @@ export function useDeck(categoryId: CategoryId): Deck {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, categoryId, attempt]);
+  }, [hydrated, categoryId, subcategoryId, deckKey, attempt]);
 
   const swipe = useCallback(
     (direction: SwipeDirection) => {
@@ -113,13 +114,13 @@ export function useDeck(categoryId: CategoryId): Deck {
       const profile = buildTasteProfile(swipes, known.current, bands.current, undefined, picks());
       const next = rerankQueue(rest, profile, {
         bands: bands.current,
-        seed: hashSeed(`${categoryId}:${swipes.length}`),
+        seed: hashSeed(`${deckKey}:${swipes.length}`),
       });
       setCards(next.map(toCard));
       setColdStart(isColdStart(profile));
       setHistory((h) => [...h, top]);
     },
-    [cards, categoryId, recordSwipe],
+    [cards, categoryId, deckKey, recordSwipe],
   );
 
   const lastInSession = history.at(-1);

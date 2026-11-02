@@ -103,12 +103,13 @@ export function useProductSearch(query: string, filters: SearchFilters = EMPTY_F
 export function useFilterOptions(query: string) {
   const options = useAsync(async () => {
     const repo = getProductRepository();
-    const [categories, retailers, all] = await Promise.all([
+    const [categories, subcategories, retailers, all] = await Promise.all([
       repo.listCategories(),
+      repo.listSubcategories(),
       repo.listRetailers(),
       repo.listProducts({ search: query.trim() }),
     ]);
-    return { categories, retailers, all };
+    return { categories, subcategories, retailers, all };
   }, [query.trim()]);
   const all = options.data?.all;
   const countFor = useCallback(
@@ -117,6 +118,7 @@ export function useFilterOptions(query: string) {
   );
   return {
     categories: options.data?.categories ?? [],
+    subcategories: options.data?.subcategories ?? [],
     retailers: options.data?.retailers ?? [],
     countFor,
   };

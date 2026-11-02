@@ -9,7 +9,7 @@ import {
   toggleIn,
   type SearchFilters,
 } from '@/domain/filters';
-import type { Category, Retailer } from '@/domain/types';
+import type { Category, Retailer, Subcategory } from '@/domain/types';
 import { colors, hitTarget, radii, space, type as typeScale } from '@/theme/tokens';
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -20,6 +20,7 @@ interface FilterSheetProps {
   visible: boolean;
   value: SearchFilters;
   categories: readonly Category[];
+  subcategories: readonly Subcategory[];
   retailers: readonly Retailer[];
   /** Live result count for a draft, so the button can say "Show 12 results". */
   countFor: (draft: SearchFilters) => number | null;
@@ -37,7 +38,15 @@ export function FilterSheet({ visible, onClose, ...rest }: FilterSheetProps) {
 
 const centsToText = (c: number | null) => (c === null ? '' : String(Math.round(c / 100)));
 
-function FilterForm({ value, categories, retailers, countFor, onApply, onClose }: Omit<FilterSheetProps, 'visible'>) {
+function FilterForm({
+  value,
+  categories,
+  subcategories,
+  retailers,
+  countFor,
+  onApply,
+  onClose,
+}: Omit<FilterSheetProps, 'visible'>) {
   const [draft, setDraft] = useState<SearchFilters>(value);
   const [minText, setMinText] = useState(centsToText(value.minPriceCents));
   const [maxText, setMaxText] = useState(centsToText(value.maxPriceCents));
@@ -52,7 +61,7 @@ function FilterForm({ value, categories, retailers, countFor, onApply, onClose }
   return (
     <>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-        <Group title="Category">
+        <Group title="Room">
           {categories.map((c) => (
             <Chip
               key={c.id}
@@ -61,6 +70,19 @@ function FilterForm({ value, categories, retailers, countFor, onApply, onClose }
               onPress={() => setDraft((d) => ({ ...d, categoryIds: toggleIn(d.categoryIds, c.id) }))}
             />
           ))}
+        </Group>
+
+        <Group title="Type">
+          {subcategories
+            .filter((t) => draft.categoryIds.length === 0 || draft.categoryIds.includes(t.categoryId))
+            .map((t) => (
+              <Chip
+                key={t.id}
+                label={t.label}
+                selected={draft.subcategoryIds.includes(t.id)}
+                onPress={() => setDraft((d) => ({ ...d, subcategoryIds: toggleIn(d.subcategoryIds, t.id) }))}
+              />
+            ))}
         </Group>
 
         <Group title="Price">

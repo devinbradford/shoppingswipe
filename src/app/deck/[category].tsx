@@ -8,7 +8,13 @@ import { GlassIconButton, GlassPill, GlassTextButton } from '@/components/Glass'
 import { Header } from '@/components/Header';
 import { LoadingView, StateView } from '@/components/StateView';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/SwipeDeck';
-import { CATEGORY_IDS, type CategoryId, type SwipeDirection } from '@/domain/types';
+import {
+  CATEGORY_IDS,
+  SUBCATEGORY_IDS,
+  type CategoryId,
+  type SubcategoryId,
+  type SwipeDirection,
+} from '@/domain/types';
 import { useCategorySummaries, useRetailerNames } from '@/hooks/useCatalog';
 import { useDeck } from '@/hooks/useDeck';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
@@ -20,27 +26,33 @@ function isCategoryId(v: unknown): v is CategoryId {
   return typeof v === 'string' && (CATEGORY_IDS as readonly string[]).includes(v);
 }
 
+function isSubcategoryId(v: unknown): v is SubcategoryId {
+  return typeof v === 'string' && (SUBCATEGORY_IDS as readonly string[]).includes(v);
+}
+
 export default function DeckScreen() {
-  const { category } = useLocalSearchParams<{ category: string }>();
-  if (!isCategoryId(category)) {
+  // /deck/living-room swipes the whole room; /deck/living-room?type=sofas just sofas.
+  const { category, type } = useLocalSearchParams<{ category: string; type?: string }>();
+  if (!isCategoryId(category) || (type !== undefined && !isSubcategoryId(type))) {
     return (
       <SafeAreaView style={styles.screen}>
         <Header onBack={() => router.back()} />
         <StateView
           icon="info"
-          title="Category not found"
+          title="Not found"
           primary={{ label: 'Back to discover', onPress: () => router.replace('/') }}
         />
       </SafeAreaView>
     );
   }
-  return <Deck categoryId={category} />;
+  return <Deck categoryId={category} subcategoryId={isSubcategoryId(type) ? type : undefined} />;
 }
 
-function Deck({ categoryId }: { categoryId: CategoryId }) {
+function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcategoryId?: SubcategoryId }) {
   const { summaries } = useCategorySummaries();
-  const label = summaries.find((c) => c.id === categoryId)?.label ?? '';
-  const deck = useDeck(categoryId);
+  const room = summaries.find((c) => c.id === categoryId);
+  const label = (subcategoryId ? room?.subcategories.find((s) => s.id === subcategoryId)?.label : room?.label) ?? '';
+  const deck = useDeck(categoryId, subcategoryId);
   const retailers = useRetailerNames();
   const keptCount = useSwipeStore((s) => s.saved.length);
   const deckRef = useRef<SwipeDeckHandle>(null);
