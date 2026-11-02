@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { Wishlist } from '@/domain/types';
 import { addToList, createList, deleteList, removeFromList, renameList } from '@/domain/wishlists';
+import { isUuid, newId } from '@/lib/ids';
 
 type Result = { ok: true; id: string } | { ok: false; error: string };
 
@@ -15,10 +16,6 @@ interface WishlistState {
   add: (id: string, productIds: readonly string[]) => void;
   removeItems: (id: string, productIds: readonly string[]) => void;
   resetAll: () => void;
-}
-
-function newId(): string {
-  return `wl_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /** Named wishlists. Rules live in `@/domain/wishlists`; this only stores the results. */
@@ -46,9 +43,14 @@ export const useWishlistStore = create<WishlistState>()(
     {
       name: 'swipeshop.wishlists.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      // v2: lists pointing at the old (pre-furniture) sample catalog are cleared once.
-      version: 2,
-      migrate: () => ({ lists: [] }),
+      // v2: lists pointing at the old (pre-furniture) sample catalog were cleared.
+      // v3: list ids become UUIDs so they can sync.
+      version: 3,
+      migrate: (persisted, version) => {
+        if (version < 2) return { lists: [] };
+        const lists = (persisted as { lists?: Wishlist[] }).lists ?? [];
+        return { lists: lists.map((l) => (isUuid(l.id) ? l : { ...l, id: newId() })) };
+      },
       partialize: (s) => ({ lists: s.lists }),
     },
   ),

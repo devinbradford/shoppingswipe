@@ -80,6 +80,8 @@ export type SwipeDirection = 'keep' | 'skip';
 
 /** Row in `swipes`. The swipe log is the source of truth for taste. */
 export interface SwipeEvent {
+  /** Made on the phone (`swipes.client_id`), so a swipe synced twice is stored once and undo can find it. */
+  id: string;
   productId: string;
   categoryId: CategoryId;
   direction: SwipeDirection;

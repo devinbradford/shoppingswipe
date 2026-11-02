@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { SavedItem, SwipeEvent } from '@/domain/types';
+import { newId } from '@/lib/ids';
 
 /**
  * On-device record of what the user did. Facts only: the swipe log and the
@@ -59,10 +60,17 @@ export const useSwipeStore = create<SwipeState>()(
     {
       name: 'swipeshop.swipes.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      // v2: the catalog became furniture-only (rooms and product types), so
-      // swipes and kept items from the old sample catalog are cleared once.
-      version: 2,
-      migrate: () => ({ swipes: [], saved: [] }),
+      // v2: the catalog became furniture-only, so older swipes and kept items were cleared.
+      // v3: every swipe carries an id (for syncing); older swipes get one.
+      version: 3,
+      migrate: (persisted, version) => {
+        if (version < 2) return { swipes: [], saved: [] };
+        const s = persisted as { swipes?: Omit<SwipeEvent, 'id'>[]; saved?: SavedItem[] };
+        return {
+          swipes: (s.swipes ?? []).map((e) => ({ id: newId(), ...e })),
+          saved: s.saved ?? [],
+        };
+      },
       partialize: (s) => ({ swipes: s.swipes, saved: s.saved }),
     },
   ),

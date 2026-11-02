@@ -55,6 +55,7 @@ describe('first-launch taste picker', () => {
     const picks = ['minimal', 'coastal', 'scandinavian'];
     const kept = Array.from({ length: 60 }, () => product(['vintage']));
     const swipes: SwipeEvent[] = kept.map((p, i) => ({
+      id: `k${i}`,
       productId: p.id,
       categoryId: p.categoryId,
       direction: 'keep',

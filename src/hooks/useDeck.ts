@@ -13,6 +13,7 @@ import {
   type PriceBands,
   type RankedProduct,
 } from '@/recommendation';
+import { newId } from '@/lib/ids';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
@@ -109,7 +110,7 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
     (direction: SwipeDirection) => {
       const [top, ...rest] = cards;
       if (!top) return;
-      recordSwipe({ productId: top.product.id, categoryId, direction, swipedAt: Date.now() });
+      recordSwipe({ id: newId(), productId: top.product.id, categoryId, direction, swipedAt: Date.now() });
       const { swipes } = useSwipeStore.getState();
       const profile = buildTasteProfile(swipes, known.current, bands.current, undefined, picks());
       const next = rerankQueue(rest, profile, {

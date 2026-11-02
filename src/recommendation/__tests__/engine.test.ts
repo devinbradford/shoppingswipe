@@ -36,7 +36,7 @@ function product(overrides: Partial<Product> = {}): Product {
 }
 
 function swipe(p: Product, direction: 'keep' | 'skip', swipedAt: number): SwipeEvent {
-  return { productId: p.id, categoryId: p.categoryId, direction, swipedAt };
+  return { id: `${p.id}@${swipedAt}`, productId: p.id, categoryId: p.categoryId, direction, swipedAt };
 }
 
 const byId = (ps: Product[]) => new Map(ps.map((p) => [p.id, p]));
@@ -80,7 +80,7 @@ describe('taste profile', () => {
 
   it('ignores swipes for unknown products', () => {
     const profile = buildTasteProfile(
-      [{ productId: 'gone', categoryId: 'bedroom', direction: 'keep', swipedAt: 1 }],
+      [{ id: 'x', productId: 'gone', categoryId: 'bedroom', direction: 'keep', swipedAt: 1 }],
       new Map(),
       {},
     );

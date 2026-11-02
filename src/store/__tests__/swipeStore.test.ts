@@ -1,14 +1,18 @@
 import { useSwipeStore } from '../swipeStore';
 
 const keep = (productId: string, swipedAt: number) =>
-  useSwipeStore.getState().recordSwipe({ productId, categoryId: 'bedroom', direction: 'keep', swipedAt });
+  useSwipeStore
+    .getState()
+    .recordSwipe({ id: `${productId}@${swipedAt}`, productId, categoryId: 'bedroom', direction: 'keep', swipedAt });
 
 beforeEach(() => useSwipeStore.getState().resetAll());
 
 describe('swipe store', () => {
   it('adds kept products to the kept list, newest first', () => {
     keep('a', 1);
-    useSwipeStore.getState().recordSwipe({ productId: 'b', categoryId: 'bedroom', direction: 'skip', swipedAt: 2 });
+    useSwipeStore
+      .getState()
+      .recordSwipe({ id: 'b@2', productId: 'b', categoryId: 'bedroom', direction: 'skip', swipedAt: 2 });
     keep('c', 3);
     const { swipes, saved } = useSwipeStore.getState();
     expect(swipes).toHaveLength(3);
