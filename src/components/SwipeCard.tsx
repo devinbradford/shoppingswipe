@@ -46,6 +46,8 @@ interface SwipeCardProps {
 }
 
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
+/** Room the "For you" bubble, price, name and store line take up above `infoBottom`. */
+const INFO_BLOCK_HEIGHT = 190;
 
 export function SwipeCard({
   card,
@@ -208,7 +210,14 @@ export function SwipeCard({
         importantForAccessibility={isTop ? 'yes' : 'no-hide-descendants'}>
         {/* The photo ignores touches so the card's own gestures always get them. */}
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <ProductImage uri={photos[photo]} style={StyleSheet.absoluteFill} priority={isTop ? 'high' : 'normal'} />
+          <ProductImage
+            uri={photos[photo]}
+            style={StyleSheet.absoluteFill}
+            fit="showcase"
+            // Keep the whole product between the top controls and the price block.
+            insets={{ top: pipsTop + 64, bottom: infoBottom + INFO_BLOCK_HEIGHT, left: space.lg, right: space.lg }}
+            priority={isTop ? 'high' : 'normal'}
+          />
         </View>
 
         <LinearGradient

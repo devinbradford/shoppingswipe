@@ -33,7 +33,12 @@ export function PhotoTile({ product, retailerName, height, onPress, onRemove, re
         accessibilityLabel={`${product.title}, ${price}${retailerName ? `, at ${retailerName}` : ''}`}
         accessibilityHint={selecting ? undefined : 'Opens product details'}
         style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
-        <ProductImage uri={product.imageUrls[0]} style={StyleSheet.absoluteFill} />
+        <ProductImage
+          uri={product.imageUrls[0]}
+          style={StyleSheet.absoluteFill}
+          fit="showcase"
+          insets={{ top: space.sm, left: space.sm, right: space.sm, bottom: Math.round(height * 0.3) }}
+        />
         <LinearGradient colors={[colors.scrimLight, colors.scrim]} style={styles.scrim} pointerEvents="none" />
         <View style={styles.text} pointerEvents="none">
           <AppText variant="heading" color={colors.onPhoto} style={styles.price}>

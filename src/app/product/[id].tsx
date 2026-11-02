@@ -9,7 +9,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button, IconButton } from '@/components/Button';
@@ -62,6 +62,7 @@ export default function ProductScreen() {
 }
 
 function ProductDetail({ product, retailer }: { product: Product; retailer: Retailer | null }) {
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [photo, setPhoto] = useState(0);
   const [opening, setOpening] = useState(false);
@@ -111,6 +112,8 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
                 key={uri}
                 uri={uri}
                 style={{ width, height: width * 1.2 }}
+                fit="showcase"
+                insets={{ top: insets.top + 56, bottom: 36, left: space.lg, right: space.lg }}
                 accessibilityLabel={`Photo ${i + 1} of ${product.imageUrls.length}`}
                 priority={i === 0 ? 'high' : 'normal'}
               />
