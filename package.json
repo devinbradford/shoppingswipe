@@ -56,7 +56,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "check": "npm run typecheck && npm test",
-    "seed": "tsx scripts/generate-seed.ts"
+    "seed": "tsx scripts/generate-seed.ts && tsx scripts/build-setup-sql.ts",
+    "setup-sql": "tsx scripts/build-setup-sql.ts"
   },
   "private": true,
   "jest": {

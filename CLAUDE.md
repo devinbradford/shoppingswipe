@@ -55,7 +55,7 @@ supabase/migrations/  SQL schema + row-level security.
 
 Warm espresso dark (`#12110F`) with off-white text (`#F3F2EF`) and one champagne accent (`#D8C29D`) for Keep and selection; rose (`#E0A39A`) for Skip and errors. Instrument Serif for names, prices and headings; Geist for everything else, with small spaced capitals for labels (FURNITURE · 18 LEFT). The swipe card is a full-screen photo with frosted-glass controls floating over it and a "For you" bubble explaining the pick. Kept and lists are mood boards (two columns, varying heights). Sentence-case copy; buttons say exactly what they do ("Keep", "Buy now"). All values live in `src/theme/tokens.ts`.
 
-## Current state: Phase 2 is done (awaiting Devin's go-ahead for Phase 3)
+## Current state: Phase 3 code is done; waiting on Devin's Supabase/Google/Apple setup and a two-phone test
 
 **MVP scope (Devin's call): furniture only.** Rooms → product types:
 - Bedroom: bed frames, nightstands, dressers
@@ -80,6 +80,16 @@ Phase 2:
 - Accessibility: reduce-motion support, card Keep/Skip screen-reader actions and swipe announcements, sheet Close buttons, 44pt+ tap targets, capped display-text scaling, WCAG contrast test
 - Checks passing: typecheck, lint, 53 unit tests
 - Sample photos are random placeholders from picsum.photos until real feeds arrive (Phase 4)
+
+Phase 3 (accounts and sync; sign-in options chosen by Devin: Apple + Google only):
+- Sign-in through Supabase with the secure browser sheet (PKCE), works in Expo Go (`src/lib/auth.ts`); account is optional
+- `SupabaseProductRepository` (used automatically when `.env` is set) and `SupabaseSyncRemote`
+- Sync engine (`src/sync/`): persistent outbox, first sign-in merges local history, pull-after-push, rejected changes dropped; tested with a simulated server and two simulated phones
+- Account screen: sign in, sync status, Sync now, Sign out (clears the phone), Delete account (`delete_my_account()` database function)
+- `npm run seed` writes `supabase/seed.sql` and `supabase/setup.sql` (all migrations + seed in one paste); both tested on a throwaway Postgres
+- Setup steps for Devin: `docs/SETUP-ACCOUNTS.md`
+- Not yet verified: against a live Supabase project, real Apple/Google sign-in, on two real phones
+- Checks passing: typecheck, lint, 65 unit tests
 
 ## Phase plan
 
