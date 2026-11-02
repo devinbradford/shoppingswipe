@@ -5,10 +5,37 @@
  * here, change the matching column there (and vice versa).
  */
 
-export const CATEGORY_IDS = ['furniture', 'clothing', 'bedding', 'collectibles', 'decor', 'footwear'] as const;
+/** Rooms. The MVP is furniture only, organised the way people shop for it. */
+export const CATEGORY_IDS = ['bedroom', 'living-room', 'kitchen-dining'] as const;
 
-/** `categories.id` */
+/** `categories.id`: a room. */
 export type CategoryId = (typeof CATEGORY_IDS)[number];
+
+/** Product types within a room. */
+export const SUBCATEGORY_IDS = [
+  'bed-frames',
+  'nightstands',
+  'dressers',
+  'sofas',
+  'accent-chairs',
+  'coffee-tables',
+  'tv-stands',
+  'rugs',
+  'bar-stools',
+  'dining-tables',
+  'dining-chairs',
+] as const;
+
+/** `subcategories.id`: a product type such as sofas or nightstands. */
+export type SubcategoryId = (typeof SUBCATEGORY_IDS)[number];
+
+/** Row in `subcategories`. */
+export interface Subcategory {
+  id: SubcategoryId;
+  categoryId: CategoryId;
+  label: string;
+  sortOrder: number;
+}
 
 /** Row in `categories`. */
 export interface Category {
@@ -29,6 +56,7 @@ export interface Retailer {
 export interface Product {
   id: string;
   categoryId: CategoryId;
+  subcategoryId: SubcategoryId;
   retailerId: string;
   title: string;
   brand: string;
@@ -66,10 +94,18 @@ export interface SavedItem {
   savedAt: number;
 }
 
-/** A category plus how many of its products the user hasn't swiped yet. */
+/** A product type plus how many of its products the user hasn't swiped yet. */
+export interface SubcategorySummary extends Subcategory {
+  totalCount: number;
+  remainingCount: number;
+  coverUrl?: string;
+}
+
+/** A room, its product types and how many products are left to swipe in it. */
 export interface CategorySummary extends Category {
   totalCount: number;
   remainingCount: number;
+  subcategories: SubcategorySummary[];
 }
 
 /** Row in `wishlist_items`. */

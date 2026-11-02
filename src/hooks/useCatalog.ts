@@ -2,43 +2,56 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getProductRepository } from '@/data';
 import { countActiveFilters, EMPTY_FILTERS, matchesFilters, type SearchFilters } from '@/domain/filters';
-import type { CategoryId, CategorySummary, Product } from '@/domain/types';
-import { useSwipeStore } from '@/store/swipeStore';
+import type { CategorySummary, Product, SubcategorySummary } from '@/domain/types';
+import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 import { useAsync } from './useAsync';
 
-/** Category tiles with "N left" counts that update as the user swipes. */
+/**
+ * Rooms and their product types for Discover, with "N left" counts that update
+ * as the user swipes.
+ */
 export function useCategorySummaries() {
   const hydrated = useHydrated();
   const swipes = useSwipeStore((s) => s.swipes);
   const base = useAsync(async () => {
     const repo = getProductRepository();
-    const [categories, counts] = await Promise.all([repo.listCategories(), repo.countByCategory()]);
-    const firsts = await Promise.all(categories.map((c) => repo.listProducts({ categoryId: c.id, limit: 1 })));
-    const covers = new Map(categories.map((c, i) => [c.id, firsts[i][0]?.imageUrls[0]]));
-    return { categories, counts, covers };
+    const [categories, subcategories, totals] = await Promise.all([
+      repo.listCategories(),
+      repo.listSubcategories(),
+      repo.countBySubcategory(),
+    ]);
+    const firsts = await Promise.all(subcategories.map((s) => repo.listProducts({ subcategoryId: s.id, limit: 1 })));
+    const covers = new Map(subcategories.map((s, i) => [s.id, firsts[i][0]?.imageUrls[0]]));
+    return { categories, subcategories, totals, covers };
   }, []);
 
+  // Recount what's left whenever the swipe log changes.
+  const swipeKey = swipes.length;
+  const remaining = useAsync(
+    () => getProductRepository().countBySubcategory(selectSwipedIds(useSwipeStore.getState())),
+    [swipeKey],
+  );
+
   const baseData = base.data;
-  const summaries = useMemo<(CategorySummary & { coverUrl?: string })[]>(() => {
+  const left = remaining.data;
+  const summaries = useMemo<CategorySummary[]>(() => {
     if (!baseData) return [];
-    const swipedPerCategory = new Map<CategoryId, Set<string>>();
-    for (const s of swipes) {
-      const set = swipedPerCategory.get(s.categoryId) ?? new Set<string>();
-      set.add(s.productId);
-      swipedPerCategory.set(s.categoryId, set);
-    }
     return baseData.categories.map((c) => {
-      const totalCount = baseData.counts[c.id] ?? 0;
-      const swiped = swipedPerCategory.get(c.id)?.size ?? 0;
+      const subcategories: SubcategorySummary[] = baseData.subcategories
+        .filter((s) => s.categoryId === c.id)
+        .map((s) => {
+          const totalCount = baseData.totals[s.id] ?? 0;
+          return { ...s, totalCount, remainingCount: left?.[s.id] ?? totalCount, coverUrl: baseData.covers.get(s.id) };
+        });
       return {
         ...c,
-        totalCount,
-        remainingCount: Math.max(0, totalCount - swiped),
-        coverUrl: baseData.covers.get(c.id),
+        subcategories,
+        totalCount: subcategories.reduce((n, s) => n + s.totalCount, 0),
+        remainingCount: subcategories.reduce((n, s) => n + s.remainingCount, 0),
       };
     });
-  }, [baseData, swipes]);
+  }, [baseData, left]);
 
   return {
     status: hydrated ? base.status : ('loading' as const),

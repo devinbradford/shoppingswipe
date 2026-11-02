@@ -17,7 +17,8 @@ function product(overrides: Partial<Product> = {}): Product {
   n++;
   return {
     id: `p${String(n).padStart(4, '0')}`,
-    categoryId: 'furniture',
+    categoryId: 'living-room',
+    subcategoryId: 'sofas',
     retailerId: 'r1',
     title: 'Thing',
     brand: 'Brand',
@@ -44,7 +45,7 @@ const noExplore = { ...DEFAULT_OPTIONS, explorationRate: 0 };
 describe('price bands', () => {
   it('splits each category into terciles', () => {
     const ps = [100, 200, 300, 400, 500, 600].map((c) => product({ priceCents: c }));
-    expect(computePriceBands(ps).furniture).toEqual([300, 500]);
+    expect(computePriceBands(ps).sofas).toEqual([300, 500]);
   });
 });
 
@@ -79,7 +80,7 @@ describe('taste profile', () => {
 
   it('ignores swipes for unknown products', () => {
     const profile = buildTasteProfile(
-      [{ productId: 'gone', categoryId: 'decor', direction: 'keep', swipedAt: 1 }],
+      [{ productId: 'gone', categoryId: 'bedroom', direction: 'keep', swipedAt: 1 }],
       new Map(),
       {},
     );
@@ -126,14 +127,15 @@ describe('ranking', () => {
 
   it('carries taste across categories', () => {
     const kept = Array.from({ length: 3 }, () =>
-      product({ categoryId: 'furniture', material: 'walnut', color: 'walnut' }),
+      product({ categoryId: 'living-room', subcategoryId: 'sofas', material: 'walnut', color: 'walnut' }),
     );
     const profile = buildTasteProfile(
       kept.map((p, i) => swipe(p, 'keep', i)),
       byId(kept),
       {},
     );
-    const decor = (material: string, color: string) => product({ categoryId: 'decor' as CategoryId, material, color });
+    const decor = (material: string, color: string) =>
+      product({ categoryId: 'bedroom' as CategoryId, subcategoryId: 'nightstands', material, color });
     const ranked = rankProducts([decor('glass', 'white'), decor('walnut', 'walnut'), decor('brass', 'navy')], profile, {
       bands: {},
       seed: 3,
@@ -143,7 +145,7 @@ describe('ranking', () => {
   });
 
   it('explores roughly 15% of slots and is deterministic per seed', () => {
-    const catalog = generateCatalog({ perCategory: 200, seed: 7 });
+    const catalog = generateCatalog({ perSubcategory: 110, seed: 7 });
     const keeps = catalog.slice(0, 5).map((p, i) => swipe(p, 'keep', i));
     const profile = buildTasteProfile(keeps, byId(catalog), computePriceBands(catalog));
     const bands = computePriceBands(catalog);
@@ -175,8 +177,8 @@ describe('ranking', () => {
   });
 
   it('ranks a 12k-product catalog quickly', () => {
-    const catalog = generateCatalog({ perCategory: 2000 });
-    expect(catalog).toHaveLength(12000);
+    const catalog = generateCatalog({ perSubcategory: 1100 });
+    expect(catalog).toHaveLength(12100);
     const bands = computePriceBands(catalog);
     const keeps = catalog
       .filter((_, i) => i % 97 === 0)
@@ -185,7 +187,7 @@ describe('ranking', () => {
     const profile = buildTasteProfile(keeps, byId(catalog), bands);
     const start = Date.now();
     const ranked = rankProducts(catalog, profile, { bands, seed: 1 });
-    expect(ranked).toHaveLength(12000);
+    expect(ranked).toHaveLength(12100);
     expect(Date.now() - start).toBeLessThan(3000);
   });
 });

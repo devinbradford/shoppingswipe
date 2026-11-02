@@ -2,10 +2,13 @@
  * Search filters: what the user narrowed results to. Pure, shared by the local
  * repository now and mirrored by SQL `where` clauses in Phase 3.
  */
-import type { CategoryId, Product } from './types';
+import type { CategoryId, Product, SubcategoryId } from './types';
 
 export interface SearchFilters {
+  /** Rooms. */
   categoryIds: CategoryId[];
+  /** Product types (sofas, nightstands…). */
+  subcategoryIds: SubcategoryId[];
   retailerIds: string[];
   /** Inclusive, in cents. Null means no limit. */
   minPriceCents: number | null;
@@ -14,6 +17,7 @@ export interface SearchFilters {
 
 export const EMPTY_FILTERS: SearchFilters = {
   categoryIds: [],
+  subcategoryIds: [],
   retailerIds: [],
   minPriceCents: null,
   maxPriceCents: null,
@@ -35,6 +39,7 @@ export const PRICE_PRESETS: PricePreset[] = [
 
 export function matchesFilters(product: Product, f: SearchFilters): boolean {
   if (f.categoryIds.length > 0 && !f.categoryIds.includes(product.categoryId)) return false;
+  if (f.subcategoryIds.length > 0 && !f.subcategoryIds.includes(product.subcategoryId)) return false;
   if (f.retailerIds.length > 0 && !f.retailerIds.includes(product.retailerId)) return false;
   if (f.minPriceCents !== null && product.priceCents < f.minPriceCents) return false;
   if (f.maxPriceCents !== null && product.priceCents > f.maxPriceCents) return false;
@@ -45,6 +50,7 @@ export function matchesFilters(product: Product, f: SearchFilters): boolean {
 export function countActiveFilters(f: SearchFilters): number {
   return (
     (f.categoryIds.length > 0 ? 1 : 0) +
+    (f.subcategoryIds.length > 0 ? 1 : 0) +
     (f.retailerIds.length > 0 ? 1 : 0) +
     (f.minPriceCents !== null || f.maxPriceCents !== null ? 1 : 0)
   );

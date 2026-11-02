@@ -1,14 +1,15 @@
-import { CATEGORIES, generateCatalog, RETAILERS } from '../../data/sample/catalog';
+import { CATEGORIES, generateCatalog, RETAILERS, SUBCATEGORIES } from '../../data/sample/catalog';
 import { LocalProductRepository } from '../../data/LocalProductRepository';
 import { countActiveFilters, EMPTY_FILTERS, normalizePrice, parseDollars, toggleIn } from '../filters';
 
 const catalog = generateCatalog();
-const repo = new LocalProductRepository(catalog, CATEGORIES, RETAILERS);
+const repo = new LocalProductRepository(catalog, CATEGORIES, SUBCATEGORIES, RETAILERS);
 
 describe('search filters', () => {
   it('filters by category, retailer and price together', async () => {
     const filters = {
-      categoryIds: ['furniture' as const, 'decor' as const],
+      categoryIds: ['bedroom' as const, 'living-room' as const],
+      subcategoryIds: [],
       retailerIds: ['fern-fold'],
       minPriceCents: 10000,
       maxPriceCents: 100000,
@@ -16,14 +17,14 @@ describe('search filters', () => {
     const results = await repo.listProducts({ filters });
     expect(results.length).toBeGreaterThan(0);
     for (const p of results) {
-      expect(['furniture', 'decor']).toContain(p.categoryId);
+      expect(['bedroom', 'living-room']).toContain(p.categoryId);
       expect(p.retailerId).toBe('fern-fold');
       expect(p.priceCents).toBeGreaterThanOrEqual(10000);
       expect(p.priceCents).toBeLessThanOrEqual(100000);
     }
     const expected = catalog.filter(
       (p) =>
-        ['furniture', 'decor'].includes(p.categoryId) &&
+        ['bedroom', 'living-room'].includes(p.categoryId) &&
         p.retailerId === 'fern-fold' &&
         p.priceCents >= 10000 &&
         p.priceCents <= 100000,
@@ -36,6 +37,12 @@ describe('search filters', () => {
     const cheap = await repo.listProducts({ search: 'walnut', filters: { ...EMPTY_FILTERS, maxPriceCents: 20000 } });
     expect(cheap.length).toBeLessThan(all.length);
     expect(cheap.every((p) => p.priceCents <= 20000)).toBe(true);
+  });
+
+  it('filters by product type', async () => {
+    const results = await repo.listProducts({ filters: { ...EMPTY_FILTERS, subcategoryIds: ['sofas', 'rugs'] } });
+    expect(results).toHaveLength(32);
+    expect(results.every((p) => p.subcategoryId === 'sofas' || p.subcategoryId === 'rugs')).toBe(true);
   });
 
   it('counts active groups and fixes reversed price ranges', () => {

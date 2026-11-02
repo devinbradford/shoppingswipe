@@ -1,6 +1,6 @@
 import type { PriceBands } from '@/recommendation';
 import type { SearchFilters } from '@/domain/filters';
-import type { Category, CategoryId, Product, Retailer } from '@/domain/types';
+import type { Category, CategoryId, Product, Retailer, Subcategory, SubcategoryId } from '@/domain/types';
 
 /** A style tag with how many products have it and a photo to represent it. */
 export interface StyleOption {
@@ -11,6 +11,7 @@ export interface StyleOption {
 
 export interface ProductQuery {
   categoryId?: CategoryId;
+  subcategoryId?: SubcategoryId;
   /** Free text matched against title, brand, retailer, style, material and color. */
   search?: string;
   /** Product ids to leave out (e.g. already swiped). */
@@ -28,7 +29,9 @@ export interface ProductQuery {
 export interface ProductRepository {
   listCategories(): Promise<Category[]>;
   /** Number of products in each category. */
-  countByCategory(): Promise<Record<CategoryId, number>>;
+  listSubcategories(): Promise<Subcategory[]>;
+  /** Number of products of each type, leaving out `excludeIds` (e.g. already swiped). */
+  countBySubcategory(excludeIds?: ReadonlySet<string>): Promise<Record<SubcategoryId, number>>;
   listProducts(query?: ProductQuery): Promise<Product[]>;
   getProduct(id: string): Promise<Product | null>;
   /** Products for the given ids, in the same order; unknown ids are dropped. */

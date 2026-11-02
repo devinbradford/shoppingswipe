@@ -46,6 +46,9 @@ export const useWishlistStore = create<WishlistState>()(
     {
       name: 'swipeshop.wishlists.v1',
       storage: createJSONStorage(() => AsyncStorage),
+      // v2: lists pointing at the old (pre-furniture) sample catalog are cleared once.
+      version: 2,
+      migrate: () => ({ lists: [] }),
       partialize: (s) => ({ lists: s.lists }),
     },
   ),

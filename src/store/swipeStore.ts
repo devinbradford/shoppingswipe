@@ -59,6 +59,10 @@ export const useSwipeStore = create<SwipeState>()(
     {
       name: 'swipeshop.swipes.v1',
       storage: createJSONStorage(() => AsyncStorage),
+      // v2: the catalog became furniture-only (rooms and product types), so
+      // swipes and kept items from the old sample catalog are cleared once.
+      version: 2,
+      migrate: () => ({ swipes: [], saved: [] }),
       partialize: (s) => ({ swipes: s.swipes, saved: s.saved }),
     },
   ),

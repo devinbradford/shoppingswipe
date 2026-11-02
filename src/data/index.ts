@@ -1,4 +1,4 @@
-import { CATEGORIES, generateCatalog, RETAILERS } from './sample/catalog';
+import { CATEGORIES, generateCatalog, RETAILERS, SUBCATEGORIES } from './sample/catalog';
 import { LocalProductRepository } from './LocalProductRepository';
 import type { ProductRepository } from './ProductRepository';
 
@@ -12,7 +12,7 @@ let instance: ProductRepository | null = null;
  */
 export function getProductRepository(): ProductRepository {
   if (!instance) {
-    instance = new LocalProductRepository(generateCatalog(), CATEGORIES, RETAILERS);
+    instance = new LocalProductRepository(generateCatalog(), CATEGORIES, SUBCATEGORIES, RETAILERS);
   }
   return instance;
 }

@@ -1,6 +1,13 @@
 import { matchesFilters } from '@/domain/filters';
 import { computePriceBands, type PriceBands } from '@/recommendation';
-import { CATEGORY_IDS, type Category, type CategoryId, type Product, type Retailer } from '@/domain/types';
+import {
+  SUBCATEGORY_IDS,
+  type Category,
+  type Product,
+  type Retailer,
+  type Subcategory,
+  type SubcategoryId,
+} from '@/domain/types';
 import type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
 
 /** In-memory repository over a fixed catalog (the bundled sample data). */
@@ -13,8 +20,13 @@ export class LocalProductRepository implements ProductRepository {
   constructor(
     private readonly products: readonly Product[],
     private readonly categories: readonly Category[],
+    private readonly subcategories: readonly Subcategory[],
     private readonly retailers: readonly Retailer[],
   ) {
+    const placeLabels = new Map<string, string>([
+      ...categories.map((c) => [c.id, c.label] as const),
+      ...subcategories.map((c) => [c.id, c.label] as const),
+    ]);
     this.byId = new Map(products.map((p) => [p.id, p]));
     this.retailerNames = new Map(retailers.map((r) => [r.id, r.name]));
     this.bands = computePriceBands(products);
@@ -27,7 +39,8 @@ export class LocalProductRepository implements ProductRepository {
           this.retailerNames.get(p.retailerId) ?? '',
           p.material,
           p.color,
-          p.categoryId,
+          placeLabels.get(p.categoryId) ?? '',
+          placeLabels.get(p.subcategoryId) ?? '',
           ...p.styleTags,
         ]
           .join(' ')
@@ -40,17 +53,24 @@ export class LocalProductRepository implements ProductRepository {
     return [...this.categories].sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
-  async countByCategory(): Promise<Record<CategoryId, number>> {
-    const counts = Object.fromEntries(CATEGORY_IDS.map((id) => [id, 0])) as Record<CategoryId, number>;
-    for (const p of this.products) counts[p.categoryId]++;
+  async listSubcategories(): Promise<Subcategory[]> {
+    return [...this.subcategories].sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+
+  async countBySubcategory(excludeIds?: ReadonlySet<string>): Promise<Record<SubcategoryId, number>> {
+    const counts = Object.fromEntries(SUBCATEGORY_IDS.map((id) => [id, 0])) as Record<SubcategoryId, number>;
+    for (const p of this.products) if (!excludeIds?.has(p.id)) counts[p.subcategoryId]++;
     return counts;
   }
 
-  async listProducts({ categoryId, search, excludeIds, filters, limit }: ProductQuery = {}): Promise<Product[]> {
+  async listProducts({ categoryId, subcategoryId, search, excludeIds, filters, limit }: ProductQuery = {}): Promise<
+    Product[]
+  > {
     const terms = (search ?? '').toLowerCase().split(/\s+/).filter(Boolean);
     const out: Product[] = [];
     for (const p of this.products) {
       if (categoryId && p.categoryId !== categoryId) continue;
+      if (subcategoryId && p.subcategoryId !== subcategoryId) continue;
       if (excludeIds?.has(p.id)) continue;
       if (filters && !matchesFilters(p, filters)) continue;
       if (terms.length > 0) {

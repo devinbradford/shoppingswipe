@@ -6,7 +6,8 @@ function product(styleTags: string[], overrides: Partial<Product> = {}): Product
   n++;
   return {
     id: `t${String(n).padStart(4, '0')}`,
-    categoryId: 'decor',
+    categoryId: 'living-room',
+    subcategoryId: 'rugs',
     retailerId: 'r1',
     title: 'Thing',
     brand: 'Brand',

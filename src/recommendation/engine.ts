@@ -17,7 +17,7 @@
  *  4. Until the user has kept 3 things (cold start) we show a varied,
  *     shuffled mix instead.
  */
-import type { CategoryId, Product, SwipeEvent } from '../domain/types';
+import type { Product, SubcategoryId, SwipeEvent } from '../domain/types';
 import { createRng } from './random';
 
 export type FeatureKind = 'style' | 'material' | 'color' | 'brand' | 'retailer' | 'price';
@@ -33,8 +33,8 @@ export interface Feature {
   key: string;
 }
 
-/** Per category: [low/mid boundary, mid/high boundary] in cents. */
-export type PriceBands = Partial<Record<CategoryId, [number, number]>>;
+/** Per product type: [low/mid boundary, mid/high boundary] in cents. A $400 rug and a $400 sofa sit in different bands. */
+export type PriceBands = Partial<Record<SubcategoryId, [number, number]>>;
 
 export interface RecommenderOptions {
   explorationRate: number;
@@ -88,25 +88,25 @@ function feature(kind: FeatureKind, value: string): Feature {
   return { kind, value: v, label: value, key: `${kind}:${v}` };
 }
 
-/** Low / mid / high price boundaries (terciles) for each category. */
+/** Low / mid / high price boundaries (terciles) for each product type. */
 export function computePriceBands(products: readonly Product[]): PriceBands {
-  const byCategory = new Map<CategoryId, number[]>();
+  const byType = new Map<SubcategoryId, number[]>();
   for (const p of products) {
-    const list = byCategory.get(p.categoryId) ?? [];
+    const list = byType.get(p.subcategoryId) ?? [];
     list.push(p.priceCents);
-    byCategory.set(p.categoryId, list);
+    byType.set(p.subcategoryId, list);
   }
   const bands: PriceBands = {};
-  for (const [categoryId, prices] of byCategory) {
+  for (const [typeId, prices] of byType) {
     prices.sort((a, b) => a - b);
     const at = (q: number) => prices[Math.min(prices.length - 1, Math.floor(q * prices.length))];
-    bands[categoryId] = [at(1 / 3), at(2 / 3)];
+    bands[typeId] = [at(1 / 3), at(2 / 3)];
   }
   return bands;
 }
 
 export function priceBandOf(product: Product, bands: PriceBands): PriceBand {
-  const b = bands[product.categoryId];
+  const b = bands[product.subcategoryId];
   if (!b) return 'mid';
   if (product.priceCents < b[0]) return 'low';
   if (product.priceCents < b[1]) return 'mid';
