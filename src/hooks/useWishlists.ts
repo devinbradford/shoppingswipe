@@ -47,18 +47,3 @@ export function useListsForProduct(productId: string) {
   const lists = useWishlistStore((s) => s.lists);
   return useMemo(() => lists.filter((l) => l.items.some((i) => i.productId === productId)), [lists, productId]);
 }
-
-/** Cover photo for each list (its newest item's first photo). */
-export function useListCovers() {
-  const lists = useWishlistStore((s) => s.lists);
-  const firsts = lists.map((l) => l.items[0]?.productId ?? '');
-  const key = firsts.join(',');
-  const result = useAsync(async () => {
-    const products = await getProductRepository().getProducts(key.split(',').filter(Boolean));
-    return new Map(products.map((p) => [p.id, p.imageUrls[0]]));
-  }, [key]);
-  return useMemo(() => {
-    const byProduct = result.data ?? new Map<string, string>();
-    return new Map(lists.map((l) => [l.id, byProduct.get(l.items[0]?.productId ?? '')]));
-  }, [lists, result.data]);
-}

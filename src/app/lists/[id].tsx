@@ -1,20 +1,21 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
-import { Button } from '@/components/Button';
+import { Chip } from '@/components/Chip';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { Header } from '@/components/Header';
 import { NameSheet } from '@/components/NameSheet';
-import { ProductGridItem } from '@/components/ProductGridItem';
+import { GlassIconButton } from '@/components/Glass';
+import { MasonryGrid } from '@/components/MasonryGrid';
+import { PhotoTile } from '@/components/PhotoTile';
 import { LoadingView, StateView } from '@/components/StateView';
 import { useRetailerNames } from '@/hooks/useCatalog';
 import { useWishlistProducts } from '@/hooks/useWishlists';
-import { pluralize } from '@/lib/format';
 import { useWishlistStore } from '@/store/wishlistStore';
-import { colors, space } from '@/theme/tokens';
+import { colors, fonts, space } from '@/theme/tokens';
 
 export default function ListScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,56 +43,59 @@ export default function ListScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <Header onBack={() => router.back()} />
-      <FlatList
-        data={status === 'ready' ? products : []}
-        keyExtractor={(p) => p.id}
-        numColumns={2}
-        contentContainerStyle={styles.content}
-        ListHeaderComponent={
-          <View style={styles.head}>
-            <AppText variant="hero" accessibilityRole="header" numberOfLines={2}>
-              {list?.name ?? ''}
-            </AppText>
-            <AppText variant="body" color={colors.inkMuted}>
-              {pluralize(list?.items.length ?? 0, 'item')}
-            </AppText>
-            <View style={styles.actions}>
-              <Button label="Rename" variant="secondary" onPress={() => setRenaming(true)} />
-              <Button label="Delete list" variant="ghost" onPress={() => setConfirmDelete(true)} />
-            </View>
+      <View style={styles.topBar}>
+        <GlassIconButton icon="back" label="Back" onPress={() => router.back()} />
+      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.head}>
+          <AppText variant="eyebrow" color={colors.inkMuted}>
+            {`LIST · ${(list?.items.length ?? 0) === 1 ? '1 PIECE' : `${list?.items.length ?? 0} PIECES`}`}
+          </AppText>
+          <AppText variant="hero" accessibilityRole="header" numberOfLines={2} style={styles.italic}>
+            {list?.name ?? ''}
+          </AppText>
+          <View style={styles.actions}>
+            <Chip label="Rename" onPress={() => setRenaming(true)} />
+            <Chip label="Delete list" onPress={() => setConfirmDelete(true)} />
           </View>
-        }
-        renderItem={({ item, index }) => (
-          <ProductGridItem
-            index={index}
-            product={item}
-            retailerName={retailers.get(item.retailerId)}
-            onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.id } })}
-            onRemove={() => list && removeItems(list.id, [item.id])}
-            removeLabel={`Remove ${item.title} from ${list?.name ?? 'this list'}`}
+        </View>
+        {status === 'ready' && products.length > 0 ? (
+          <MasonryGrid
+            items={products}
+            keyOf={(p) => p.id}
+            renderItem={(item, height) => (
+              <PhotoTile
+                product={item}
+                height={height}
+                retailerName={retailers.get(item.retailerId)}
+                onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.id } })}
+                onRemove={() => list && removeItems(list.id, [item.id])}
+                removeLabel={`Remove ${item.title} from ${list?.name ?? 'this list'}`}
+              />
+            )}
           />
+        ) : (
+          <View style={styles.empty}>
+            {status === 'loading' ? (
+              <LoadingView label="Loading list" />
+            ) : status === 'error' ? (
+              <StateView
+                icon="refresh"
+                title="Couldn't load this list"
+                message="Your items are still saved. Try again in a moment."
+                primary={{ label: 'Try again', onPress: reload }}
+              />
+            ) : (
+              <StateView
+                icon="keep"
+                title="This list is empty"
+                message="Go to Kept, tap Select, and copy or move items here."
+                primary={{ label: 'Go to kept', onPress: () => router.back() }}
+              />
+            )}
+          </View>
         )}
-        ListEmptyComponent={
-          status === 'loading' ? (
-            <LoadingView label="Loading list" />
-          ) : status === 'error' ? (
-            <StateView
-              icon="refresh"
-              title="Couldn't load this list"
-              message="Your items are still saved. Try again in a moment."
-              primary={{ label: 'Try again', onPress: reload }}
-            />
-          ) : (
-            <StateView
-              icon="keep"
-              title="This list is empty"
-              message="Go to Kept, tap Select, and copy or move items here."
-              primary={{ label: 'Go to kept', onPress: () => router.back() }}
-            />
-          )
-        }
-      />
+      </ScrollView>
 
       <NameSheet
         visible={renaming}
@@ -123,7 +127,10 @@ export default function ListScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: space.lg, paddingBottom: space.xxxl, gap: space.xl, flexGrow: 1 },
-  head: { gap: space.sm },
+  topBar: { paddingHorizontal: space.lg, paddingTop: space.sm },
+  content: { paddingBottom: space.xxxl, gap: space.xl, flexGrow: 1 },
+  head: { gap: space.sm, paddingHorizontal: space.xl, paddingTop: space.md },
+  italic: { fontFamily: fonts.serifItalic },
   actions: { flexDirection: 'row', gap: space.sm, marginTop: space.sm },
+  empty: { flex: 1, minHeight: 360 },
 });

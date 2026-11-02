@@ -51,9 +51,9 @@ supabase/migrations/  SQL schema + row-level security.
 4. **Secrets:** only `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` may be in the app. Service-role keys and retailer/affiliate credentials go in Edge Function secrets only. Never commit `.env`.
 5. **Sample data stays obviously fake:** fictional retailers, `*.example.com` URLs. Never imitate a real store.
 
-## Design direction
+## Design direction ("D · Mix", chosen by Devin)
 
-Stone background (`#ECEEEA`), graphite ink (`#22283A`), bottle-green for Keep (`#2E6A4F`), oxblood for Skip (`#9E3B36`). Bricolage Grotesque for headings and prices, system font for body text. The product photo is the hero, and the price is set big and bold on the card. Keep the UI quiet everywhere else. Sentence-case copy; buttons say exactly what they do ("Keep", "Buy now").
+Warm espresso dark (`#12110F`) with off-white text (`#F3F2EF`) and one champagne accent (`#D8C29D`) for Keep and selection; rose (`#E0A39A`) for Skip and errors. Instrument Serif for names, prices and headings; Geist for everything else, with small spaced capitals for labels (FURNITURE · 18 LEFT). The swipe card is a full-screen photo with frosted-glass controls floating over it and a "For you" bubble explaining the pick. Kept and lists are mood boards (two columns, varying heights). Sentence-case copy; buttons say exactly what they do ("Keep", "Buy now"). All values live in `src/theme/tokens.ts`.
 
 ## Current state: Phase 2 is done (awaiting Devin's go-ahead for Phase 3)
 

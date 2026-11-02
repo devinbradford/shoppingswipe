@@ -1,22 +1,25 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
+import { Chip } from '@/components/Chip';
+import { ProductImage } from '@/components/ProductImage';
 import { LoadingView, StateView } from '@/components/StateView';
-import { StyleTile } from '@/components/StyleTile';
 import { MAX_STYLE_PICKS, MIN_STYLE_PICKS, pickerCta, toggleStylePick } from '@/domain/tastePicker';
 import { useStyleOptions } from '@/hooks/useCatalog';
 import { usePreferencesStore } from '@/store/preferencesStore';
-import { colors, space } from '@/theme/tokens';
+import { colors, fonts, space } from '@/theme/tokens';
 
 const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** First-launch taste picker: tap 3–5 styles so the deck is personal from the first card. */
 export default function WelcomeScreen() {
-  const styles_ = useStyleOptions();
+  const insets = useSafeAreaInsets();
+  const options = useStyleOptions();
   const saved = usePreferencesStore((s) => s.stylePicks);
   const onboarded = usePreferencesStore((s) => s.onboarded);
   const setStylePicks = usePreferencesStore((s) => s.setStylePicks);
@@ -24,54 +27,90 @@ export default function WelcomeScreen() {
   const [picks, setPicks] = useState<string[]>(saved);
   const ready = picks.length >= MIN_STYLE_PICKS;
   const full = picks.length >= MAX_STYLE_PICKS;
+  const styleList = options.status === 'ready' ? options.data : [];
+  const heroUrl = styleList.find((s) => s.coverUrl)?.coverUrl;
 
   const leave = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <FlatList
-        data={styles_.status === 'ready' ? styles_.data : []}
-        keyExtractor={(s) => s.tag}
-        numColumns={2}
-        contentContainerStyle={styles.content}
-        columnWrapperStyle={styles.columns}
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <AppText variant="hero" accessibilityRole="header">
-              {onboarded ? 'Your styles' : 'Welcome'}
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scroll} bounces={false}>
+        <View style={styles.hero}>
+          <ProductImage uri={heroUrl} style={StyleSheet.absoluteFill} priority="high" />
+          <LinearGradient
+            colors={[colors.scrimMid, colors.scrimLight, colors.scrimLight, colors.scrim, colors.background]}
+            locations={[0, 0.22, 0.42, 0.78, 1]}
+            style={StyleSheet.absoluteFill}
+          />
+          <AppText variant="eyebrow" color={colors.onPhoto} style={[styles.brand, { top: insets.top + space.lg }]}>
+            SWIPESHOP
+          </AppText>
+          <View style={styles.heroText}>
+            <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
+              {onboarded ? 'Your styles' : 'What feels like '}
+              {onboarded ? null : (
+                <AppText variant="hero" color={colors.accentText} style={styles.italic}>
+                  home?
+                </AppText>
+              )}
             </AppText>
             <AppText variant="body" color={colors.inkMuted}>
-              Pick {MIN_STYLE_PICKS} to {MAX_STYLE_PICKS} styles you like. Your first deck will lean toward them, and it
-              keeps learning as you swipe.
-            </AppText>
-            <AppText variant="label" color={colors.keep} accessibilityLiveRegion="polite">
-              {picks.length} of {MAX_STYLE_PICKS} picked
+              Pick {MIN_STYLE_PICKS} to {MAX_STYLE_PICKS} styles. Your first deck is built around them, and it keeps
+              learning as you swipe.
             </AppText>
           </View>
-        }
-        renderItem={({ item }) => (
-          <StyleTile
-            label={titleCase(item.tag)}
-            coverUrl={item.coverUrl}
-            selected={picks.includes(item.tag)}
-            disabled={full && !picks.includes(item.tag)}
-            onPress={() => setPicks((p) => toggleStylePick(p, item.tag))}
-          />
-        )}
-        ListEmptyComponent={
-          styles_.status === 'error' ? (
+        </View>
+
+        <View style={styles.body}>
+          <View style={styles.countRow}>
+            <AppText variant="eyebrow" color={colors.inkMuted}>
+              STYLES
+            </AppText>
+            <AppText variant="bodySmall" accessibilityLiveRegion="polite">
+              {picks.length} of {MAX_STYLE_PICKS}
+            </AppText>
+          </View>
+          {options.status === 'ready' ? (
+            <View style={styles.chips}>
+              {styleList.map((s) => {
+                const on = picks.includes(s.tag);
+                return (
+                  <Chip
+                    key={s.tag}
+                    label={titleCase(s.tag)}
+                    size="lg"
+                    selected={on}
+                    checkWhenSelected
+                    disabled={full && !on}
+                    accessibilityHint={full && !on ? 'You can pick up to 5. Unpick one to choose this.' : undefined}
+                    onPress={() => setPicks((p) => toggleStylePick(p, s.tag))}
+                  />
+                );
+              })}
+            </View>
+          ) : options.status === 'error' ? (
             <StateView
               icon="refresh"
               title="Couldn't load styles"
               message="You can skip this and start swiping."
-              primary={{ label: 'Try again', onPress: styles_.reload }}
+              primary={{ label: 'Try again', onPress: options.reload }}
             />
           ) : (
             <LoadingView label="Loading styles" />
-          )
-        }
-      />
-      <View style={styles.footer}>
+          )}
+        </View>
+      </ScrollView>
+
+      <View style={[styles.footer, { paddingBottom: insets.bottom + space.lg }]}>
+        <Button
+          label={pickerCta(picks.length)}
+          disabled={!ready}
+          size="lg"
+          onPress={() => {
+            setStylePicks(picks);
+            leave();
+          }}
+        />
         <Button
           label={onboarded ? 'Cancel' : 'Skip for now'}
           variant="ghost"
@@ -80,34 +119,27 @@ export default function WelcomeScreen() {
             leave();
           }}
         />
-        <Button
-          label={pickerCta(picks.length)}
-          disabled={!ready}
-          size="lg"
-          style={styles.cta}
-          onPress={() => {
-            setStylePicks(picks);
-            leave();
-          }}
-        />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: space.lg, paddingBottom: space.xl, gap: space.md },
-  columns: { gap: space.md },
-  header: { gap: space.sm, paddingTop: space.lg, paddingBottom: space.md },
-  footer: {
+  scroll: { paddingBottom: space.xl },
+  hero: { height: 400, justifyContent: 'flex-end' },
+  brand: { position: 'absolute', left: space.xl },
+  heroText: { paddingHorizontal: space.xl, gap: space.md },
+  italic: { fontFamily: fonts.serifItalic },
+  body: { paddingHorizontal: space.xl, paddingTop: space.xl, gap: space.lg },
+  countRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
-    paddingHorizontal: space.lg,
-    paddingTop: space.md,
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
+    paddingTop: space.md,
   },
-  cta: { flex: 1 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm + 2 },
+  footer: { paddingHorizontal: space.xl, paddingTop: space.md, gap: space.xs },
 });
