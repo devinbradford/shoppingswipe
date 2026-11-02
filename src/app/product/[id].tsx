@@ -144,7 +144,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
             <Fact label="Material" value={product.material} />
             <Fact label="Color" value={product.color} />
             <Fact label="Style" value={product.styleTags.join(', ')} />
-            {retailer ? <Fact label="Sold by" value={`${retailer.name} (${retailer.domain})`} /> : null}
+            {retailer ? <Fact label="Sold by" value={`${retailer.name} (${retailer.domain})`} keepCase /> : null}
           </View>
 
           <View style={styles.lists}>
@@ -194,13 +194,13 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+function Fact({ label, value, keepCase }: { label: string; value: string; keepCase?: boolean }) {
   return (
     <View style={styles.fact}>
       <AppText variant="bodySmall" color={colors.inkMuted}>
         {label}
       </AppText>
-      <AppText variant="bodySmall" style={styles.factValue}>
+      <AppText variant="bodySmall" style={[styles.factValue, !keepCase && styles.capitalize]}>
         {value}
       </AppText>
     </View>
@@ -244,7 +244,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  factValue: { flexShrink: 1, textAlign: 'right', textTransform: 'capitalize' },
+  factValue: { flexShrink: 1, textAlign: 'right' },
+  capitalize: { textTransform: 'capitalize' },
   bar: {
     flexDirection: 'row',
     gap: space.md,
