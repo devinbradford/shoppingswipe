@@ -273,9 +273,8 @@
     border-top: 1px solid transparent; border-image: linear-gradient(var(--line), var(--line)) 1 / 1px 0 0 / 0 100vmax;
   }
   #how .discover::after { content: ""; position: absolute; left: 50%; top: -1px; width: 72px; height: 1px; margin-left: -36px; background: var(--accent); }
-  #how .discover-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px 64px; align-items: end; }
-  #how .discover-head h3 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.06; margin-top: 14px; max-width: 15em; }
-  #how .discover-head > p { color: var(--muted); font-size: 16px; margin: 0; max-width: 26em; }
+  #how .discover-head { text-align: center; }
+  #how .discover-head h3 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.06; margin: 14px auto 0; max-width: 15em; }
   #how .shelf { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
   #how .shelf li { margin: 0; }
   #how .shelf-ph {
@@ -289,7 +288,6 @@
   #how .shelf span::before { content: ""; width: 4px; height: 4px; border-radius: 2px; background: var(--accent); flex-shrink: 0; }
   @media (max-width: 820px) {
     #how .discover { margin-top: 80px; padding-block: 64px 72px; }
-    #how .discover-head { grid-template-columns: minmax(0, 1fr); }
     #how .shelf { gap: 10px; margin-top: 28px; }
     #how .shelf span { font-size: 12px; margin-top: 9px; gap: 6px; }
   }
@@ -474,7 +472,6 @@
             <p class="eyebrow">Discover your style</p>
             <h3>Whatever you’re looking for, <em>find something you’ll love.</em></h3>
           </div>
-          <p>From the perfect sofa to your next bedroom upgrade, discover furniture that fits your taste.</p>
         </div>
         <ul class="shelf" aria-label="Furniture you can discover">
           <li><div class="shelf-ph"><img src="assets/discover/sofas.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Sofas</span></li>
