@@ -162,19 +162,20 @@
   .hero .act.small { width: 36px; height: 36px; border-color: rgba(243,242,239,0.22); }
   .hero .act.keep { background: var(--accent); border-color: var(--accent); box-shadow: 0 10px 26px rgba(216,194,157,0.32); }
 
-  .hero .board { padding: 44px 14px 18px 40px; }
+  .hero .board { padding: 44px 10px 18px 36px; }
   .hero .board .ph-top { position: static; padding: 0; }
   .hero .board h4 { font: 400 32px/1 var(--serif); margin: 14px 2px 0; }
   .hero .board .count { font-size: 8px; letter-spacing: 0.2em; color: var(--muted); margin: 6px 2px 0; }
   .hero .chips { display: flex; gap: 5px; margin: 12px 2px 12px; }
   .hero .chip { font-size: 9.5px; padding: 6px 9px; border-radius: 999px; border: 1px solid rgba(243,242,239,0.26); white-space: nowrap; }
   .hero .chip.on { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .hero .kept-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .hero .kept-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .hero .tile { position: relative; aspect-ratio: 4 / 5; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(243,242,239,0.06); }
   .hero .tile .ph { inset: 0; }
+  .hero .tile .ph > img { filter: brightness(1.12) saturate(1.04); }
   .hero .tile .ph > svg { width: 66%; }
-  .hero .tile::after { content: ""; position: absolute; inset: 45% 0 0 0; background: linear-gradient(180deg, rgba(18,17,15,0), rgba(18,17,15,0.88)); }
-  .hero .tile b { position: absolute; z-index: 2; left: 8px; bottom: 6px; font: 400 16px/1 var(--serif); }
+  .hero .tile::after { content: ""; position: absolute; left: 0; bottom: 0; width: 80%; height: 38%; background: radial-gradient(100% 100% at 0% 100%, rgba(18,17,15,0.9), rgba(18,17,15,0.55) 45%, rgba(18,17,15,0) 80%); }
+  .hero .tile b { position: absolute; z-index: 2; left: 8px; bottom: 6px; font: 400 16px/1 var(--serif); text-shadow: 0 1px 6px rgba(0,0,0,0.45); }
 
   @media (prefers-reduced-motion: no-preference) {
     .hero .hero-phone { animation: hero-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
