@@ -266,7 +266,13 @@
   }
   @media (max-width: 1000px) { #how .step h3 { font-size: 24px; } #how .hv-title { font-size: 22px; } }
   /* Discover your style: compact strip at the end of How it works, scoped to #how .discover. */
-  #how .discover { margin-top: 96px; }
+  #how { padding-bottom: 0; }
+  #how .discover {
+    position: relative; margin-top: 112px; padding-block: 88px 96px;
+    background: #1B1A17; box-shadow: 0 0 0 100vmax #1B1A17; clip-path: inset(0 -100vmax);
+    border-top: 1px solid transparent; border-image: linear-gradient(var(--line), var(--line)) 1 / 1px 0 0 / 0 100vmax;
+  }
+  #how .discover::after { content: ""; position: absolute; left: 50%; top: -1px; width: 72px; height: 1px; margin-left: -36px; background: var(--accent); }
   #how .discover-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px 64px; align-items: end; }
   #how .discover-head h3 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.06; margin-top: 14px; max-width: 15em; }
   #how .discover-head > p { color: var(--muted); font-size: 16px; margin: 0; max-width: 26em; }
@@ -282,7 +288,7 @@
   #how .shelf span { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; color: var(--ink); }
   #how .shelf span::before { content: ""; width: 4px; height: 4px; border-radius: 2px; background: var(--accent); flex-shrink: 0; }
   @media (max-width: 820px) {
-    #how .discover { margin-top: 72px; }
+    #how .discover { margin-top: 80px; padding-block: 64px 72px; }
     #how .discover-head { grid-template-columns: minmax(0, 1fr); }
     #how .shelf { gap: 10px; margin-top: 28px; }
     #how .shelf span { font-size: 12px; margin-top: 9px; gap: 6px; }
