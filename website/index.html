@@ -265,19 +265,38 @@
     #how .hv-panel { padding: 12px; }
   }
   @media (max-width: 1000px) { #how .step h3 { font-size: 24px; } #how .hv-title { font-size: 22px; } }
+  /* Discover your style: compact strip at the end of How it works, scoped to #how .discover. */
+  #how .discover { margin-top: 96px; }
+  #how .discover-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px 64px; align-items: end; }
+  #how .discover-head h3 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.06; margin-top: 14px; max-width: 15em; }
+  #how .discover-head > p { color: var(--muted); font-size: 16px; margin: 0; max-width: 26em; }
+  #how .shelf { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+  #how .shelf li { margin: 0; }
+  #how .shelf-ph {
+    position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(90% 90% at 50% 40%, #3D352C, #1C1B18); box-shadow: 0 0 0 1px rgba(243,242,239,0.07);
+  }
+  #how .shelf-ph > svg { width: 52%; height: auto; }
+  #how .shelf-ph > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  #how .shelf li:hover .shelf-ph > img { transform: scale(1.04); }
+  #how .shelf span { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; color: var(--ink); }
+  #how .shelf span::before { content: ""; width: 4px; height: 4px; border-radius: 2px; background: var(--accent); flex-shrink: 0; }
+  @media (max-width: 820px) {
+    #how .discover { margin-top: 72px; }
+    #how .discover-head { grid-template-columns: minmax(0, 1fr); }
+    #how .shelf { gap: 10px; margin-top: 28px; }
+    #how .shelf span { font-size: 12px; margin-top: 9px; gap: 6px; }
+  }
+  @media (max-width: 600px) {
+    #how .shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; }
+    #how .shelf span { font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) { #how .shelf-ph > img { transition: none; } }
   @media (max-width: 820px) {
     #how .steps { grid-template-columns: minmax(0, 1fr); max-width: 460px; margin-inline: auto; }
     #how .step h3 { font-size: 28px; } #how .hv-title { font-size: 26px; }
   }
 
-  .rooms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
-  .room { border-radius: 20px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); }
-  .room .art { height: 180px; display: grid; place-items: center; }
-  .room .body { padding: 22px 24px 26px; }
-  .room h3 { font-size: 30px; }
-  .room ul { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
-  .room li { font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(243,242,239,0.2); color: var(--muted); }
-  @media (max-width: 900px) { .rooms { grid-template-columns: minmax(0, 1fr); } }
 
   .why { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 64px; margin-top: 56px; }
   .why h3 { font-size: 30px; }
@@ -318,7 +337,6 @@
     <a class="brand" href="#top" aria-label="Arvelle home">Arvelle</a>
     <nav aria-label="Main">
       <a class="hide-sm" href="#how">How it works</a>
-      <a class="hide-sm" href="#rooms">Rooms</a>
       <a class="hide-sm" href="#stores">For stores</a>
       <a class="btn btn-light" href="#join">Join the waitlist</a>
     </nav>
@@ -444,29 +462,22 @@
           <p>Keep favorites together. Buy directly from the retailer.</p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="rooms">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Rooms</p>
-        <h2>The pieces that <em>make a room.</em></h2>
-        <p>We start with the big, considered purchases: the furniture you live with every day.</p>
-      </div>
-      <div class="rooms">
-        <article class="room">
-          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#4A4136,#1C1B18);"><svg width="46%" viewBox="0 0 200 140" fill="none" stroke="#EADCC0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="30" y="20" width="140" height="52" rx="12"/><rect x="20" y="66" width="160" height="34" rx="8"/><path d="M60 54h80"/><path d="M28 100v14M172 100v14"/></svg></div>
-          <div class="body"><h3>Bedroom</h3><ul><li>Bed frames</li><li>Nightstands</li><li>Dressers</li></ul></div>
-        </article>
-        <article class="room">
-          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#3E4639,#1C1B18);"><svg width="50%" viewBox="0 0 200 120" fill="none" stroke="#EADCC0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="34" y="24" width="132" height="46" rx="16"/><rect x="26" y="62" width="148" height="28" rx="11"/><rect x="14" y="48" width="26" height="44" rx="12"/><rect x="160" y="48" width="26" height="44" rx="12"/><path d="M38 92l-4 14M162 92l4 14"/></svg></div>
-          <div class="body"><h3>Living room</h3><ul><li>Sofas</li><li>Accent chairs</li><li>Coffee tables</li><li>TV stands</li><li>Rugs</li></ul></div>
-        </article>
-        <article class="room">
-          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#4B3A33,#1C1B18);"><svg width="24%" viewBox="0 0 100 160" fill="none" stroke="#EADCC0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="50" cy="30" rx="34" ry="10"/><path d="M22 36l-10 110M78 36l10 110M30 40l-4 106M70 40l4 106M18 100h64"/></svg></div>
-          <div class="body"><h3>Kitchen &amp; dining</h3><ul><li>Bar stools</li><li>Dining tables</li><li>Dining chairs</li></ul></div>
-        </article>
+      <div class="discover">
+        <div class="discover-head">
+          <div>
+            <p class="eyebrow">Discover your style</p>
+            <h3>Whatever you’re looking for, <em>find something you’ll love.</em></h3>
+          </div>
+          <p>From the perfect sofa to your next bedroom upgrade, discover furniture that fits your taste.</p>
+        </div>
+        <ul class="shelf" aria-label="Furniture you can discover">
+          <li><div class="shelf-ph"><img src="assets/discover/sofas.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Sofas</span></li>
+          <li><div class="shelf-ph"><img src="assets/discover/beds.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Beds</span></li>
+          <li><div class="shelf-ph"><img src="assets/discover/accent-chairs.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Accent chairs</span></li>
+          <li><div class="shelf-ph"><img src="assets/discover/nightstands.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Nightstands</span></li>
+          <li><div class="shelf-ph"><svg viewBox="0 0 160 100" fill="none" stroke="#EADCC0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="22" width="136" height="10" rx="4"/><path d="M30 32v52M130 32v52M30 58h100"/></svg><img src="assets/discover/dining-tables.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Dining tables</span></li>
+          <li><div class="shelf-ph"><img src="assets/discover/rugs.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div><span>Rugs</span></li>
+        </ul>
       </div>
     </div>
   </section>
