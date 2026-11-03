@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arvelle — Swipe to curate your home</title>
+<meta name="description" content="Arvelle is a furniture discovery app. Swipe through sofas, beds, chairs and more from the stores you trust; Arvelle learns your taste, then sends you to the store to buy.">
+<meta property="og:title" content="Arvelle — Swipe to curate your home">
+<meta property="og:description" content="Swipe through furniture from the stores you trust. Arvelle learns your taste, then sends you to the store to buy.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#12110F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312110F'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Georgia,serif' font-size='38' fill='%23D8C29D'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&display=swap">
+<style>
+  /* Same look as the app: espresso dark, off-white, one champagne accent. */
+  :root {
+    --bg: #12110F;
+    --surface: #1C1B18;
+    --raised: #24221F;
+    --line: #33312C;
+    --ink: #F3F2EF;
+    --muted: #B8B4AC;
+    --accent: #D8C29D;
+    --accent-ink: #EADCC0;
+    --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-ink); text-underline-offset: 3px; }
+  a:hover { color: var(--ink); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .eyebrow { font: 500 12px/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+  em { font-style: italic; color: var(--accent-ink); }
+
+  /* Header */
+  header { position: sticky; top: 0; z-index: 10; background: rgba(18,17,15,0.86); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; }
+  .nav { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 16px; }
+  .brand { font: 400 28px/1 var(--serif); color: var(--ink); text-decoration: none; letter-spacing: 0.01em; }
+  .nav nav { display: flex; gap: 28px; align-items: center; }
+  .nav nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
+  .nav nav a:hover { color: var(--ink); }
+  .nav nav a.btn-light, .nav nav a.btn-light:hover { color: var(--bg); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid transparent;
+    font: 500 15px/1 var(--sans); text-decoration: none; cursor: pointer;
+  }
+  .btn-light { background: var(--ink); color: var(--bg); }
+  .btn-light:hover { background: #FFFFFF; color: var(--bg); }
+  .btn-ghost { border-color: rgba(243,242,239,0.28); color: var(--ink); background: transparent; }
+  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+  @media (max-width: 720px) { .nav nav .hide-sm { display: none; } }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 56px; align-items: center; padding-block: 72px 96px; }
+  .hero h1 { font-size: clamp(48px, 7vw, 88px); line-height: 0.98; margin-top: 18px; }
+  .lede { color: var(--muted); font-size: 19px; max-width: 34em; margin: 24px 0 0; }
+  .join { margin-top: 36px; max-width: 480px; }
+  .join form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .join label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .join input {
+    flex: 1 1 240px; min-width: 0; min-height: 52px; padding: 0 20px; border-radius: 999px;
+    border: 1px solid rgba(243,242,239,0.24); background: var(--surface); color: var(--ink); font: 400 16px var(--sans);
+  }
+  .join input::placeholder { color: #8C887F; }
+  .join .btn { min-height: 52px; }
+  .join .note { margin: 12px 4px 0; font-size: 14px; color: var(--muted); min-height: 1.4em; }
+  .join .note.ok { color: var(--accent-ink); }
+  .join .note.err { color: #E0A39A; }
+  .stores-line { margin-top: 28px; font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .stores-line::before { content: ""; flex-shrink: 0; width: 6px; height: 6px; border-radius: 3px; background: var(--accent); }
+  @media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); padding-block: 48px 64px; gap: 48px; } }
+
+  /* Phone mockups */
+  .phones { position: relative; display: flex; justify-content: center; gap: 18px; }
+  .phone {
+    width: 260px; aspect-ratio: 9 / 19.2; border-radius: 40px; padding: 9px; background: #0A0908;
+    box-shadow: 0 40px 80px -30px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(243,242,239,0.08);
+    flex-shrink: 0;
+  }
+  .phone.back { transform: translateY(42px) scale(0.92); opacity: 0.92; }
+  .screen { position: relative; height: 100%; border-radius: 32px; overflow: hidden; background: var(--bg); }
+  @media (max-width: 1060px) { .phone.back { display: none; } }
+  @media (max-width: 400px) { .phone { width: 100%; max-width: 280px; } }
+
+  .card-photo { position: absolute; inset: 0; }
+  .card-photo .art { position: absolute; left: 10%; right: 10%; top: 17%; height: 40%; display: grid; place-items: center; border-radius: 14px; }
+  .glass { position: absolute; display: flex; align-items: center; justify-content: center; background: rgba(18,17,15,0.38); border: 1px solid rgba(243,242,239,0.24); border-radius: 999px; color: var(--ink); }
+  .pips { position: absolute; top: 14px; left: 18px; right: 18px; display: flex; gap: 4px; }
+  .pips span { flex: 1; height: 2px; background: rgba(243,242,239,0.32); }
+  .pips span:first-child { background: var(--ink); }
+  .card-info { position: absolute; left: 18px; right: 18px; bottom: 96px; }
+  .foryou { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: rgba(216,194,157,0.16); border: 1px solid rgba(216,194,157,0.5); color: var(--accent-ink); font-size: 10px; }
+  .foryou::before { content: ""; width: 4px; height: 4px; border-radius: 2px; background: var(--accent); }
+  .foryou i { font: italic 12px var(--serif); }
+  .price { font: 400 40px/1 var(--serif); margin-top: 8px; }
+  .pname { font: 400 20px/1.15 var(--serif); margin-top: 4px; }
+  .store { font-size: 8px; letter-spacing: 0.2em; color: var(--muted); margin-top: 6px; }
+  .actions { position: absolute; left: 0; right: 0; bottom: 26px; display: flex; justify-content: center; align-items: center; gap: 22px; }
+  .act { width: 50px; height: 50px; border-radius: 25px; display: grid; place-items: center; border: 1px solid rgba(243,242,239,0.42); }
+  .act.small { width: 34px; height: 34px; border-color: rgba(243,242,239,0.22); }
+  .act.keep { background: var(--accent); border-color: var(--accent); box-shadow: 0 8px 24px rgba(216,194,157,0.3); }
+
+  .board { padding: 22px 14px; }
+  .board h4 { font: 400 34px/1 var(--serif); margin: 18px 4px 4px; }
+  .chips { display: flex; gap: 6px; margin: 12px 4px 14px; }
+  .chip { font-size: 10px; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(243,242,239,0.26); }
+  .chip.on { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .masonry > div { display: flex; flex-direction: column; gap: 8px; }
+  .tile { position: relative; border-radius: 12px; overflow: hidden; display: grid; place-items: center; }
+  .tile b { position: absolute; left: 8px; bottom: 6px; font: 400 16px var(--serif); font-weight: 400; }
+
+  /* Sections */
+  section { padding-block: 96px; border-top: 1px solid var(--line); }
+  .section-head { max-width: 640px; }
+  .section-head h2 { font-size: clamp(36px, 5vw, 56px); line-height: 1.02; margin-top: 14px; }
+  .section-head p { color: var(--muted); margin: 18px 0 0; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
+  .step { padding: 28px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .step .n { font: 400 15px var(--sans); color: var(--accent-ink); letter-spacing: 0.08em; }
+  .step h3 { font-size: 28px; margin-top: 14px; }
+  .step p { color: var(--muted); margin: 10px 0 0; font-size: 16px; }
+  @media (max-width: 820px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+  .rooms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
+  .room { border-radius: 20px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); }
+  .room .art { height: 180px; display: grid; place-items: center; }
+  .room .body { padding: 22px 24px 26px; }
+  .room h3 { font-size: 30px; }
+  .room ul { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .room li { font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(243,242,239,0.2); color: var(--muted); }
+  @media (max-width: 900px) { .rooms { grid-template-columns: minmax(0, 1fr); } }
+
+  .why { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 64px; margin-top: 56px; }
+  .why h3 { font-size: 30px; }
+  .why p { color: var(--muted); margin: 10px 0 0; }
+  @media (max-width: 760px) { .why { grid-template-columns: minmax(0, 1fr); } }
+
+  .money { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+  .money .panel { padding: 32px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+  .money .panel p { margin: 0; color: var(--muted); }
+  .money .panel p + p { margin-top: 14px; }
+  @media (max-width: 820px) { .money { grid-template-columns: minmax(0, 1fr); } }
+
+  .faq { margin-top: 40px; max-width: 760px; }
+  details { border-top: 1px solid var(--line); padding: 20px 0; }
+  details:last-child { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font: 400 24px/1.3 var(--serif); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-family: var(--sans); color: var(--accent-ink); }
+  details[open] summary::after { content: "–"; }
+  details p { color: var(--muted); margin: 12px 0 0; }
+
+  .final { text-align: center; }
+  .final h2 { font-size: clamp(40px, 6vw, 72px); line-height: 1; }
+  .final .join { margin: 36px auto 0; }
+  .final .join form { justify-content: center; }
+
+  footer { border-top: 1px solid var(--line); padding-block: 40px 56px; color: var(--muted); font-size: 14px; }
+  .foot { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: baseline; }
+  .foot nav { display: flex; flex-wrap: wrap; gap: 20px; }
+  .foot a { color: var(--muted); }
+  .foot a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Arvelle home">Arvelle</a>
+    <nav aria-label="Main">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#rooms">Rooms</a>
+      <a class="hide-sm" href="#stores">For stores</a>
+      <a class="btn btn-light" href="#join">Join the waitlist</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">Furniture discovery app · iOS &amp; Android</p>
+      <h1>Swipe to curate <em>your home.</em></h1>
+      <p class="lede">Arvelle shows you sofas, beds, chairs and more from the stores you already trust, one beautiful card at a time. Swipe right on what you love. Arvelle learns your taste, and when you’re ready, takes you straight to the store to buy.</p>
+      <div class="join" id="join">
+        <form data-waitlist data-source="hero" novalidate>
+          <label for="email-hero">Email address</label>
+          <input id="email-hero" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" required>
+          <button class="btn btn-light" type="submit">Join the waitlist</button>
+        </form>
+        <p class="note" role="status" aria-live="polite">Be first to try Arvelle. No spam, one email when we launch.</p>
+      </div>
+      <p class="stores-line">Furniture from leading home retailers. You always buy on the store’s own site.</p>
+    </div>
+
+    <div class="phones" aria-label="Arvelle app screens" role="img">
+      <div class="phone">
+        <div class="screen">
+          <div class="card-photo" style="background: radial-gradient(120% 80% at 50% 30%, #4A3F33 0%, #2A241E 55%, #12110F 100%);">
+            <div class="art" style="background: radial-gradient(90% 90% at 50% 40%, #6B5A47, #3A3128);">
+              <svg width="78%" viewBox="0 0 200 120" fill="none" stroke="#EADCC0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="34" y="24" width="132" height="46" rx="16"/><rect x="26" y="62" width="148" height="28" rx="11"/><rect x="14" y="48" width="26" height="44" rx="12"/><rect x="160" y="48" width="26" height="44" rx="12"/><path d="M100 64v24"/><path d="M38 92l-4 14M162 92l4 14"/></svg>
+            </div>
+          </div>
+          <div class="pips"><span></span><span></span><span></span></div>
+          <div class="glass" style="top:30px;left:14px;width:34px;height:34px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F3F2EF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="glass" style="top:30px;left:60px;right:60px;height:34px;font-size:8px;letter-spacing:0.2em;">SOFAS · 16 LEFT</div>
+          <div class="glass" style="top:30px;right:14px;width:40px;height:34px;font-size:10px;">Kept</div>
+          <div class="card-info">
+            <span class="foryou">For you · <i>mid-century</i></span>
+            <div class="price">$1,249</div>
+            <div class="pname">Oatmeal boucle sofa</div>
+            <div class="store">SAMPLE LISTING</div>
+          </div>
+          <div class="actions">
+            <div class="act"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F3F2EF" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+            <div class="act small"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8B4AC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></div>
+            <div class="act keep"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#12110F" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone back">
+        <div class="screen board">
+          <div class="glass" style="position:static;width:34px;height:34px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F3F2EF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <h4>Kept</h4>
+          <div class="chips"><span class="chip on">All</span><span class="chip">Living room 4</span><span class="chip">Bedroom 2</span></div>
+          <div class="masonry">
+            <div>
+              <div class="tile" style="height:150px;background:radial-gradient(#5B4E3E,#2B251F);"><svg width="70%" viewBox="0 0 200 120" fill="none" stroke="#EADCC0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="34" y="24" width="132" height="46" rx="16"/><rect x="26" y="62" width="148" height="28" rx="11"/><rect x="14" y="48" width="26" height="44" rx="12"/><rect x="160" y="48" width="26" height="44" rx="12"/></svg><b>$1,249</b></div>
+              <div class="tile" style="height:110px;background:radial-gradient(#3F4A40,#1F2620);"><svg width="46%" viewBox="0 0 120 120" fill="none" stroke="#EADCC0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="22" y="20" width="76" height="70" rx="6"/><path d="M22 55h76M54 37h12M54 72h12M30 90l-4 14M90 90l4 14"/></svg><b>$329</b></div>
+            </div>
+            <div>
+              <div class="tile" style="height:110px;background:radial-gradient(#4E3B33,#251C18);"><svg width="54%" viewBox="0 0 120 120" fill="none" stroke="#EADCC0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 60c0-24 12-40 30-40s30 16 30 40"/><rect x="24" y="56" width="72" height="26" rx="10"/><path d="M36 82l-4 18M84 82l4 18"/></svg><b>$689</b></div>
+              <div class="tile" style="height:150px;background:radial-gradient(#47423A,#22201C);"><svg width="74%" viewBox="0 0 200 140" fill="none" stroke="#EADCC0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="30" y="20" width="140" height="52" rx="12"/><rect x="20" y="66" width="160" height="34" rx="8"/><path d="M60 54h80"/><path d="M28 100v14M172 100v14"/></svg><b>$949</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From scrolling to <em>knowing what you want.</em></h2>
+        <p>Furniture shopping means hundreds of tabs and endless filters. Arvelle turns it into a few relaxed minutes of yes and no.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">01</div>
+          <h3>Pick a room</h3>
+          <p>Start with your bedroom, living room or kitchen, or go straight to sofas, rugs or bar stools.</p>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <h3>Swipe what you love</h3>
+          <p>Right to keep, left to skip. With every swipe, Arvelle learns your style, materials and price range, and shows you more of what fits.</p>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <h3>Buy from the store</h3>
+          <p>Group favorites into lists for each room. When you’re ready, tap Buy now and finish on the retailer’s own website.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rooms">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Rooms</p>
+        <h2>The pieces that <em>make a room.</em></h2>
+        <p>We start with the big, considered purchases: the furniture you live with every day.</p>
+      </div>
+      <div class="rooms">
+        <article class="room">
+          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#4A4136,#1C1B18);"><svg width="46%" viewBox="0 0 200 140" fill="none" stroke="#EADCC0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="30" y="20" width="140" height="52" rx="12"/><rect x="20" y="66" width="160" height="34" rx="8"/><path d="M60 54h80"/><path d="M28 100v14M172 100v14"/></svg></div>
+          <div class="body"><h3>Bedroom</h3><ul><li>Bed frames</li><li>Nightstands</li><li>Dressers</li></ul></div>
+        </article>
+        <article class="room">
+          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#3E4639,#1C1B18);"><svg width="50%" viewBox="0 0 200 120" fill="none" stroke="#EADCC0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="34" y="24" width="132" height="46" rx="16"/><rect x="26" y="62" width="148" height="28" rx="11"/><rect x="14" y="48" width="26" height="44" rx="12"/><rect x="160" y="48" width="26" height="44" rx="12"/><path d="M38 92l-4 14M162 92l4 14"/></svg></div>
+          <div class="body"><h3>Living room</h3><ul><li>Sofas</li><li>Accent chairs</li><li>Coffee tables</li><li>TV stands</li><li>Rugs</li></ul></div>
+        </article>
+        <article class="room">
+          <div class="art" style="background:radial-gradient(80% 90% at 50% 45%,#4B3A33,#1C1B18);"><svg width="24%" viewBox="0 0 100 160" fill="none" stroke="#EADCC0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="50" cy="30" rx="34" ry="10"/><path d="M22 36l-10 110M78 36l10 110M30 40l-4 106M70 40l4 106M18 100h64"/></svg></div>
+          <div class="body"><h3>Kitchen &amp; dining</h3><ul><li>Bar stools</li><li>Dining tables</li><li>Dining chairs</li></ul></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Why Arvelle</p>
+        <h2>Shopping that <em>feels like you.</em></h2>
+      </div>
+      <div class="why">
+        <div><h3>It learns your taste</h3><p>Every keep and skip teaches Arvelle what you like, from mid-century walnut to soft boucle, so your next swipe is more you than the last.</p></div>
+        <div><h3>Many stores, one place</h3><p>See pieces from trusted home retailers side by side, without opening a dozen tabs or creating a dozen accounts.</p></div>
+        <div><h3>Plan room by room</h3><p>Save favorites into lists like “Living room” or “Guest bedroom”, and pick up on any device when you sign in.</p></div>
+        <div><h3>You buy from the store</h3><p>Prices, delivery and returns come straight from the retailer. Arvelle never handles your payment.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stores">
+    <div class="wrap money">
+      <div class="section-head">
+        <p class="eyebrow">For retailers &amp; how we make money</p>
+        <h2>Shoppers who <em>already love it.</em></h2>
+        <p>Every shopper Arvelle sends you has already chosen your product over the alternatives. They tap Buy now on a piece they kept, and land on your product page ready to purchase.</p>
+      </div>
+      <div class="panel" id="disclosure">
+        <p><strong style="color:var(--ink);font-weight:500;">Affiliate disclosure.</strong> Arvelle is free to use. When you tap Buy now and make a purchase, the retailer may pay Arvelle a small commission through its affiliate program. This never changes the price you pay.</p>
+        <p>Commissions don’t decide what you see: Arvelle ranks products by your own taste. We only work with established retailers, and you always complete your purchase on the retailer’s own website.</p>
+        <p>Retail and partnership enquiries: <a data-email href="mailto:hello@arvelleco.com">hello@arvelleco.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Questions</p>
+        <h2>Good to know.</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Is Arvelle free?</summary><p>Yes. Arvelle is free to download and use. We earn a small commission from retailers on some purchases, at no extra cost to you.</p></details>
+        <details><summary>Do I buy through Arvelle?</summary><p>No. When you tap Buy now, you go to the retailer’s own website, where you check out, pay and arrange delivery exactly as you normally would.</p></details>
+        <details><summary>When can I try it?</summary><p>Arvelle is in testing now and launching soon on iPhone and Android. Join the waitlist and we’ll email you once, when it’s ready.</p></details>
+        <details><summary>Do I need an account?</summary><p>No. You can swipe and save without one. Sign in with Apple or Google if you want your favorites and taste saved across devices.</p></details>
+        <details><summary>What do you do with my data?</summary><p>We use your swipes only to personalize your recommendations, and we never sell your personal information. Read our <a href="privacy.html">privacy policy</a>.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <p class="eyebrow">Coming soon</p>
+      <h2 style="margin-top:14px;">Your home, <em>one swipe at a time.</em></h2>
+      <div class="join">
+        <form data-waitlist data-source="footer" novalidate>
+          <label for="email-final">Email address</label>
+          <input id="email-final" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" required>
+          <button class="btn btn-light" type="submit">Join the waitlist</button>
+        </form>
+        <p class="note" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div><span class="brand" style="font-size:22px;">Arvelle</span> &nbsp;·&nbsp; © <span data-year>2026</span> Arvelle. All rights reserved.</div>
+    <nav aria-label="Footer">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="#disclosure">Affiliate disclosure</a>
+      <a data-email href="mailto:hello@arvelleco.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+  (function () {
+    var cfg = window.ARVELLE_CONFIG || {};
+    var email = cfg.contactEmail || 'hello@arvelleco.com';
+    document.querySelectorAll('[data-email]').forEach(function (a) {
+      a.href = 'mailto:' + email;
+      if (a.textContent.indexOf('@') !== -1) a.textContent = email;
+    });
+    document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
+
+    var valid = function (v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) && v.length <= 254; };
+    document.querySelectorAll('form[data-waitlist]').forEach(function (form) {
+      var input = form.querySelector('input');
+      var button = form.querySelector('button');
+      var note = form.parentElement.querySelector('.note');
+      var say = function (text, kind) { note.textContent = text; note.className = 'note' + (kind ? ' ' + kind : ''); };
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var value = input.value.trim().toLowerCase();
+        if (!valid(value)) { say('Please enter a valid email address.', 'err'); input.focus(); return; }
+        if (!cfg.supabaseUrl || !cfg.supabasePublishableKey) {
+          say('The waitlist opens very soon. For now, email ' + email + ' and we’ll add you.', 'err');
+          return;
+        }
+        button.disabled = true;
+        say('Adding you…');
+        fetch(cfg.supabaseUrl.replace(/\/$/, '') + '/rest/v1/waitlist', {
+          method: 'POST',
+          headers: {
+            apikey: cfg.supabasePublishableKey,
+            Authorization: 'Bearer ' + cfg.supabasePublishableKey,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal'
+          },
+          body: JSON.stringify({ email: value, source: form.getAttribute('data-source') || 'website' })
+        }).then(function (res) {
+          // 409 means this email is already on the list: that's fine.
+          if (res.ok || res.status === 409) { say('You’re on the list. We’ll email you when Arvelle launches.', 'ok'); form.reset(); }
+          else { say('Something went wrong. Please try again in a moment.', 'err'); }
+        }).catch(function () {
+          say('Couldn’t connect. Check your internet and try again.', 'err');
+        }).then(function () { button.disabled = false; });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
