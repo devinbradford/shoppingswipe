@@ -15,6 +15,7 @@ import { LoadingView, StateView } from '@/components/StateView';
 import { useRetailerNames, useSavedProducts } from '@/hooks/useCatalog';
 import { useTransferFromKept, type TransferMode } from '@/hooks/useWishlists';
 import { pluralize } from '@/lib/format';
+import { recordSignal } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, space } from '@/theme/tokens';
@@ -133,7 +134,10 @@ export default function KeptScreen() {
                 onPress={() =>
                   selecting ? toggle(item.id) : router.push({ pathname: '/product/[id]', params: { id: item.id } })
                 }
-                onRemove={() => removeSaved(item.id)}
+                onRemove={() => {
+                  removeSaved(item.id);
+                  recordSignal(item.id, 'unsave');
+                }}
                 removeLabel={`Remove ${item.title} from kept`}
               />
             )}

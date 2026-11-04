@@ -43,6 +43,8 @@ interface SwipeCardProps {
   infoBottom?: number;
   /** Shown in the "For you" bubble's place when there is no reason yet. */
   hint?: string | null;
+  /** Called when the shopper flips to another photo. */
+  onPhotoBrowse?: () => void;
 }
 
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
@@ -61,6 +63,7 @@ export function SwipeCard({
   pipsTop = space.md,
   infoBottom = space.xl,
   hint = null,
+  onPhotoBrowse,
 }: SwipeCardProps) {
   const { width: screenWidth } = useWindowDimensions();
   const threshold = screenWidth * motion.swipeThreshold;
@@ -75,6 +78,10 @@ export function SwipeCard({
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
   const { product, forYou } = card;
   const photos = product.imageUrls;
+  const nextPhoto = () => {
+    if (photo < photos.length - 1) onPhotoBrowse?.();
+    setPhoto((p) => Math.min(photos.length - 1, p + 1));
+  };
 
   // A card that just became the top one resets the shared progress.
   useEffect(() => {
@@ -146,7 +153,7 @@ export function SwipeCard({
       } else if (e.x < cardSize.width * 0.4) {
         setPhoto((p) => Math.max(0, p - 1));
       } else {
-        setPhoto((p) => Math.min(photos.length - 1, p + 1));
+        nextPhoto();
       }
     },
   });
@@ -204,7 +211,7 @@ export function SwipeCard({
           if (e.nativeEvent.actionName === 'keep') flyOut('keep');
           if (e.nativeEvent.actionName === 'skip') flyOut('skip');
           if (e.nativeEvent.actionName === 'activate') onOpen();
-          if (e.nativeEvent.actionName === 'increment') setPhoto((p) => Math.min(photos.length - 1, p + 1));
+          if (e.nativeEvent.actionName === 'increment') nextPhoto();
           if (e.nativeEvent.actionName === 'decrement') setPhoto((p) => Math.max(0, p - 1));
         }}
         importantForAccessibility={isTop ? 'yes' : 'no-hide-descendants'}>

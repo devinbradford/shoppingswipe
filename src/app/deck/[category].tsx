@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AppText } from '@/components/AppText';
 import { GlassIconButton, GlassPill, GlassTextButton } from '@/components/Glass';
 import { Header } from '@/components/Header';
+import { QuestionPill } from '@/components/QuestionPill';
 import { LoadingView, StateView } from '@/components/StateView';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/SwipeDeck';
 import {
@@ -19,6 +20,7 @@ import { useCategorySummaries, useRetailerNames } from '@/hooks/useCatalog';
 import { useDeck } from '@/hooks/useDeck';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { formatPrice } from '@/lib/format';
+import { recordSignal } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { colors, space } from '@/theme/tokens';
 
@@ -95,6 +97,7 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
           infoBottom={infoBottom}
           hint={deck.coldStart ? 'Keep a few you like and the deck will learn' : null}
           onOpen={(p) => router.push({ pathname: '/product/[id]', params: { id: p.id } })}
+          onPhotoBrowse={(p) => recordSignal(p.id, 'photo_browse')}
         />
       ) : (
         <View style={[styles.stateArea, { paddingTop: barTop + 60 }]}>
@@ -137,6 +140,18 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
         />
       </View>
 
+      {showDeck && deck.question ? (
+        // Floats over the bottom of the photo, just above the price and name, so nothing is covered.
+        <View style={[styles.question, { bottom: infoBottom + QUESTION_ABOVE_INFO }]} pointerEvents="box-none">
+          <QuestionPill
+            question={deck.question}
+            onAnswer={deck.answerQuestion}
+            onDismiss={deck.dismissQuestion}
+            reduceMotion={reduceMotion}
+          />
+        </View>
+      ) : null}
+
       {showDeck ? (
         <View style={[styles.actions, { bottom: actionsBottom }]} pointerEvents="box-none">
           <GlassIconButton
@@ -164,6 +179,9 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
   );
 }
 
+/** The price, name and store line take about this much room above `infoBottom`. */
+const QUESTION_ABOVE_INFO = 200;
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   stateArea: { flex: 1 },
@@ -186,4 +204,5 @@ const styles = StyleSheet.create({
     gap: space.xxl,
   },
   undo: { paddingTop: 10 },
+  question: { position: 'absolute', left: 0, right: 0 },
 });

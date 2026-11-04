@@ -91,6 +91,14 @@ Phase 3 (accounts and sync; sign-in options chosen by Devin: Apple + Google only
 - Not yet verified: against a live Supabase project, real Apple/Google sign-in, on two real phones
 - Checks passing: typecheck, lint, 65 unit tests
 
+Recommender v2 (personalization upgrade):
+- Per-shopper Bayesian logistic regression (`src/recommendation/model.ts`): learns which features explain keeps and skips, with uncertainty; long-term + right-now taste; learned price ceiling per product type
+- Learns from more than swipes (`signals.ts`, stored in `src/store/signalStore.ts`, on-device only for now): Buy now ×3, list add ×2, detail open, photo browsing, un-keeping, fast vs slow skips
+- Ranking (`rank.ts`): Thompson-sampling exploration, a "probe" card every 7th slot, variety between neighbours, budget and confident-dislike push-down, coverage-based first cards
+- Occasional questions (`questions.ts` + `QuestionPill`): only after telling skips (pattern, mixed signals, surprise), max ~3 per 50 swipes, fades on its own
+- Simulated-shopper benchmark: `npm run engine-report` (v1 vs v2). v1 (`engine.ts`) is kept as the baseline and for the sync tests
+- Checks passing: typecheck, lint, 125 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

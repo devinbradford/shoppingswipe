@@ -58,7 +58,8 @@
     "check": "npm run typecheck && npm test",
     "seed": "tsx scripts/generate-seed.ts && tsx scripts/build-setup-sql.ts",
     "setup-sql": "tsx scripts/build-setup-sql.ts",
-    "bundle-waitlist": "tsx scripts/bundle-waitlist-function.ts"
+    "bundle-waitlist": "tsx scripts/bundle-waitlist-function.ts",
+    "engine-report": "tsx scripts/engine-report.ts"
   },
   "private": true,
   "jest": {

@@ -3,18 +3,26 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProductRepository } from '@/data';
 import type { CategoryId, Product, SubcategoryId, SwipeDirection } from '@/domain/types';
 import {
-  buildTasteProfile,
+  buildTasteModel,
+  EMPTY_QUESTION_STATE,
   formatReasons,
-  reasonLabels,
   hashSeed,
-  isColdStart,
-  rankProducts,
-  rerankQueue,
+  isColdStartModel,
+  markAsked,
+  nextQuestion,
+  rankDeck,
+  reasonLabels,
+  rerankDeck,
   type PriceBands,
+  type Question,
+  type QuestionState,
   type RankedProduct,
+  type SessionSwipe,
+  type SkipReason,
 } from '@/recommendation';
 import { newId } from '@/lib/ids';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { recordSignal, useSignalStore } from '@/store/signalStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 
@@ -38,10 +46,28 @@ export interface Deck {
   undo: () => void;
   canUndo: boolean;
   retry: () => void;
+  /** A quick question after a telling skip, or null. Shown briefly; ignoring it is fine. */
+  question: Question | null;
+  /** Feature questions: 'less' or 'fine'. "What put you off?": a SkipReason. */
+  answerQuestion: (answer: 'less' | 'fine' | SkipReason) => void;
+  /** The question faded or was closed without an answer. */
+  dismissQuestion: () => void;
 }
 
 /** Styles picked on first launch. */
 const picks = () => usePreferencesStore.getState().stylePicks;
+
+function modelFor(known: ReadonlyMap<string, Product>, bands: PriceBands) {
+  const { signals, feedback } = useSignalStore.getState();
+  return buildTasteModel({
+    swipes: useSwipeStore.getState().swipes,
+    products: known,
+    bands,
+    signals,
+    feedback,
+    seedStyles: picks(),
+  });
+}
 
 function toCard(r: RankedProduct): DeckCard {
   const labels = reasonLabels(r.reasons);
@@ -69,6 +95,16 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
   /** Every product we know about (candidates + previously swiped), for profile rebuilds. */
   const known = useRef(new Map<string, Product>());
   const bands = useRef<PriceBands>({});
+  /** This visit's swipes, for deciding when to ask a question. */
+  const session = useRef<SessionSwipe[]>([]);
+  const questionState = useRef<QuestionState>(EMPTY_QUESTION_STATE);
+  const [question, setQuestion] = useState<Question | null>(null);
+  /** When the current top card appeared, for how long it was looked at. */
+  const shownAt = useRef(0);
+  const topId = cards[0]?.product.id;
+  useEffect(() => {
+    shownAt.current = Date.now();
+  }, [topId]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -76,23 +112,31 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
     const repo = getProductRepository();
     const { swipes } = useSwipeStore.getState();
     const swipedIds = selectSwipedIds({ swipes });
+    const { signals, feedback } = useSignalStore.getState();
+    const engagedIds = new Set([
+      ...signals.map((s) => s.productId),
+      ...feedback.flatMap((f) => (f.kind === 'skip_reason' ? [f.productId] : [])),
+    ]);
 
     (async () => {
-      const [candidates, swipedProducts, priceBands] = await Promise.all([
+      const [candidates, seenProducts, priceBands] = await Promise.all([
         repo.listProducts({ categoryId, subcategoryId, excludeIds: swipedIds }),
-        repo.getProducts([...swipedIds]),
+        repo.getProducts([...new Set([...swipedIds, ...engagedIds])]),
         repo.getPriceBands(),
       ]);
       if (cancelled) return;
-      for (const p of [...candidates, ...swipedProducts]) known.current.set(p.id, p);
+      for (const p of [...candidates, ...seenProducts]) known.current.set(p.id, p);
       bands.current = priceBands;
-      const profile = buildTasteProfile(swipes, known.current, priceBands, undefined, picks());
-      const ranked = rankProducts(candidates, profile, {
+      const model = modelFor(known.current, priceBands);
+      const ranked = rankDeck(candidates, model, {
         bands: priceBands,
         seed: hashSeed(`${deckKey}:${swipes.length}`),
       });
+      session.current = [];
+      questionState.current = EMPTY_QUESTION_STATE;
+      setQuestion(null);
       setCards(ranked.map(toCard));
-      setColdStart(isColdStart(profile));
+      setColdStart(isColdStartModel(model));
       setHistory([]);
       setStatus('ready');
     })().catch((e: unknown) => {
@@ -110,19 +154,65 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
     (direction: SwipeDirection) => {
       const [top, ...rest] = cards;
       if (!top) return;
+      const dwellMs = shownAt.current ? Date.now() - shownAt.current : undefined;
+      if (dwellMs !== undefined) recordSignal(top.product.id, 'swipe_dwell', dwellMs);
       recordSwipe({ id: newId(), productId: top.product.id, categoryId, direction, swipedAt: Date.now() });
       const { swipes } = useSwipeStore.getState();
-      const profile = buildTasteProfile(swipes, known.current, bands.current, undefined, picks());
-      const next = rerankQueue(rest, profile, {
+      const model = modelFor(known.current, bands.current);
+      session.current = [
+        ...session.current,
+        { product: top.product, direction, dwellMs, predicted: top.score, forYou: top.forYou !== null },
+      ];
+      const next = rerankDeck(rest, model, {
         bands: bands.current,
         seed: hashSeed(`${deckKey}:${swipes.length}`),
+        position: session.current.length,
       });
       setCards(next.map(toCard));
-      setColdStart(isColdStart(profile));
+      setColdStart(isColdStartModel(model));
       setHistory((h) => [...h, top]);
+
+      // A question still showing when they swipe on counts as ignored.
+      let qs = questionState.current;
+      if (question) qs = { ...qs, ignoredStreak: qs.ignoredStreak + 1 };
+      const q = nextQuestion(session.current, model, bands.current, qs);
+      if (q) qs = markAsked(qs, q, session.current.length);
+      questionState.current = qs;
+      setQuestion(q);
     },
-    [cards, categoryId, deckKey, recordSwipe],
+    [cards, categoryId, deckKey, recordSwipe, question],
   );
+
+  const answerQuestion = useCallback(
+    (answer: 'less' | 'fine' | SkipReason) => {
+      if (!question) return;
+      const store = useSignalStore.getState();
+      if (question.type === 'feature' && (answer === 'less' || answer === 'fine')) {
+        store.answerFeature(question.featureKey, answer);
+      } else if (question.type === 'why' && answer !== 'less' && answer !== 'fine') {
+        store.answerSkipReason(question.productId, answer);
+      }
+      questionState.current = { ...questionState.current, ignoredStreak: 0 };
+      setQuestion(null);
+      // Apply the answer straight away, behind the cards already on screen.
+      const { swipes } = useSwipeStore.getState();
+      const model = modelFor(known.current, bands.current);
+      setCards((c) =>
+        rerankDeck(c, model, {
+          bands: bands.current,
+          seed: hashSeed(`${deckKey}:${swipes.length}:answer`),
+          position: session.current.length,
+        }).map(toCard),
+      );
+    },
+    [question, deckKey],
+  );
+
+  const dismissQuestion = useCallback(() => {
+    if (!question) return;
+    questionState.current = { ...questionState.current, ignoredStreak: questionState.current.ignoredStreak + 1 };
+    setQuestion(null);
+  }, [question]);
 
   const lastInSession = history.at(-1);
   const canUndo = lastInSession !== undefined;
@@ -136,15 +226,11 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
       return;
     }
     undoLastSwipe();
-    const profile = buildTasteProfile(
-      useSwipeStore.getState().swipes,
-      known.current,
-      bands.current,
-      undefined,
-      picks(),
-    );
+    session.current = session.current.slice(0, -1);
+    setQuestion(null);
+    const model = modelFor(known.current, bands.current);
     setCards((c) => [lastInSession, ...c]);
-    setColdStart(isColdStart(profile));
+    setColdStart(isColdStartModel(model));
     setHistory((h) => h.slice(0, -1));
   }, [lastInSession, undoLastSwipe]);
 
@@ -153,5 +239,5 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
     setAttempt((n) => n + 1);
   }, []);
 
-  return { status, error, cards, coldStart, swipe, undo, canUndo, retry };
+  return { status, error, cards, coldStart, swipe, undo, canUndo, retry, question, answerQuestion, dismissQuestion };
 }

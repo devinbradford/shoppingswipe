@@ -22,6 +22,8 @@ interface SwipeDeckProps {
   retailerNames: ReadonlyMap<string, string>;
   onSwipe: (direction: SwipeDirection) => void;
   onOpen: (product: Product) => void;
+  /** The shopper flipped to another photo of the top card. */
+  onPhotoBrowse?: (product: Product) => void;
   reduceMotion?: boolean;
   /** Layout around the full-screen card: where the photo lines and price sit. */
   pipsTop?: number;
@@ -37,6 +39,7 @@ export function SwipeDeck({
   retailerNames,
   onSwipe,
   onOpen,
+  onPhotoBrowse,
   reduceMotion,
   pipsTop,
   infoBottom,
@@ -88,6 +91,7 @@ export function SwipeDeck({
             infoBottom={infoBottom}
             hint={hint}
             onOpen={() => onOpen(card.product)}
+            onPhotoBrowse={onPhotoBrowse ? () => onPhotoBrowse(card.product) : undefined}
             registerApi={
               isTop
                 ? (api) => {

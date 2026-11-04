@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -22,6 +22,7 @@ import { useOnline } from '@/hooks/useOnline';
 import { useListsForProduct } from '@/hooks/useWishlists';
 import { formatPrice } from '@/lib/format';
 import { outboundUrl } from '@/lib/outboundLink';
+import { recordSignal } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, radii, space } from '@/theme/tokens';
@@ -77,6 +78,14 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   const price = formatPrice(product.priceCents, product.currency);
   const retailerName = retailer?.name ?? 'the retailer';
 
+  // Opening a product and flipping through its photos say a little about taste.
+  useEffect(() => {
+    recordSignal(product.id, 'detail_open');
+  }, [product.id]);
+  useEffect(() => {
+    if (photo > 0) recordSignal(product.id, 'photo_browse');
+  }, [photo, product.id]);
+
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setPhoto(Math.round(e.nativeEvent.contentOffset.x / width));
   };
@@ -88,6 +97,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
       return;
     }
     setOpening(true);
+    recordSignal(product.id, 'buy_click');
     try {
       await WebBrowser.openBrowserAsync(outboundUrl(product));
     } catch {
@@ -164,7 +174,10 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
         title="Add to list"
         checkedIds={new Set(inLists.map((l) => l.id))}
         onClose={() => setPicking(false)}
-        onPick={(listId) => addToList(listId, [product.id])}
+        onPick={(listId) => {
+          addToList(listId, [product.id]);
+          recordSignal(product.id, 'list_add');
+        }}
       />
 
       {buyError ? (
@@ -180,7 +193,14 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
           icon={isKept ? 'check' : 'keep'}
           variant="secondary"
           size="lg"
-          onPress={() => (isKept ? removeSaved(product.id) : addSaved(product.id))}
+          onPress={() => {
+            if (isKept) {
+              removeSaved(product.id);
+              recordSignal(product.id, 'unsave');
+            } else {
+              addSaved(product.id);
+            }
+          }}
           accessibilityHint={isKept ? 'Removes it from your kept list' : 'Adds it to your kept list'}
         />
         <Button
