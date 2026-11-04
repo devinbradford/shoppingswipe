@@ -371,21 +371,39 @@
   #stores .partners h2 { font-size: clamp(36px, 5vw, 56px); line-height: 1.02; margin-top: 14px; }
   #stores .partners-intro p:not(.eyebrow) { color: var(--muted); font-size: 18px; margin: 18px 0 0; max-width: 40em; }
   #stores .partners-intro p:not(.eyebrow) + p { margin-top: 14px; }
-  #stores .model { margin-top: 40px; padding-top: 36px; border-top: 1px solid var(--line); }
+  #stores .model { margin-top: 44px; padding-top: 40px; border-top: 1px solid var(--line); }
   #stores .model h3 { font: 500 17px/1.3 var(--sans); color: var(--ink); }
-  #stores .flow { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) 32px minmax(0, 1fr); align-items: center; }
+  #stores .flow { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) 32px minmax(0, 1fr); align-items: stretch; }
   #stores .flow li { margin: 0; }
-  #stores .flow .stage { padding: 14px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); text-align: center; font-size: 15px; font-weight: 500; color: var(--ink); }
+  #stores .flow .stage { padding: 20px 20px 22px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  #stores .flow .stage .n { display: block; font-size: 11px; letter-spacing: 0.2em; color: var(--accent-ink); }
+  #stores .flow .stage b { display: block; margin-top: 10px; font: 400 24px/1.1 var(--serif); color: var(--ink); }
+  #stores .flow .stage span:last-child { display: block; margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  #stores .flow .stage.is-retail { border-color: rgba(216,194,157,0.45); background: linear-gradient(180deg, rgba(216,194,157,0.08), rgba(216,194,157,0) 70%), var(--surface); }
   #stores .flow .to { display: grid; place-items: center; }
-  #stores .disclosure { margin: 28px 0 0; color: var(--muted); font-size: 15px; max-width: 46em; }
-  #stores .disclosure strong { color: var(--ink); font-weight: 500; }
+
+  #stores .disclosure-card {
+    margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px 40px;
+    padding: 26px 28px; border-radius: 18px; border: 1px solid var(--line);
+  }
   #stores #disclosure { scroll-margin-top: 104px; }
-  #stores .contact { margin: 16px 0 0; color: var(--muted); font-size: 15px; }
-  #stores .contact a { color: var(--ink); font-weight: 500; }
-  @media (max-width: 600px) {
+  #stores .disclosure-card .eyebrow { margin-bottom: 12px; }
+  #stores .disclosure-card p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 15px; }
+  #stores .promises { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; align-content: center; }
+  #stores .promises li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
+  #stores .promises li svg { margin-top: 3px; }
+  #stores .contact { margin: 28px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; color: var(--muted); font-size: 15px; }
+  #stores .contact a { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px; border: 1px solid rgba(216,194,157,0.45); color: var(--accent-ink); text-decoration: none; font-weight: 500; transition: background-color .2s ease, border-color .2s ease; }
+  #stores .contact a:hover { background: rgba(216,194,157,0.1); border-color: var(--accent); }
+  @media (max-width: 860px) {
+    #stores .disclosure-card { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 700px) {
     #stores .partners-intro p:not(.eyebrow) { font-size: 17px; }
     #stores .flow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    #stores .flow .to { padding-block: 2px; }
     #stores .flow .to svg { transform: rotate(90deg); }
+    #stores .disclosure-card { padding: 22px 20px; }
   }
 
   .faq { margin-top: 40px; max-width: 760px; }
@@ -602,14 +620,25 @@
       <div class="model">
         <h3>How our model works</h3>
         <ol class="flow">
-          <li class="stage">Discover</li>
+          <li class="stage"><span class="n">01</span><b>Discover</b><span>Shoppers swipe through furniture matched to their taste.</span></li>
           <li class="to" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></li>
-          <li class="stage">Save</li>
+          <li class="stage"><span class="n">02</span><b>Save</b><span>They keep the pieces they love, organized by room.</span></li>
           <li class="to" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></li>
-          <li class="stage">Shop at retailer</li>
+          <li class="stage is-retail"><span class="n">03</span><b>Shop at retailer</b><span>They land on your product page, ready to buy on your site.</span></li>
         </ol>
-        <p class="disclosure" id="disclosure"><strong>Affiliate disclosure:</strong> Arvelle is designed to be free for shoppers. We plan to earn commissions on qualifying purchases through affiliate partnerships. Purchases and payments are handled directly by retailers.</p>
-        <p class="contact">Partnership inquiries: <a data-email href="mailto:hello@arvelleco.com">hello@arvelleco.com</a></p>
+
+        <div class="disclosure-card" id="disclosure">
+          <div>
+            <p class="eyebrow">Affiliate disclosure</p>
+            <p>Arvelle is designed to be free for shoppers. We plan to earn commissions on qualifying purchases through affiliate partnerships. Purchases and payments are handled directly by retailers.</p>
+          </div>
+          <ul class="promises">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" stroke-opacity="0.45"/><path d="M8 12.3l2.7 2.7L16 9.6"/></svg><span>Commissions never change the price you pay.</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" stroke-opacity="0.45"/><path d="M8 12.3l2.7 2.7L16 9.6"/></svg><span>Commissions don’t decide what you see. Arvelle ranks products by each shopper’s own taste.</span></li>
+          </ul>
+        </div>
+
+        <p class="contact">Partnership inquiries <a data-email href="mailto:hello@arvelleco.com">hello@arvelleco.com</a></p>
       </div>
     </div>
   </section>
