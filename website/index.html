@@ -366,11 +366,27 @@
     #why .taste-line .trait { gap: 8px; font-size: 10.5px; letter-spacing: 0.04em; }
   }
 
-  .money { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
-  .money .panel { padding: 32px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
-  .money .panel p { margin: 0; color: var(--muted); }
-  .money .panel p + p { margin-top: 14px; }
-  @media (max-width: 820px) { .money { grid-template-columns: minmax(0, 1fr); } }
+  /* For retail partners. Every rule is scoped to #stores. */
+  #stores .partners > * { max-width: 860px; }
+  #stores .partners h2 { font-size: clamp(36px, 5vw, 56px); line-height: 1.02; margin-top: 14px; }
+  #stores .partners-intro p:not(.eyebrow) { color: var(--muted); font-size: 18px; margin: 18px 0 0; max-width: 40em; }
+  #stores .partners-intro p:not(.eyebrow) + p { margin-top: 14px; }
+  #stores .model { margin-top: 40px; padding-top: 36px; border-top: 1px solid var(--line); }
+  #stores .model h3 { font: 500 17px/1.3 var(--sans); color: var(--ink); }
+  #stores .flow { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) 32px minmax(0, 1fr); align-items: center; }
+  #stores .flow li { margin: 0; }
+  #stores .flow .stage { padding: 14px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); text-align: center; font-size: 15px; font-weight: 500; color: var(--ink); }
+  #stores .flow .to { display: grid; place-items: center; }
+  #stores .disclosure { margin: 28px 0 0; color: var(--muted); font-size: 15px; max-width: 46em; }
+  #stores .disclosure strong { color: var(--ink); font-weight: 500; }
+  #stores #disclosure { scroll-margin-top: 104px; }
+  #stores .contact { margin: 16px 0 0; color: var(--muted); font-size: 15px; }
+  #stores .contact a { color: var(--ink); font-weight: 500; }
+  @media (max-width: 600px) {
+    #stores .partners-intro p:not(.eyebrow) { font-size: 17px; }
+    #stores .flow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    #stores .flow .to svg { transform: rotate(90deg); }
+  }
 
   .faq { margin-top: 40px; max-width: 760px; }
   details { border-top: 1px solid var(--line); padding: 20px 0; }
@@ -576,16 +592,24 @@
   </section>
 
   <section id="stores">
-    <div class="wrap money">
-      <div class="section-head">
-        <p class="eyebrow">For retailers &amp; how we make money</p>
-        <h2>Shoppers who <em>already love it.</em></h2>
-        <p>Every shopper Arvelle sends you has already chosen your product over the alternatives. They tap Buy now on a piece they kept, and land on your product page ready to purchase.</p>
+    <div class="wrap partners">
+      <div class="partners-intro">
+        <p class="eyebrow">For retail partners</p>
+        <h2>A more personal <em>path to purchase.</em></h2>
+        <p>Arvelle is building a personalized furniture discovery experience that helps shoppers explore products from multiple retailers.</p>
+        <p>As shoppers keep or skip products, Arvelle learns their preferences and works to surface more relevant furniture. When they’re ready to buy, we direct them to the retailer’s own product page.</p>
       </div>
-      <div class="panel" id="disclosure">
-        <p><strong style="color:var(--ink);font-weight:500;">Affiliate disclosure.</strong> Arvelle is free to use. When you tap Buy now and make a purchase, the retailer may pay Arvelle a small commission through its affiliate program. This never changes the price you pay.</p>
-        <p>Commissions don’t decide what you see: Arvelle ranks products by your own taste. We only work with established retailers, and you always complete your purchase on the retailer’s own website.</p>
-        <p>Retail and partnership enquiries: <a data-email href="mailto:hello@arvelleco.com">hello@arvelleco.com</a></p>
+      <div class="model">
+        <h3>How our model works</h3>
+        <ol class="flow">
+          <li class="stage">Discover</li>
+          <li class="to" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></li>
+          <li class="stage">Save</li>
+          <li class="to" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></li>
+          <li class="stage">Shop at retailer</li>
+        </ol>
+        <p class="disclosure" id="disclosure"><strong>Affiliate disclosure:</strong> Arvelle is designed to be free for shoppers. We plan to earn commissions on qualifying purchases through affiliate partnerships. Purchases and payments are handled directly by retailers.</p>
+        <p class="contact">Partnership inquiries: <a data-email href="mailto:hello@arvelleco.com">hello@arvelleco.com</a></p>
       </div>
     </div>
   </section>
