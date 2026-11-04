@@ -26,12 +26,64 @@ The site lists **hello@arvelleco.com**. Make it real before applying to CJ:
 
 ## 4. Turn on the waitlist (after the Supabase setup)
 
-Once Supabase is set up (see `docs/SETUP-ACCOUNTS.md`; `supabase/setup.sql` already includes the waitlist table):
-1. Open `website/config.js` in Notepad.
-2. Paste the same **Project URL** and **Publishable key** you put in the app's `.env`, then save.
-3. Re-upload the `website` folder to Netlify.
-4. Sign up with your own email to test, then check **Supabase → Table Editor → waitlist**.
+Both sign-up forms send emails to a small server-side function in Supabase called **`waitlist-signup`**. It checks the email, blocks spam and repeated attempts, records which disclosure the person saw, and saves the email to the **`waitlist_signups`** table. The website itself holds **no Supabase keys**, and nobody on the internet can read the list; only you can, in the Supabase dashboard.
 
-The publishable key is safe on a public website: the waitlist table only lets people add an email, never read the list.
+Until step 4.4 is done, the forms politely ask visitors to email you instead.
 
-Until then, the form politely tells visitors to email you instead.
+### 4.1 Add the waitlist table (once)
+
+1. Supabase dashboard → your project → **SQL Editor** → **New query**.
+2. Open `supabase/migrations/20261106000000_waitlist_signups.sql` in Notepad, copy everything, paste it in, and press **Run**. You should see "Success. No rows returned".
+   - If you are setting up a brand-new project with `supabase/setup.sql`, skip this: it's already included.
+   - This only **adds** two tables (`waitlist_signups`, `waitlist_rate_limits`) and one function (`waitlist_signup`). It doesn't change or delete anything existing.
+
+### 4.2 Set the function's two secrets
+
+Supabase dashboard → **Edge Functions** → **Secrets** → add:
+
+| Name | Value |
+| --- | --- |
+| `WAITLIST_ALLOWED_ORIGINS` | Your website addresses, comma-separated, exactly as they appear in the browser, e.g. `https://cureavo.com,https://www.cureavo.com,https://your-site.netlify.app` |
+| `WAITLIST_IP_SALT` | A long random string. Make one in PowerShell: `[guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N')` and paste the result. Don't share it. |
+
+Supabase gives the function its database access automatically (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`); never put those anywhere in the website. (If your project has legacy API keys turned off, create a **secret** API key under **Project Settings → API Keys** and add it as a secret named `WAITLIST_SERVICE_KEY`.)
+
+### 4.3 Deploy the function (PowerShell, from the project folder)
+
+```powershell
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase functions deploy waitlist-signup --no-verify-jwt
+```
+
+- `YOUR_PROJECT_REF` is the code in your project's URL (`https://YOUR_PROJECT_REF.supabase.co`), also under **Project Settings → General**.
+- `--no-verify-jwt` is required: visitors aren't logged in. The function protects itself with the website allow-list, spam checks and rate limits.
+
+### 4.4 Point the website at it
+
+1. Open `website/config.js` in Notepad and set
+   `waitlistUrl: 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/waitlist-signup'`.
+2. Re-upload the `website` folder to Netlify.
+3. Test: sign up with your own email on the live site, then check **Supabase → Table Editor → waitlist_signups**. Sign up again with the same email in capitals: you'll see the same success message, and still only one row.
+
+### What gets stored
+
+- **`waitlist_signups`**: the email (trimmed, lower case), which form was used (`hero` or `footer`), the exact disclosure text shown next to that form plus its version, the time, and `marketing_opt_in = false` (people only agree to launch updates). Empty columns `confirmed_at`, `welcome_email_sent_at` and `unsubscribed_at` are ready for when emails are added later.
+- **`waitlist_rate_limits`**: one row per attempt with a salted hash of the visitor's IP (never the IP itself), deleted automatically after a day. Each visitor gets 5 attempts per 10 minutes and 20 per day.
+
+### Changing the wording next to a form
+
+The text under each form is the consent record. If you change it (for example when renaming to CureAvo), also add a new version in `supabase/functions/waitlist-signup/handler.ts` (`CONSENT_DISCLOSURES`, e.g. `hero-v2`), update the form's `data-consent` attribute in `index.html` to match, and redeploy the function.
+
+### Adding a welcome email later
+
+Brand-new signups (not repeats) run `onNewSignup()` in `supabase/functions/waitlist-signup/index.ts`. Send the email there, then fill in `welcome_email_sent_at`. A failing email never blocks the signup.
+
+### The older `waitlist` table
+
+Earlier versions of the site wrote straight to a table called `waitlist`. The website no longer uses it, but it was left untouched. If it exists in your project and you want to close it to the public, run:
+
+```sql
+revoke insert on public.waitlist from anon, authenticated;
+drop policy if exists "Waitlist: anyone can join" on public.waitlist;
+```

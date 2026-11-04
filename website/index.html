@@ -435,10 +435,11 @@
       <h1>Discover furniture you’ll love.<br><em>One swipe at a time.</em></h1>
       <p class="lede">Find your style across furniture stores, without the endless tabs. Swipe through pieces you love, save your favorites, and shop directly from the retailer.</p>
       <div class="join" id="join">
-        <form data-waitlist data-source="hero" novalidate>
+        <form data-waitlist data-source="hero" data-consent="hero-v1" novalidate>
           <label for="email-hero">Email address</label>
           <input id="email-hero" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" required>
           <button class="btn btn-light" type="submit">Join the early-access list</button>
+          <input class="hp" type="text" name="hp-extra" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;">
         </form>
         <p class="note" role="status" aria-live="polite">Free to join. Be first to know when Arvelle launches.</p>
       </div>
@@ -642,12 +643,13 @@
       <p class="eyebrow">Coming soon</p>
       <h2 style="margin-top:14px;">Your home, <em>one swipe at a time.</em></h2>
       <div class="join">
-        <form data-waitlist data-source="footer" novalidate>
+        <form data-waitlist data-source="footer" data-consent="footer-v1" novalidate>
           <label for="email-final">Email address</label>
           <input id="email-final" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" required>
           <button class="btn btn-light" type="submit">Join the waitlist</button>
+          <input class="hp" type="text" name="hp-extra" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;">
         </form>
-        <p class="note" role="status" aria-live="polite"></p>
+        <p class="note" role="status" aria-live="polite">Free to join. We’ll only email you about our launch.</p>
       </div>
     </div>
   </section>
@@ -675,38 +677,69 @@
     });
     document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 
+    // Waitlist: both forms post to the waitlist-signup Edge Function (see
+    // supabase/functions/waitlist-signup). No Supabase keys live in this page.
+    var loadedAt = Date.now();
     var valid = function (v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) && v.length <= 254; };
+    var MESSAGES = {
+      invalid: 'Please enter a valid email address.',
+      sending: 'Adding you to the list…',
+      ok: 'You’re on the list. We’ll email you when we launch.',
+      rateLimited: 'Too many attempts. Please wait a few minutes and try again.',
+      server: 'Something went wrong on our end. Please try again in a moment.',
+      offline: 'Couldn’t connect. Check your internet and try again.'
+    };
     document.querySelectorAll('form[data-waitlist]').forEach(function (form) {
-      var input = form.querySelector('input');
+      var input = form.querySelector('input[type="email"]');
+      var trap = form.querySelector('input.hp');
       var button = form.querySelector('button');
       var note = form.parentElement.querySelector('.note');
+      var busy = false;
       var say = function (text, kind) { note.textContent = text; note.className = 'note' + (kind ? ' ' + kind : ''); };
+      var setBusy = function (on) {
+        busy = on;
+        button.disabled = on;
+        input.readOnly = on;
+        if (on) { form.setAttribute('aria-busy', 'true'); } else { form.removeAttribute('aria-busy'); }
+      };
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        if (busy) return; // ignore double clicks while a request is in flight
         var value = input.value.trim().toLowerCase();
-        if (!valid(value)) { say('Please enter a valid email address.', 'err'); input.focus(); return; }
-        if (!cfg.supabaseUrl || !cfg.supabasePublishableKey) {
+        if (!valid(value)) { say(MESSAGES.invalid, 'err'); input.focus(); return; }
+        if (!cfg.waitlistUrl) {
           say('The waitlist opens very soon. For now, email ' + email + ' and we’ll add you.', 'err');
           return;
         }
-        button.disabled = true;
-        say('Adding you…');
-        fetch(cfg.supabaseUrl.replace(/\/$/, '') + '/rest/v1/waitlist', {
+        setBusy(true);
+        say(MESSAGES.sending);
+        var controller = 'AbortController' in window ? new AbortController() : null;
+        var timer = controller ? setTimeout(function () { controller.abort(); }, 15000) : null;
+        fetch(cfg.waitlistUrl, {
           method: 'POST',
-          headers: {
-            apikey: cfg.supabasePublishableKey,
-            Authorization: 'Bearer ' + cfg.supabasePublishableKey,
-            'Content-Type': 'application/json',
-            Prefer: 'return=minimal'
-          },
-          body: JSON.stringify({ email: value, source: form.getAttribute('data-source') || 'website' })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: value,
+            source: form.getAttribute('data-source'),
+            consent: true,
+            consentVersion: form.getAttribute('data-consent'),
+            company: trap ? trap.value : '',
+            elapsedMs: Date.now() - loadedAt
+          }),
+          signal: controller ? controller.signal : undefined
         }).then(function (res) {
-          // 409 means this email is already on the list: that's fine.
-          if (res.ok || res.status === 409) { say('You’re on the list. We’ll email you when Arvelle launches.', 'ok'); form.reset(); }
-          else { say('Something went wrong. Please try again in a moment.', 'err'); }
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (res.ok && data.ok) { say(MESSAGES.ok, 'ok'); form.reset(); }
+            else if (res.status === 429) { say(MESSAGES.rateLimited, 'err'); }
+            else if (data.error === 'invalid_email') { say(MESSAGES.invalid, 'err'); input.focus(); }
+            else { say(MESSAGES.server, 'err'); }
+          });
         }).catch(function () {
-          say('Couldn’t connect. Check your internet and try again.', 'err');
-        }).then(function () { button.disabled = false; });
+          say(MESSAGES.offline, 'err');
+        }).then(function () {
+          if (timer) clearTimeout(timer);
+          setBusy(false);
+        });
       });
     });
   })();

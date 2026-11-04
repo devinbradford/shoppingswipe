@@ -1,8 +1,7 @@
-// Website settings. Fill these in after the Supabase project exists
-// (same two values as the app's .env). Both are safe to publish: the
-// waitlist table only allows adding an email, never reading the list.
+// Website settings. Everything here is public: do NOT put any Supabase key
+// in this file. The waitlist URL is your Edge Function's address, shown in
+// Supabase > Edge Functions > waitlist-signup (see docs/WEBSITE.md).
 window.ARVELLE_CONFIG = {
-  supabaseUrl: '', // e.g. 'https://abcdefgh.supabase.co'
-  supabasePublishableKey: '', // e.g. 'sb_publishable_...'
+  waitlistUrl: '', // e.g. 'https://abcdefgh.supabase.co/functions/v1/waitlist-signup'
   contactEmail: 'hello@arvelleco.com',
 };

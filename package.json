@@ -67,7 +67,7 @@
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/supabase/"
+      "/supabase/(?!functions/)"
     ]
   }
 }

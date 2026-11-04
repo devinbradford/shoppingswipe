@@ -1,0 +1,8 @@
+# Supabase CLI settings for this project. Only what we need is set here;
+# everything else uses the CLI defaults.
+project_id = "swipeshop"
+
+# Public website form endpoint: no logged-in user, so no JWT. It is protected
+# by its own origin allow-list, anti-spam checks and database rate limits.
+[functions.waitlist-signup]
+verify_jwt = false
