@@ -52,6 +52,7 @@ export interface WaitlistDeps {
  */
 export const CONSENT_DISCLOSURES: Record<string, { source: SignupSource; text: string }> = {
   'hero-v1': { source: 'hero', text: 'Free to join. Be first to know when Arvelle launches.' },
+  'hero-v2': { source: 'hero', text: 'Free to join. Be first to know when CureAvo launches.' },
   'footer-v1': { source: 'footer', text: 'Free to join. We’ll only email you about our launch.' },
 };
 

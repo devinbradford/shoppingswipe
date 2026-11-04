@@ -107,6 +107,16 @@ describe('handleWaitlistRequest', () => {
     expect(created).toEqual([]);
   });
 
+  it('records the renamed hero disclosure (v2) and still accepts cached v1 pages', async () => {
+    for (const version of ['hero-v2', 'hero-v1']) {
+      const { deps, saved } = makeDeps('created');
+      const res = await handleWaitlistRequest(post({ ...valid, consentVersion: version }), config, deps);
+      expect(res.status).toBe(200);
+      expect(saved[0]).toMatchObject({ consentVersion: version, consentText: CONSENT_DISCLOSURES[version].text });
+    }
+    expect(CONSENT_DISCLOSURES['hero-v2'].text).toBe('Free to join. Be first to know when CureAvo launches.');
+  });
+
   it('accepts the footer form with its own disclosure', async () => {
     const { deps, saved } = makeDeps('created');
     const res = await handleWaitlistRequest(post({ ...valid, source: 'footer', consentVersion: 'footer-v1' }), config, deps);
