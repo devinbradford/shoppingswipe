@@ -301,10 +301,82 @@
   }
 
 
-  .why { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 64px; margin-top: 56px; }
-  .why h3 { font-size: 30px; }
-  .why p { color: var(--muted); margin: 10px 0 0; }
-  @media (max-width: 760px) { .why { grid-template-columns: minmax(0, 1fr); } }
+  /* Why Arvelle: how swipes shape recommendations. Every rule is scoped to #why. */
+  #why .why-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px 64px; align-items: end; }
+  #why .why-head h2 { font-size: clamp(38px, 5vw, 60px); line-height: 1.02; margin-top: 14px; max-width: 12em; }
+  #why .why-head > p { color: var(--muted); font-size: 17px; margin: 0; max-width: 25em; }
+
+  #why .story { list-style: none; padding: 0; margin: 56px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr) 44px minmax(0, 1fr); grid-template-rows: auto auto; }
+  #why .story > li { margin: 0; }
+  #why .story > li:not(.step-arrow) { display: grid; grid-row: span 2; grid-template-rows: subgrid; }
+  #why .shot { position: relative; aspect-ratio: 5 / 4; border-radius: 18px; overflow: hidden; background: #2A2620; box-shadow: 0 0 0 1px rgba(243,242,239,0.08), 0 30px 60px -36px rgba(0,0,0,0.9); }
+  #why .shot > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #why .shot::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,17,15,0.28) 0%, rgba(18,17,15,0) 34%); pointer-events: none; }
+  #why .is-skip .shot > img { filter: grayscale(0.55) brightness(0.62); }
+  #why .is-foryou .shot { box-shadow: 0 0 0 1px rgba(216,194,157,0.7), 0 0 0 6px rgba(216,194,157,0.1), 0 30px 70px -30px rgba(216,194,157,0.35); }
+  #why .badge {
+    position: absolute; z-index: 2; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px 7px 9px;
+    border-radius: 999px; background: rgba(18,17,15,0.55); border: 1px solid rgba(243,242,239,0.2);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: var(--ink); font-size: 12px; line-height: 1;
+  }
+  #why .badge i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 9px; }
+  #why .is-skip .badge { color: var(--muted); }
+  #why .is-skip .badge i { border: 1px solid rgba(243,242,239,0.35); }
+  #why .is-keep .badge i { background: var(--accent); }
+  #why .is-foryou .badge { color: var(--accent-ink); border-color: rgba(216,194,157,0.45); }
+  #why .is-foryou .badge i { width: 6px; height: 6px; border-radius: 3px; background: var(--accent); margin: 0 2px 0 4px; }
+  #why .story-cap { margin-top: 14px; padding-inline: 4px; }
+  #why .story-cap b { display: block; font: 400 22px/1.15 var(--serif); color: var(--ink); }
+  #why .story-cap span { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
+  #why .is-skip .story-cap b { color: var(--muted); }
+  #why .step-arrow { grid-row: 1; display: grid; place-items: center; align-self: center; }
+  #why .story > li:nth-child(1) { grid-column: 1; }
+  #why .story > li:nth-child(2) { grid-column: 2; }
+  #why .story > li:nth-child(3) { grid-column: 3; }
+  #why .story > li:nth-child(4) { grid-column: 4; }
+  #why .story > li:nth-child(5) { grid-column: 5; }
+  #why .step-arrow span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 15px; border: 1px solid rgba(216,194,157,0.35); }
+
+  #why .insight {
+    margin-top: 32px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px 56px; align-items: center;
+    padding: 26px 30px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line);
+  }
+  #why .insight h3 { font-size: 28px; line-height: 1.1; }
+  #why .insight > div > p { color: var(--muted); font-size: 15px; margin: 8px 0 0; max-width: 30em; }
+  #why .learned { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  #why .learned li { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr); align-items: center; gap: 16px; font-size: 14px; color: var(--ink); }
+  #why .learned li > span { position: relative; height: 4px; border-radius: 2px; background: rgba(243,242,239,0.1); overflow: hidden; }
+  #why .learned li > span::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: 2px; background: linear-gradient(90deg, rgba(216,194,157,0.45), var(--accent)); }
+
+  #why .perks { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 40px; }
+  #why .perks li { margin: 0; padding-top: 20px; border-top: 1px solid var(--line); }
+  #why .perks svg { display: block; margin-bottom: 12px; }
+  #why .perks b { display: block; font-size: 16px; font-weight: 500; color: var(--ink); }
+  #why .perks p { color: var(--muted); font-size: 15px; margin: 6px 0 0; }
+
+  @media (max-width: 1000px) {
+    #why .story { grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) 32px minmax(0, 1fr); }
+    #why .story-cap b { font-size: 19px; }
+    #why .story-cap span { font-size: 13px; }
+    #why .insight { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    #why .why-head { grid-template-columns: minmax(0, 1fr); }
+    #why .story { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; margin-top: 40px; }
+    #why .story > li:not(.step-arrow) { grid-row: auto; grid-template-rows: none; grid-template-columns: 132px minmax(0, 1fr); gap: 16px; align-items: center; }
+    #why .step-arrow, #why .story > li:nth-child(n) { grid-row: auto; grid-column: auto; }
+    #why .shot { border-radius: 14px; }
+    #why .badge { top: 8px; left: 8px; padding: 5px 9px 5px 7px; font-size: 11px; gap: 5px; }
+    #why .badge i { width: 15px; height: 15px; }
+    #why .story-cap { margin-top: 0; padding: 0; }
+    #why .step-arrow { justify-items: start; padding: 8px 0 8px 51px; }
+    #why .step-arrow svg { transform: rotate(90deg); }
+    #why .insight { padding: 22px 20px; margin-top: 28px; }
+    #why .insight h3 { font-size: 24px; }
+    #why .perks { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 32px; }
+    #why .perks li { padding-block: 18px; }
+    #why .perks svg { float: left; margin: 2px 14px 0 0; }
+  }
 
   .money { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
   .money .panel { padding: 32px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
@@ -484,18 +556,50 @@
     </div>
   </section>
 
-  <section>
+  <section id="why">
     <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Why Arvelle</p>
-        <h2>Shopping that <em>feels like you.</em></h2>
+      <div class="why-head">
+        <div>
+          <p class="eyebrow">Why Arvelle</p>
+          <h2>The more you swipe, <em>the more it gets you.</em></h2>
+        </div>
+        <p>Every keep and skip helps Arvelle understand your style, so your recommendations become more personal as you explore.</p>
       </div>
-      <div class="why">
-        <div><h3>It learns your taste</h3><p>Every keep and skip teaches Arvelle what you like, from mid-century walnut to soft boucle, so your next swipe is more you than the last.</p></div>
-        <div><h3>Many stores, one place</h3><p>See pieces from trusted home retailers side by side, without opening a dozen tabs or creating a dozen accounts.</p></div>
-        <div><h3>Plan room by room</h3><p>Save favorites into lists like “Living room” or “Guest bedroom”, and pick up on any device when you sign in.</p></div>
-        <div><h3>You buy from the store</h3><p>Prices, delivery and returns come straight from the retailer. Arvelle never handles your payment.</p></div>
+
+      <ol class="story" aria-label="Example: how your swipes shape what Arvelle shows you next">
+        <li class="is-skip">
+          <div class="shot"><img src="assets/why/skip-leather-sofa.jpg" alt="Dark brown leather sofa with tailored arms" loading="lazy" decoding="async"><span class="badge"><i><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#B8B4AC" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></i>Skipped</span></div>
+          <div class="story-cap"><b>Not your style</b><span>Dark leather, tailored lines</span></div>
+        </li>
+        <li class="step-arrow" aria-hidden="true"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="is-keep">
+          <div class="shot"><img src="assets/why/keep-curved-boucle.jpg" alt="Curved cream bouclé sofa" loading="lazy" decoding="async"><span class="badge"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="#12110F" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg></i>Kept</span></div>
+          <div class="story-cap"><b>You love this</b><span>Cream bouclé, soft curves</span></div>
+        </li>
+        <li class="step-arrow" aria-hidden="true"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></li>
+        <li class="is-foryou">
+          <div class="shot"><img src="assets/why/foryou-boucle-loveseat.jpg" alt="Rounded cream bouclé loveseat with light wood legs" loading="lazy" decoding="async"><span class="badge"><i></i>For you</span></div>
+          <div class="story-cap"><b>More of what you love</b><span>A new piece with the same feel</span></div>
+        </li>
+      </ol>
+
+      <div class="insight">
+        <div>
+          <h3>Your taste is taking shape.</h3>
+          <p>Arvelle starts recognizing what you love, from softer silhouettes to lighter fabrics.</p>
+        </div>
+        <ul class="learned" aria-label="Preferences Arvelle is learning">
+          <li>Curved silhouettes<span style="--w: 86%;" aria-hidden="true"></span></li>
+          <li>Light upholstery<span style="--w: 74%;" aria-hidden="true"></span></li>
+          <li>Soft textures<span style="--w: 66%;" aria-hidden="true"></span></li>
+        </ul>
       </div>
+
+      <ul class="perks">
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><b>Discover across stores</b><p>Explore furniture from different retailers without endless tabs.</p></li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg><b>Save what you love</b><p>Keep your favorite pieces organized by room.</p></li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D8C29D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg><b>Shop directly</b><p>Find your favorites here, then buy from the retailer.</p></li>
+      </ul>
     </div>
   </section>
 
