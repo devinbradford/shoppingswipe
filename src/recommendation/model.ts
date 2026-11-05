@@ -123,6 +123,8 @@ export interface TasteInput {
   signals?: readonly EngagementSignal[];
   feedback?: readonly Feedback[];
   seedStyles?: readonly string[];
+  /** Budget from onboarding: a price cap for one product type, scaled to the others. */
+  statedBudget?: { subcategoryId: Product['subcategoryId']; maxCents: number } | null;
   options?: ModelOptions;
 }
 
@@ -328,7 +330,16 @@ export function buildTasteModel(input: TasteInput): TasteModel {
     baseRate: (P + 1) / (P + N + 2),
     shortBaseRate: (sP + 1) / (sP + sN + 2),
     shortMass: sP + sN,
-    budget: learnBudget(pricePoints, pricedOut),
+    budget: learnBudget(
+      pricePoints,
+      pricedOut,
+      input.statedBudget && bands[input.statedBudget.subcategoryId]
+        ? priceRatio(
+            { priceCents: input.statedBudget.maxCents, subcategoryId: input.statedBudget.subcategoryId },
+            bands,
+          )
+        : null,
+    ),
     muted,
     fine: [...fine],
     keepCount,
@@ -340,7 +351,30 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   };
 }
 
-function learnBudget(points: { r: number; w: number }[], pricedOut: number[]): Budget | null {
+/**
+ * Price ceiling, learned from what they keep. A budget stated during onboarding
+ * (`stated`, same units) counts like about 3 kept pieces at that price: it sets
+ * the ceiling from the very first card, then real behavior takes over.
+ */
+function learnBudget(points: { r: number; w: number }[], pricedOut: number[], stated: number | null): Budget | null {
+  const learned = learnFromBehavior(points, pricedOut);
+  if (stated === null) return learned;
+  const hint = { center: stated - 0.35, ceiling: stated + 0.05, confidence: 0.8 };
+  const W = points.reduce((s, p) => s + p.w, 0);
+  if (!learned || W < 2.5) {
+    if (!learned) return hint;
+    return { ...hint, ceiling: Math.min(hint.ceiling, learned.ceiling) };
+  }
+  const HINT_WEIGHT = 3;
+  const mix = (a: number, b: number) => (HINT_WEIGHT * a + W * b) / (HINT_WEIGHT + W);
+  return {
+    center: mix(hint.center, learned.center),
+    ceiling: mix(hint.ceiling, learned.ceiling),
+    confidence: Math.max(hint.confidence, learned.confidence),
+  };
+}
+
+function learnFromBehavior(points: { r: number; w: number }[], pricedOut: number[]): Budget | null {
   const W = points.reduce((s, p) => s + p.w, 0);
   if (W >= 2.5) {
     const center = points.reduce((s, p) => s + p.r * p.w, 0) / W;

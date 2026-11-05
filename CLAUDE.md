@@ -99,6 +99,13 @@ Recommender v2 (personalization upgrade):
 - Simulated-shopper benchmark: `npm run engine-report` (v1 vs v2). v1 (`engine.ts`) is kept as the baseline and for the sync tests
 - Checks passing: typecheck, lint, 125 unit tests
 
+Onboarding (premium first launch):
+- `/intro`: 3 animated slides, auto-advance, Skip; shown once per phone (`introSeen`)
+- `/welcome`: 3x3 photo style picker (`assets/styles`, `src/data/stylePhotos.ts`), extra styles as chips
+- `/setup/room` then `/setup/budget`: room choice and a stepped price slider for that room's key piece (`src/domain/budget.ts`); budget seeds the engine's price ceiling (`statedBudget`), then real behavior takes over. Room and budget are on-device only for now
+- `/building`: 1.7 s "Building your feed" moment, then straight into the chosen room's deck
+- No permission prompts during onboarding
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

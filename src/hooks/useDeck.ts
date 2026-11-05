@@ -66,6 +66,7 @@ function modelFor(known: ReadonlyMap<string, Product>, bands: PriceBands) {
     signals,
     feedback,
     seedStyles: picks(),
+    statedBudget: usePreferencesStore.getState().budget,
   });
 }
 

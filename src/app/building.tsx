@@ -36,7 +36,7 @@ const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
  * appear, then the app moves on. Makes the first deck feel made for them.
  *
  * Route params: `next` (where to go after; default Discover), `tags` (extra
- * answer labels to show, comma-separated, e.g. room and budget).
+ * answer labels to show, separated by |, e.g. room and budget).
  */
 export default function BuildingScreen() {
   const insets = useSafeAreaInsets();
@@ -47,7 +47,7 @@ export default function BuildingScreen() {
 
   const tags = useMemo(() => {
     const extra = (params.tags ?? '')
-      .split(',')
+      .split('|')
       .map((t) => t.trim())
       .filter(Boolean);
     return [...picks.map(titleCase), ...extra].slice(0, 6);

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import type { BudgetAnswer, RoomChoice } from '@/domain/budget';
 import { recordOps } from '@/sync/record';
 
 interface PreferencesState {
@@ -12,6 +13,12 @@ interface PreferencesState {
   /** True once the 3-screen intro was seen or skipped (on this phone). */
   introSeen: boolean;
   markIntroSeen: () => void;
+  /** Room they said they're shopping for (onboarding), or null if skipped. On this phone only for now. */
+  room: RoomChoice | null;
+  /** Budget they gave (onboarding), or null for no limit / skipped. On this phone only for now. */
+  budget: BudgetAnswer | null;
+  setRoom: (room: RoomChoice | null) => void;
+  setBudget: (budget: BudgetAnswer | null) => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -24,6 +31,10 @@ export const usePreferencesStore = create<PreferencesState>()(
       onboarded: false,
       introSeen: false,
       markIntroSeen: () => set({ introSeen: true }),
+      room: null,
+      budget: null,
+      setRoom: (room) => set({ room }),
+      setBudget: (budget) => set({ budget }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -32,12 +43,18 @@ export const usePreferencesStore = create<PreferencesState>()(
         set({ onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks: get().stylePicks, onboarded: true } }]);
       },
-      resetAll: () => set({ stylePicks: [], onboarded: false }),
+      resetAll: () => set({ stylePicks: [], onboarded: false, room: null, budget: null }),
     }),
     {
       name: 'swipeshop.preferences.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ stylePicks: s.stylePicks, onboarded: s.onboarded, introSeen: s.introSeen }),
+      partialize: (s) => ({
+        stylePicks: s.stylePicks,
+        onboarded: s.onboarded,
+        introSeen: s.introSeen,
+        room: s.room,
+        budget: s.budget,
+      }),
     },
   ),
 );

@@ -50,7 +50,7 @@ export default function WelcomeScreen() {
         onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         <View style={styles.header}>
           <AppText variant="eyebrow" color={colors.inkMuted}>
-            CUREAVO
+            {onboarded ? 'CUREAVO' : 'STEP 1 OF 3'}
           </AppText>
           <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
             {onboarded ? 'Your styles' : 'What feels like '}
@@ -125,8 +125,8 @@ export default function WelcomeScreen() {
           onPress={() => {
             const firstTime = !onboarded;
             setStylePicks(picks);
-            // First launch: a short "building your feed" moment, then Discover.
-            if (firstTime) router.replace('/building');
+            // First launch: two quick questions (room, budget), then "building your feed".
+            if (firstTime) router.push('/setup/room');
             else leave();
           }}
         />
