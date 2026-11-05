@@ -1,4 +1,4 @@
-# Swipeshop
+# CureAvo
 
 Swipe through products from many retailers. Right to keep, left to skip. The app learns your taste as you go.
 

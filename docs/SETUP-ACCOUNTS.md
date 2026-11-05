@@ -71,21 +71,21 @@ Allow about 30–45 minutes. Do the parts in order. Website menus get renamed fr
 
 10. In Supabase: **Authentication → URL Configuration → Redirect URLs → Add URL**. Add these two:
     - `exp://**` (Expo Go while testing)
-    - `swipeshop://**` (the real app later)
+    - `cureavo://**` (the real app later)
 
 ---
 
 ## Part 2: Google sign-in (free)
 
 1. In Supabase: **Authentication → Sign In / Providers → Google**. Copy the **Callback URL** shown there (looks like `https://abcdefgh.supabase.co/auth/v1/callback`). Leave this tab open.
-2. Go to **https://console.cloud.google.com** and sign in. Create a project named `Swipeshop` (project picker at the top → **New project**).
+2. Go to **https://console.cloud.google.com** and sign in. Create a project named `CureAvo` (project picker at the top → **New project**).
 3. Open **APIs & Services → OAuth consent screen** (may be called **Google Auth Platform**). Click **Get started**:
-   - App name: `Swipeshop`, support email: yours
+   - App name: `CureAvo`, support email: yours
    - Audience: **External**
    - Contact email: yours → **Create**
 4. Open **Clients** (or **Credentials → Create credentials → OAuth client ID**):
    - Application type: **Web application**
-   - Name: `Swipeshop Supabase`
+   - Name: `CureAvo Supabase`
    - **Authorized redirect URIs → Add URI**: paste the Callback URL from step 1
    - Click **Create**. Copy the **Client ID** and **Client secret**.
 5. Back in Supabase's Google provider page: turn **Enable** on, paste the Client ID and Client secret, click **Save**.
@@ -102,19 +102,19 @@ Apple only allows "Sign in with Apple" for paid developer accounts. You need thi
 Once enrolled, at **https://developer.apple.com/account** → **Certificates, Identifiers & Profiles**:
 
 1. **Identifiers → +** → **App IDs** → App:
-   - Description: `Swipeshop`, Bundle ID: `com.swipeshop.app` (Explicit)
+   - Description: `CureAvo`, Bundle ID: `com.cureavo.app` (Explicit)
    - Tick **Sign in with Apple** → Continue → Register.
 2. **Identifiers → +** → **Services IDs**:
-   - Description: `Swipeshop sign-in`, Identifier: `com.swipeshop.app.signin`
+   - Description: `CureAvo sign-in`, Identifier: `com.cureavo.app.signin`
    - Register, then open it, tick **Sign in with Apple** → **Configure**:
      - Primary App ID: the one from step 1
      - Domains: `abcdefgh.supabase.co` (your project's domain, without `https://`)
      - Return URLs: the Supabase Callback URL (`https://abcdefgh.supabase.co/auth/v1/callback`)
    - Save → Continue → Save.
-3. **Keys → +**: name `Swipeshop sign-in`, tick **Sign in with Apple** → Configure → choose the App ID → Save → Continue → Register. **Download the .p8 file** (you can only download it once) and note the **Key ID**. Your **Team ID** is shown at the top right of the developer site.
+3. **Keys → +**: name `CureAvo sign-in`, tick **Sign in with Apple** → Configure → choose the App ID → Save → Continue → Register. **Download the .p8 file** (you can only download it once) and note the **Key ID**. Your **Team ID** is shown at the top right of the developer site.
 4. In Supabase: **Authentication → Sign In / Providers → Apple**:
    - Enable it.
-   - **Client IDs**: `com.swipeshop.app.signin`
+   - **Client IDs**: `com.cureavo.app.signin`
    - **Secret key**: Supabase's Apple page links to a tool that turns your Team ID, Key ID, Services ID and .p8 file into the secret. Paste the result and **Save**.
 5. Test: Account → **Continue with Apple**.
 

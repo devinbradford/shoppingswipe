@@ -11,7 +11,7 @@ export default function NotFoundScreen() {
       <StateView
         icon="search"
         title="Page not found"
-        message="This link doesn't go anywhere in Swipeshop."
+        message="This link doesn't go anywhere in CureAvo."
         primary={{ label: 'Go to discover', onPress: () => router.replace('/') }}
       />
     </SafeAreaView>

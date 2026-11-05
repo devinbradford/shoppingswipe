@@ -43,7 +43,7 @@ export default function WelcomeScreen() {
             style={StyleSheet.absoluteFill}
           />
           <AppText variant="eyebrow" color={colors.onPhoto} style={[styles.brand, { top: insets.top + space.lg }]}>
-            SWIPESHOP
+            CUREAVO
           </AppText>
           <View style={styles.heroText}>
             <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
