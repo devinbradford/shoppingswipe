@@ -42,6 +42,11 @@ export const colors = {
   scrim: 'rgba(18, 17, 15, 0.88)',
   scrimMid: 'rgba(18, 17, 15, 0.55)',
   scrimLight: 'rgba(18, 17, 15, 0)',
+  /** Drag feedback on the swipe card: edge glow and a faint wash, champagne for Keep, rose for Skip. */
+  keepGlow: 'rgba(216, 194, 157, 0.55)',
+  keepWash: 'rgba(216, 194, 157, 0.05)',
+  skipGlow: 'rgba(224, 163, 154, 0.55)',
+  skipWash: 'rgba(224, 163, 154, 0.05)',
   /** Photo progress lines. */
   pip: 'rgba(243, 242, 239, 0.32)',
   pipActive: '#F3F2EF',
@@ -102,4 +107,7 @@ export const motion = {
   /** Fling speed (pt/s) that commits a swipe regardless of distance. */
   swipeVelocity: 900,
   flyOutMs: 220,
+  /** Upward drag (pt) or fling speed that opens the product page. */
+  openDistance: 110,
+  openVelocity: 800,
 } as const;

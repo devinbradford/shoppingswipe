@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions, type LayoutChangeEvent } from 'react-native';
 import { GestureDetector, useCompetingGestures, usePanGesture, useTapGesture } from 'react-native-gesture-handler';
 import Animated, {
+  Easing,
   Extrapolation,
   interpolate,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -18,6 +20,7 @@ import type { SwipeDirection } from '@/domain/types';
 import { formatPrice } from '@/lib/format';
 import { colors, motion, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
+import { Icon } from './Icon';
 import { ProductImage } from './ProductImage';
 import type { DeckCardData } from './SwipeDeck';
 
@@ -31,6 +34,10 @@ interface SwipeCardProps {
   isTop: boolean;
   /** 0 → 1 as the top card is dragged toward a decision. Drives the card behind. */
   progress: SharedValue<number>;
+  /** -1 (Skip) → 1 (Keep) while the top card is dragged. Lets the buttons react. */
+  drag?: SharedValue<number>;
+  /** Fly in from this side (the card just came back with Undo). */
+  enterFrom?: SwipeDirection;
   retailerName: string;
   onSwiped: (direction: SwipeDirection) => void;
   onOpen: () => void;
@@ -55,6 +62,8 @@ export function SwipeCard({
   card,
   isTop,
   progress,
+  drag,
+  enterFrom,
   retailerName,
   onSwiped,
   onOpen,
@@ -71,9 +80,14 @@ export function SwipeCard({
   const flyMs = reduceMotion ? 90 : motion.flyOutMs;
   const tilt = reduceMotion ? 0 : 12;
 
-  const tx = useSharedValue(0);
+  // An undone card starts off screen on the side it left and springs back in.
+  const enterX = enterFrom && !reduceMotion ? (enterFrom === 'keep' ? 1 : -1) * flyDistance : 0;
+  const tx = useSharedValue(enterX);
   const ty = useSharedValue(0);
   const pastThreshold = useSharedValue(false);
+  /** +1 when grabbed in the top half, -1 in the bottom half: the card tilts around your finger. */
+  const grab = useSharedValue(1);
+  const cardHeight = useSharedValue(0);
   const [photo, setPhoto] = useState(0);
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
   const { product, forYou } = card;
@@ -85,23 +99,52 @@ export function SwipeCard({
 
   // A card that just became the top one resets the shared progress.
   useEffect(() => {
-    if (isTop) progress.set(0);
-  }, [isTop, progress]);
+    if (!isTop) return;
+    progress.set(0);
+    drag?.set(withTiming(0, { duration: 160 }));
+  }, [isTop, progress, drag]);
+
+  useEffect(() => {
+    if (enterX !== 0) tx.set(withSpring(0, SPRING));
+    // Only on mount: this card's entrance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Mirror the drag for the Skip / Keep buttons.
+  useAnimatedReaction(
+    () => tx.get(),
+    (x) => {
+      if (isTop && drag) drag.set(Math.max(-1, Math.min(1, x / threshold)));
+    },
+  );
 
   const finish = (direction: SwipeDirection) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    Haptics.impactAsync(
+      direction === 'keep' ? Haptics.ImpactFeedbackStyle.Medium : Haptics.ImpactFeedbackStyle.Light,
+    ).catch(() => {});
     onSwiped(direction);
+  };
+  const open = () => {
+    Haptics.selectionAsync().catch(() => {});
+    onOpen();
   };
   const tick = () => {
     Haptics.selectionAsync().catch(() => {});
   };
 
-  const flyOut = (direction: SwipeDirection) => {
+  /** Throw the card off screen. With a fling speed it leaves at that speed and keeps its angle. */
+  const flyOut = (direction: SwipeDirection, velocityX = 0, velocityY = 0) => {
     'worklet';
     const sign = direction === 'keep' ? 1 : -1;
-    progress.set(withTiming(1, { duration: flyMs }));
+    const remaining = Math.abs(sign * flyDistance - tx.get());
+    const speed = Math.abs(velocityX);
+    const ms = reduceMotion ? flyMs : speed > 0 ? Math.max(140, Math.min(320, (remaining / speed) * 1000)) : flyMs;
+    progress.set(withTiming(1, { duration: ms }));
+    if (!reduceMotion && velocityY !== 0) {
+      ty.set(withTiming(ty.get() + velocityY * (ms / 1000) * 0.6, { duration: ms }));
+    }
     tx.set(
-      withTiming(sign * flyDistance, { duration: flyMs }, (done) => {
+      withTiming(sign * flyDistance, { duration: ms, easing: Easing.out(Easing.quad) }, (done) => {
         if (done) scheduleOnRN(finish, direction);
       }),
     );
@@ -109,17 +152,28 @@ export function SwipeCard({
 
   useEffect(() => {
     if (!isTop || !registerApi) return;
-    registerApi({ flyOut: (d) => flyOut(d) });
+    registerApi({
+      flyOut: (d) => {
+        grab.set(1);
+        flyOut(d);
+      },
+    });
     return () => registerApi(null);
   });
 
   const pan = usePanGesture({
     enabled: isTop,
     activeOffsetX: [-12, 12],
+    // Upward drags count too (they open the product page); downward ones don't.
+    activeOffsetY: [-14, 10000],
+    onBegin: (e) => {
+      'worklet';
+      grab.set(cardHeight.get() > 0 && e.y > cardHeight.get() / 2 ? -1 : 1);
+    },
     onUpdate: (e) => {
       'worklet';
       tx.set(e.translationX);
-      ty.set(reduceMotion ? 0 : e.translationY * 0.35);
+      ty.set(reduceMotion ? 0 : e.translationY * (e.translationY < 0 ? 0.6 : 0.35));
       progress.set(Math.min(1, Math.abs(e.translationX) / threshold));
       const past = Math.abs(e.translationX) > threshold;
       if (past !== pastThreshold.get()) {
@@ -131,9 +185,14 @@ export function SwipeCard({
       'worklet';
       const fling =
         Math.abs(e.velocityX) > motion.swipeVelocity && Math.sign(e.velocityX) === Math.sign(e.translationX);
-      if (Math.abs(e.translationX) > threshold || fling) {
-        flyOut(e.translationX > 0 ? 'keep' : 'skip');
+      const upward =
+        Math.abs(e.translationX) < threshold &&
+        Math.abs(e.translationY) > Math.abs(e.translationX) &&
+        (e.translationY < -motion.openDistance || e.velocityY < -motion.openVelocity);
+      if (!upward && (Math.abs(e.translationX) > threshold || fling)) {
+        flyOut(e.translationX > 0 ? 'keep' : 'skip', fling ? e.velocityX : 0, e.velocityY);
       } else {
+        if (upward) scheduleOnRN(open);
         const settle = (v: number) => (reduceMotion ? withTiming(v, { duration: 120 }) : withSpring(v, SPRING));
         tx.set(settle(0));
         ty.set(settle(0));
@@ -149,7 +208,7 @@ export function SwipeCard({
     onActivate: (e) => {
       // Bottom info area opens details; left/right of the photo flips through images.
       if (e.y > cardSize.height * 0.58) {
-        onOpen();
+        open();
       } else if (e.x < cardSize.width * 0.4) {
         setPhoto((p) => Math.max(0, p - 1));
       } else {
@@ -172,21 +231,45 @@ export function SwipeCard({
       transform: [
         { translateX: x },
         { translateY: ty.get() },
-        { rotate: `${interpolate(x, [-screenWidth, screenWidth], [-tilt, tilt], Extrapolation.CLAMP)}deg` },
+        {
+          rotate: `${grab.get() * interpolate(x, [-screenWidth, screenWidth], [-tilt, tilt], Extrapolation.CLAMP)}deg`,
+        },
       ],
     };
   });
 
-  const keepStamp = useAnimatedStyle(() => ({
-    opacity: interpolate(tx.get(), [threshold * 0.25, threshold], [0, 1], Extrapolation.CLAMP),
+  // Edge glow: fades in as the card heads for a decision, full at the point of no return.
+  const keepGlow = useAnimatedStyle(() => ({
+    opacity: interpolate(tx.get(), [threshold * 0.15, threshold], [0, 1], Extrapolation.CLAMP),
   }));
-  const skipStamp = useAnimatedStyle(() => ({
-    opacity: interpolate(tx.get(), [-threshold, -threshold * 0.25], [1, 0], Extrapolation.CLAMP),
+  const skipGlow = useAnimatedStyle(() => ({
+    opacity: interpolate(tx.get(), [-threshold, -threshold * 0.15], [1, 0], Extrapolation.CLAMP),
   }));
+  const keepMark = useAnimatedStyle(() => {
+    const x = tx.get();
+    return {
+      opacity: interpolate(x, [threshold * 0.3, threshold * 0.8], [0, 1], Extrapolation.CLAMP),
+      transform: [
+        { scale: interpolate(x, [threshold * 0.3, threshold, threshold * 1.5], [0.6, 1, 1.12], Extrapolation.CLAMP) },
+      ],
+    };
+  });
+  const skipMark = useAnimatedStyle(() => {
+    const x = tx.get();
+    return {
+      opacity: interpolate(x, [-threshold * 0.8, -threshold * 0.3], [1, 0], Extrapolation.CLAMP),
+      transform: [
+        {
+          scale: interpolate(x, [-threshold * 1.5, -threshold, -threshold * 0.3], [1.12, 1, 0.6], Extrapolation.CLAMP),
+        },
+      ],
+    };
+  });
 
   const onLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setCardSize({ width, height });
+    cardHeight.set(height);
   };
 
   const price = formatPrice(product.priceCents, product.currency);
@@ -240,17 +323,6 @@ export function SwipeCard({
           </View>
         ) : null}
 
-        <Animated.View style={[styles.stamp, styles.keepStamp, keepStamp]} pointerEvents="none">
-          <AppText variant="title" color={colors.keep}>
-            Keep
-          </AppText>
-        </Animated.View>
-        <Animated.View style={[styles.stamp, styles.skipStamp, skipStamp]} pointerEvents="none">
-          <AppText variant="title" color={colors.skip}>
-            Skip
-          </AppText>
-        </Animated.View>
-
         <LinearGradient
           colors={[colors.scrimLight, colors.scrimMid, colors.scrim, colors.background]}
           locations={[0, 0.35, 0.72, 1]}
@@ -285,6 +357,15 @@ export function SwipeCard({
             {`${product.brand} · ${retailerName}`.toUpperCase()}
           </AppText>
         </View>
+
+        <Animated.View style={[styles.glow, styles.keepGlow, keepGlow]} pointerEvents="none" />
+        <Animated.View style={[styles.glow, styles.skipGlow, skipGlow]} pointerEvents="none" />
+        <Animated.View style={[styles.mark, styles.keepMark, keepMark]} pointerEvents="none">
+          <Icon name="keep" size={30} color={colors.onInk} />
+        </Animated.View>
+        <Animated.View style={[styles.mark, styles.skipMark, skipMark]} pointerEvents="none">
+          <Icon name="close" size={30} color={colors.onInk} />
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );
@@ -307,17 +388,29 @@ const styles = StyleSheet.create({
   },
   pip: { flex: 1, height: 2, backgroundColor: colors.pip },
   pipActive: { backgroundColor: colors.pipActive },
-  stamp: {
+  glow: { ...StyleSheet.absoluteFill, borderWidth: 2 },
+  keepGlow: {
+    borderColor: colors.keep,
+    backgroundColor: colors.keepWash,
+    boxShadow: `inset 0 0 56px 2px ${colors.keepGlow}`,
+  },
+  skipGlow: {
+    borderColor: colors.skip,
+    backgroundColor: colors.skipWash,
+    boxShadow: `inset 0 0 56px 2px ${colors.skipGlow}`,
+  },
+  mark: {
     position: 'absolute',
     top: '30%',
-    paddingHorizontal: space.xl,
-    paddingVertical: space.sm,
-    borderWidth: 1,
-    borderRadius: radii.pill,
-    backgroundColor: colors.glass,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  keepStamp: { left: space.xl, borderColor: colors.keep, transform: [{ rotate: '-8deg' }] },
-  skipStamp: { right: space.xl, borderColor: colors.skip, transform: [{ rotate: '8deg' }] },
+  // Each mark sits on the side the card is leaving from, so it stays on screen.
+  keepMark: { left: space.xxl, backgroundColor: colors.keep, boxShadow: `0 10px 30px ${colors.keepGlow}` },
+  skipMark: { right: space.xxl, backgroundColor: colors.skip, boxShadow: `0 10px 30px ${colors.skipGlow}` },
   scrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '62%' },
   info: { position: 'absolute', left: space.xl, right: space.xl, gap: space.sm },
   forYou: {

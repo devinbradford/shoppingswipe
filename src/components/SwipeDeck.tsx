@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { useEffect, useImperativeHandle, useRef, type Ref } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 import type { Product, SwipeDirection } from '@/domain/types';
 import { SwipeCard, type SwipeCardApi } from './SwipeCard';
@@ -15,6 +15,8 @@ export interface DeckCardData {
 
 export interface SwipeDeckHandle {
   swipe: (direction: SwipeDirection) => void;
+  /** Call just before undoing: that product's card flies back in from the side it left. */
+  prepareReturn: (productId: string, direction: SwipeDirection) => void;
 }
 
 interface SwipeDeckProps {
@@ -30,6 +32,8 @@ interface SwipeDeckProps {
   infoBottom?: number;
   /** Shown in the "For you" spot while the deck is still learning. */
   hint?: string | null;
+  /** Written while dragging: -1 (Skip) → 1 (Keep). */
+  drag?: SharedValue<number>;
   ref?: Ref<SwipeDeckHandle>;
 }
 
@@ -44,8 +48,10 @@ export function SwipeDeck({
   pipsTop,
   infoBottom,
   hint,
+  drag,
   ref,
 }: SwipeDeckProps) {
+  const [returning, setReturning] = useState<{ productId: string; direction: SwipeDirection } | null>(null);
   const progress = useSharedValue(0);
   const topApi = useRef<SwipeCardApi | null>(null);
   const busy = useRef(false);
@@ -61,6 +67,7 @@ export function SwipeDeck({
       busy.current = true;
       topApi.current.flyOut(direction);
     },
+    prepareReturn: (productId, direction) => setReturning({ productId, direction }),
   }));
 
   // Warm the image cache for the next few cards so they appear instantly.
@@ -84,6 +91,8 @@ export function SwipeDeck({
             card={card}
             isTop={isTop}
             progress={progress}
+            drag={drag}
+            enterFrom={returning?.productId === card.product.id ? returning.direction : undefined}
             retailerName={retailerNames.get(card.product.retailerId) ?? ''}
             onSwiped={onSwipe}
             reduceMotion={reduceMotion}

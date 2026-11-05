@@ -114,6 +114,13 @@ Navigation (custom CureAvo tab bar, `src/components/TabBar.tsx`):
 - Profile: styles (`/welcome`), shopping-for room and budget (`/setup/room?edit=1`, `/setup/budget?edit=1`), account, privacy/disclosure/contact links, reset
 - Checks passing: typecheck, lint, 133 unit tests
 
+Swipe feel (Step 4):
+- Drag shows an edge glow (champagne Keep / rose Skip) with a heart or ✕ mark; no text stamps
+- Tilt follows where you grab (top vs bottom half); flings leave at their own speed and angle
+- Skip/Keep buttons grow and the other dims while dragging (`drag` shared value from `SwipeDeck`)
+- Swipe up opens the product page; Undo flies the card back in from the side it left
+- Keep sends a small heart to the Kept tab (or the Kept button in room decks), which bounces (`KeepFlight`, `Pulse`)
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

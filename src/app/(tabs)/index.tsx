@@ -1,7 +1,7 @@
 import { Redirect, router } from 'expo-router';
 import { useBottomTabBarHeight } from 'expo-router/tabs';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
@@ -49,6 +49,9 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
   const reduceMotion = useReduceMotion();
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const { width, height } = useWindowDimensions();
+  // Kept is the third of four equal tabs; its icon sits about 20pt below the bar's top edge.
+  const keptTab = { x: width * 0.625, y: height - tabBarHeight + 20 };
   const showCount = deck.status === 'ready' && deck.cards.length > 0;
   const roomLabel = ROOMS.find((r) => r.id === room)?.label ?? 'All';
 
@@ -59,6 +62,7 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
         retailers={retailers}
         reduceMotion={reduceMotion}
         bottomInset={tabBarHeight}
+        keptTarget={keptTab}
         topBarHeight={space.lg + 110}
         empty={{
           title: room ? `You've seen everything in ${roomLabel.toLowerCase()}` : "You've seen everything for now",

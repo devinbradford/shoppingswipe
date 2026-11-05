@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { colors, space } from '@/theme/tokens';
 import { AppText } from './AppText';
 import { Icon, type IconName } from './Icon';
+import { Pulse } from './Pulse';
 
 /** Tab route name → icon. Labels come from each screen's `title` option. */
 const ICONS: Record<string, { idle: IconName; active: IconName }> = {
@@ -47,7 +48,7 @@ export function TabBar({ state, descriptors, navigateToTab, insets }: BottomTabB
             accessibilityLabel={badge ? `${label}, ${badge} new` : label}
             style={styles.item}>
             <View style={[styles.dot, focused && styles.dotOn]} />
-            <View>
+            <Pulse trigger={typeof badge === 'number' ? badge : badge ? 10 : 0}>
               <Icon
                 name={focused ? icon.active : icon.idle}
                 size={21}
@@ -60,7 +61,7 @@ export function TabBar({ state, descriptors, navigateToTab, insets }: BottomTabB
                   </AppText>
                 </View>
               ) : null}
-            </View>
+            </Pulse>
             <AppText variant="caption" color={focused ? colors.accentText : colors.inkMuted} numberOfLines={1}>
               {label}
             </AppText>

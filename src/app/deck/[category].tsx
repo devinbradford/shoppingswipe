@@ -1,11 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { DeckView } from '@/components/DeckView';
 import { GlassIconButton, GlassPill, GlassTextButton } from '@/components/Glass';
 import { Header } from '@/components/Header';
+import { Pulse } from '@/components/Pulse';
 import { StateView } from '@/components/StateView';
 import { CATEGORY_IDS, SUBCATEGORY_IDS, type CategoryId, type SubcategoryId } from '@/domain/types';
 import { useCategorySummaries, useRetailerNames } from '@/hooks/useCatalog';
@@ -50,6 +51,7 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
   const keptCount = useSwipeStore((s) => s.saved.length);
   const reduceMotion = useReduceMotion();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const showCount = deck.status === 'ready' && deck.cards.length > 0;
   const eyebrow = label ? `${label.toUpperCase()}${showCount ? ` · ${deck.cards.length} LEFT` : ''}` : '';
 
@@ -60,6 +62,8 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
         retailers={retailers}
         reduceMotion={reduceMotion}
         bottomInset={insets.bottom}
+        // The Kept button, top right.
+        keptTarget={{ x: width - space.lg - 44, y: insets.top + space.lg + 22 }}
         topBarHeight={space.lg + 60}
         empty={{
           title: label ? `You've seen everything in ${label.toLowerCase()}` : "You've seen everything here",
@@ -79,11 +83,13 @@ function Deck({ categoryId, subcategoryId }: { categoryId: CategoryId; subcatego
             ) : (
               <View />
             )}
-            <GlassTextButton
-              label={keptCount > 0 ? `Kept ${keptCount}` : 'Kept'}
-              onPress={() => router.navigate('/kept')}
-              hint="Opens the things you kept"
-            />
+            <Pulse trigger={keptCount} disabled={reduceMotion}>
+              <GlassTextButton
+                label={keptCount > 0 ? `Kept ${keptCount}` : 'Kept'}
+                onPress={() => router.navigate('/kept')}
+                hint="Opens the things you kept"
+              />
+            </Pulse>
           </View>
         }
       />

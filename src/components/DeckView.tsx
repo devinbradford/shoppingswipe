@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
-import { useRef, type ReactNode } from 'react';
-import { AccessibilityInfo, StyleSheet, View } from 'react-native';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { AccessibilityInfo, StyleSheet, View, useWindowDimensions } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { SwipeDirection } from '@/domain/types';
@@ -9,6 +10,7 @@ import { formatPrice } from '@/lib/format';
 import { recordSignal } from '@/store/signalStore';
 import { space } from '@/theme/tokens';
 import { GlassIconButton } from './Glass';
+import { KeepFlight } from './KeepFlight';
 import { QuestionPill } from './QuestionPill';
 import { LoadingView, StateView, type StateAction } from './StateView';
 import { SwipeDeck, type SwipeDeckHandle } from './SwipeDeck';
@@ -26,21 +28,40 @@ interface DeckViewProps {
   /** Space to leave at the bottom (the safe area, or the tab bar when there is one). */
   bottomInset: number;
   empty: { title: string; message: string; primary: StateAction; secondary?: StateAction };
+  /** Where a kept piece's heart flies to (the Kept tab or button), in screen points. */
+  keptTarget?: { x: number; y: number };
 }
 
 /**
  * The full-screen swipe deck with its Skip / Undo / Keep buttons, question pill
  * and loading, error and empty states. Used by For you and the room decks.
  */
-export function DeckView({ deck, retailers, reduceMotion, topBar, topBarHeight, bottomInset, empty }: DeckViewProps) {
+export function DeckView({
+  deck,
+  retailers,
+  reduceMotion,
+  topBar,
+  topBarHeight,
+  bottomInset,
+  empty,
+  keptTarget,
+}: DeckViewProps) {
   const deckRef = useRef<SwipeDeckHandle>(null);
   const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const drag = useSharedValue(0);
+  // What was swiped, newest last, so Undo can fly the right card back from the right side.
+  const history = useRef<{ productId: string; direction: SwipeDirection }[]>([]);
+  const [flights, setFlights] = useState<number[]>([]);
+  const land = useCallback((id: number) => setFlights((f) => f.filter((x) => x !== id)), []);
 
   // Tell screen reader users what happened and what's next.
   const onSwipe = (direction: SwipeDirection) => {
     const [current, next] = deck.cards;
     deck.swipe(direction);
     if (!current) return;
+    history.current = [...history.current.slice(-19), { productId: current.product.id, direction }];
+    if (direction === 'keep' && keptTarget && !reduceMotion) setFlights((f) => [...f, Date.now()]);
     const what = `${direction === 'keep' ? 'Kept' : 'Skipped'} ${current.product.title}.`;
     const then = next
       ? ` Next: ${next.product.title}, ${formatPrice(next.product.priceCents, next.product.currency)}.`
@@ -48,6 +69,11 @@ export function DeckView({ deck, retailers, reduceMotion, topBar, topBarHeight, 
     AccessibilityInfo.announceForAccessibility(what + then);
   };
   const onUndo = () => {
+    const last = history.current.at(-1);
+    if (last && deck.canUndo) {
+      history.current = history.current.slice(0, -1);
+      deckRef.current?.prepareReturn(last.productId, last.direction);
+    }
     deck.undo();
     AccessibilityInfo.announceForAccessibility('Undid last swipe.');
   };
@@ -58,6 +84,23 @@ export function DeckView({ deck, retailers, reduceMotion, topBar, topBarHeight, 
   // Room the price block needs above the buttons (button + caption + spacing).
   const infoBottom = actionsBottom + 66 + 22 + space.xxl;
 
+  // The button you're dragging toward grows; the other one steps back.
+  const keepButton = useAnimatedStyle(() => {
+    const d = drag.get();
+    return {
+      opacity: interpolate(d, [-1, 0], [0.45, 1], Extrapolation.CLAMP),
+      transform: [{ scale: interpolate(d, [0, 1], [1, 1.16], Extrapolation.CLAMP) }],
+    };
+  });
+  const skipButton = useAnimatedStyle(() => {
+    const d = drag.get();
+    return {
+      opacity: interpolate(d, [0, 1], [1, 0.45], Extrapolation.CLAMP),
+      transform: [{ scale: interpolate(d, [-1, 0], [1.16, 1], Extrapolation.CLAMP) }],
+    };
+  });
+  const undoButton = useAnimatedStyle(() => ({ opacity: 1 - 0.6 * Math.min(1, Math.abs(drag.get())) }));
+
   return (
     <View style={styles.screen}>
       {showDeck ? (
@@ -67,6 +110,7 @@ export function DeckView({ deck, retailers, reduceMotion, topBar, topBarHeight, 
           retailerNames={retailers}
           onSwipe={onSwipe}
           reduceMotion={reduceMotion}
+          drag={drag}
           pipsTop={insets.top + space.xs}
           infoBottom={infoBottom}
           hint={deck.coldStart ? 'Keep a few you like and the deck will learn' : null}
@@ -104,27 +148,37 @@ export function DeckView({ deck, retailers, reduceMotion, topBar, topBarHeight, 
 
       {showDeck ? (
         <View style={[styles.actions, { bottom: actionsBottom }]} pointerEvents="box-none">
-          <GlassIconButton
-            icon="close"
-            label="Skip"
-            caption="SKIP"
-            size={66}
-            tone="strong"
-            onPress={() => deckRef.current?.swipe('skip')}
-          />
-          <View style={styles.undo}>
+          <Animated.View style={skipButton}>
+            <GlassIconButton
+              icon="close"
+              label="Skip"
+              caption="SKIP"
+              size={66}
+              tone="strong"
+              onPress={() => deckRef.current?.swipe('skip')}
+            />
+          </Animated.View>
+          <Animated.View style={[styles.undo, undoButton]}>
             <GlassIconButton icon="undo" label="Undo last swipe" onPress={onUndo} disabled={!deck.canUndo} size={46} />
-          </View>
-          <GlassIconButton
-            icon="keep"
-            label="Keep"
-            caption="KEEP"
-            size={66}
-            tone="accent"
-            onPress={() => deckRef.current?.swipe('keep')}
-          />
+          </Animated.View>
+          <Animated.View style={keepButton}>
+            <GlassIconButton
+              icon="keep"
+              label="Keep"
+              caption="KEEP"
+              size={66}
+              tone="accent"
+              onPress={() => deckRef.current?.swipe('keep')}
+            />
+          </Animated.View>
         </View>
       ) : null}
+
+      {keptTarget
+        ? flights.map((id) => (
+            <KeepFlight key={id} id={id} from={{ x: width / 2, y: height * 0.42 }} to={keptTarget} onDone={land} />
+          ))
+        : null}
     </View>
   );
 }
