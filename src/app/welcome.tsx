@@ -107,8 +107,11 @@ export default function WelcomeScreen() {
           disabled={!ready}
           size="lg"
           onPress={() => {
+            const firstTime = !onboarded;
             setStylePicks(picks);
-            leave();
+            // First launch: a short "building your feed" moment, then Discover.
+            if (firstTime) router.replace('/building');
+            else leave();
           }}
         />
         <Button

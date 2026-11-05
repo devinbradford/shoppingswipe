@@ -60,6 +60,7 @@ export default function RootLayout() {
           }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
+          <Stack.Screen name="building" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="kept" />
           <Stack.Screen name="lists/[id]" />
