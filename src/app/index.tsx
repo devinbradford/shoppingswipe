@@ -37,6 +37,7 @@ export default function DiscoverScreen() {
   const searching = query.trim().length > 0 || activeFilters > 0;
   const hydrated = useHydrated();
   const onboarded = usePreferencesStore((s) => s.onboarded);
+  const introSeen = usePreferencesStore((s) => s.introSeen);
   const hasSwipes = useSwipeStore((s) => s.swipes.length > 0);
 
   // One list for both modes, so the search box is never rebuilt (and the keyboard stays up).
@@ -133,7 +134,7 @@ export default function DiscoverScreen() {
 
   // First launch: send new users to the style picker.
   if (!hydrated) return <SafeAreaView style={styles.screen} />;
-  if (!onboarded && !hasSwipes) return <Redirect href="/welcome" />;
+  if (!onboarded && !hasSwipes) return <Redirect href={introSeen ? '/welcome' : '/intro'} />;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>

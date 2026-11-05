@@ -59,6 +59,7 @@ export default function RootLayout() {
             animation: reduceMotion ? 'fade' : 'slide_from_right',
           }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="intro" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
           <Stack.Screen name="building" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="deck/[category]" />

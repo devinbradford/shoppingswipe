@@ -9,6 +9,9 @@ interface PreferencesState {
   stylePicks: string[];
   /** True once the user finished or skipped the taste picker. */
   onboarded: boolean;
+  /** True once the 3-screen intro was seen or skipped (on this phone). */
+  introSeen: boolean;
+  markIntroSeen: () => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -19,6 +22,8 @@ export const usePreferencesStore = create<PreferencesState>()(
     (set, get) => ({
       stylePicks: [],
       onboarded: false,
+      introSeen: false,
+      markIntroSeen: () => set({ introSeen: true }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -32,7 +37,7 @@ export const usePreferencesStore = create<PreferencesState>()(
     {
       name: 'swipeshop.preferences.v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ stylePicks: s.stylePicks, onboarded: s.onboarded }),
+      partialize: (s) => ({ stylePicks: s.stylePicks, onboarded: s.onboarded, introSeen: s.introSeen }),
     },
   ),
 );
