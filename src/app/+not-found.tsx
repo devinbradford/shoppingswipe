@@ -12,7 +12,7 @@ export default function NotFoundScreen() {
         icon="search"
         title="Page not found"
         message="This link doesn't go anywhere in CureAvo."
-        primary={{ label: 'Go to discover', onPress: () => router.replace('/') }}
+        primary={{ label: 'Go to discover', onPress: () => router.replace('/discover') }}
       />
     </SafeAreaView>
   );

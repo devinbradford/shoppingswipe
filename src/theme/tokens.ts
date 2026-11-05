@@ -32,6 +32,8 @@ export const colors = {
   glass: 'rgba(18, 17, 15, 0.34)',
   glassBorder: 'rgba(243, 242, 239, 0.24)',
   glassStrongBorder: 'rgba(243, 242, 239, 0.42)',
+  /** The bottom tab bar: espresso, nearly opaque so labels stay readable over photos. */
+  tabBar: 'rgba(18, 17, 15, 0.98)',
   /** Accent-tinted glass for the "For you" bubble. */
   accentGlass: 'rgba(216, 194, 157, 0.16)',
   accentGlassBorder: 'rgba(216, 194, 157, 0.5)',

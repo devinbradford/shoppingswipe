@@ -70,3 +70,11 @@ export function budgetAnswer(anchor: BudgetAnchor, index: number): BudgetAnswer 
   const dollars = anchor.stops[Math.max(0, Math.min(anchor.stops.length - 1, index))];
   return dollars === NO_LIMIT ? null : { subcategoryId: anchor.subcategoryId, maxCents: dollars * 100 };
 }
+
+/** The slider stop a saved answer sits on (for editing it later). Unknown answers start on the default. */
+export function budgetIndex(anchor: BudgetAnchor, answer: BudgetAnswer | null): number {
+  if (!answer) return anchor.stops.length - 1;
+  if (answer.subcategoryId !== anchor.subcategoryId) return anchor.defaultIndex;
+  const i = anchor.stops.indexOf(answer.maxCents / 100);
+  return i >= 0 ? i : anchor.defaultIndex;
+}

@@ -5,7 +5,7 @@ import { AppText } from './AppText';
 import { Button } from './Button';
 import { Icon, type IconName } from './Icon';
 
-interface Action {
+export interface StateAction {
   label: string;
   onPress: () => void;
 }
@@ -14,8 +14,8 @@ interface StateViewProps {
   icon?: IconName;
   title: string;
   message?: string;
-  primary?: Action;
-  secondary?: Action;
+  primary?: StateAction;
+  secondary?: StateAction;
 }
 
 /** Centered message for empty and error states. */

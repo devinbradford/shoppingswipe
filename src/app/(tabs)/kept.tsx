@@ -1,12 +1,13 @@
-import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useBottomTabBarHeight } from 'expo-router/tabs';
+import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
-import { GlassIconButton, GlassTextButton } from '@/components/Glass';
+import { GlassTextButton } from '@/components/Glass';
 import { ListPickerSheet } from '@/components/ListPickerSheet';
 import { NameSheet } from '@/components/NameSheet';
 import { MasonryGrid } from '@/components/MasonryGrid';
@@ -15,6 +16,7 @@ import { LoadingView, StateView } from '@/components/StateView';
 import { useRetailerNames, useSavedProducts } from '@/hooks/useCatalog';
 import { useTransferFromKept, type TransferMode } from '@/hooks/useWishlists';
 import { pluralize } from '@/lib/format';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { recordSignal } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
@@ -27,6 +29,15 @@ export default function KeptScreen() {
   const lists = useWishlistStore((s) => s.lists);
   const createList = useWishlistStore((s) => s.create);
   const transfer = useTransferFromKept();
+  const tabBarHeight = useBottomTabBarHeight();
+  const markKeptSeen = usePreferencesStore((s) => s.markKeptSeen);
+  // Clears the "new" badge on the tab, now and when leaving (things kept while here aren't "new").
+  useFocusEffect(
+    useCallback(() => {
+      markKeptSeen();
+      return markKeptSeen;
+    }, [markKeptSeen]),
+  );
   const products = useMemo(() => (saved.status === 'ready' ? (saved.data ?? []) : []), [saved.status, saved.data]);
 
   const [selecting, setSelecting] = useState(false);
@@ -87,30 +98,29 @@ export default function KeptScreen() {
         icon="keep"
         title="Nothing kept yet"
         message="Swipe right on anything you like and it'll show up here."
-        primary={{ label: 'Start swiping', onPress: () => router.dismissTo('/') }}
+        primary={{ label: 'Start swiping', onPress: () => router.navigate('/') }}
       />
     );
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <View style={styles.topBar}>
-        <GlassIconButton icon="back" label="Back" onPress={() => router.back()} />
-        {products.length > 0 ? (
-          <GlassTextButton
-            label={selecting ? 'Done' : 'Select'}
-            onPress={() => (selecting ? stopSelecting() : setSelecting(true))}
-          />
-        ) : null}
-      </View>
-      <ScrollView contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: tabBarHeight + space.xxl }]}>
         <View style={styles.titleRow}>
-          <AppText variant="hero" accessibilityRole="header">
-            Kept
-          </AppText>
-          {products.length > 0 ? (
-            <AppText variant="eyebrow" color={colors.inkMuted}>
-              {selecting ? 'TAP TO SELECT' : `${products.length} ${products.length === 1 ? 'PIECE' : 'PIECES'}`}
+          <View style={styles.titleText}>
+            <AppText variant="hero" accessibilityRole="header">
+              Kept
             </AppText>
+            {products.length > 0 ? (
+              <AppText variant="eyebrow" color={colors.inkMuted}>
+                {selecting ? 'TAP TO SELECT' : `${products.length} ${products.length === 1 ? 'PIECE' : 'PIECES'}`}
+              </AppText>
+            ) : null}
+          </View>
+          {products.length > 0 ? (
+            <GlassTextButton
+              label={selecting ? 'Done' : 'Select'}
+              onPress={() => (selecting ? stopSelecting() : setSelecting(true))}
+            />
           ) : null}
         </View>
         {notice ? (
@@ -148,7 +158,7 @@ export default function KeptScreen() {
       </ScrollView>
 
       {selecting ? (
-        <View style={styles.selectBar}>
+        <View style={[styles.selectBar, { paddingBottom: tabBarHeight + space.sm }]}>
           <AppText variant="label" style={styles.selectCount}>
             {selected.size === 0 ? 'None selected' : `${selected.size} selected`}
           </AppText>
@@ -194,21 +204,15 @@ export default function KeptScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: space.lg,
-    paddingTop: space.sm,
-  },
-  content: { paddingBottom: space.xxxl, gap: space.lg, flexGrow: 1 },
+  content: { gap: space.lg, flexGrow: 1 },
   titleRow: {
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: space.xl,
-    paddingTop: space.md,
+    paddingTop: space.lg,
   },
+  titleText: { flexDirection: 'row', alignItems: 'baseline', gap: space.md },
   notice: { marginHorizontal: space.xl, backgroundColor: colors.keepSoft, borderRadius: 12, padding: space.md },
   listsScroll: { flexGrow: 0 },
   listsRow: { gap: space.sm, paddingHorizontal: space.xl, alignItems: 'center' },

@@ -19,6 +19,9 @@ interface PreferencesState {
   budget: BudgetAnswer | null;
   setRoom: (room: RoomChoice | null) => void;
   setBudget: (budget: BudgetAnswer | null) => void;
+  /** When the Kept tab was last opened (epoch ms). Drives the "new" badge. */
+  keptSeenAt: number;
+  markKeptSeen: () => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -35,6 +38,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       budget: null,
       setRoom: (room) => set({ room }),
       setBudget: (budget) => set({ budget }),
+      keptSeenAt: 0,
+      markKeptSeen: () => set({ keptSeenAt: Date.now() }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -54,6 +59,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         introSeen: s.introSeen,
         room: s.room,
         budget: s.budget,
+        keptSeenAt: s.keptSeenAt,
       }),
     },
   ),

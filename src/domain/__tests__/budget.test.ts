@@ -2,7 +2,7 @@ import { generateCatalog } from '../../data/sample/catalog';
 import { computePriceBands } from '../../recommendation/engine';
 import { buildTasteModel, priceRatio } from '../../recommendation/model';
 import { rankDeck } from '../../recommendation/rank';
-import { budgetAnchor, budgetAnswer, formatBudget, NO_LIMIT } from '../budget';
+import { budgetAnchor, budgetAnswer, budgetIndex, formatBudget, NO_LIMIT } from '../budget';
 
 describe('budget question', () => {
   it('asks about the key piece for each room, sofas when just browsing', () => {
@@ -82,5 +82,15 @@ describe('stated budget in the taste model', () => {
     const early = buildTasteModel({ swipes: [], products, bands, statedBudget: stated });
     const later = buildTasteModel({ swipes, products, bands, statedBudget: stated });
     expect(later.budget!.ceiling).toBeGreaterThan(early.budget!.ceiling);
+  });
+});
+
+describe('budgetIndex', () => {
+  const sofa = budgetAnchor('living-room');
+  it('finds the saved stop again, so editing starts where they left it', () => {
+    for (let i = 0; i < sofa.stops.length; i++) expect(budgetIndex(sofa, budgetAnswer(sofa, i))).toBe(i);
+  });
+  it('starts on the default when the saved answer is for another piece', () => {
+    expect(budgetIndex(budgetAnchor('bedroom'), budgetAnswer(sofa, 0))).toBe(budgetAnchor('bedroom').defaultIndex);
   });
 });

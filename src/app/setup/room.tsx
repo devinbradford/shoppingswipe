@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,9 +26,14 @@ const ROOMS: { id: RoomChoice; label: string; detail: string; cover?: Subcategor
 
 const GAP = space.sm + 2;
 
-/** Onboarding: "What are you shopping for right now?" Opens straight into that room afterwards. */
+/**
+ * Onboarding: "What are you shopping for right now?" For you opens on that room afterwards.
+ * With `?edit=1` (from Profile) it saves the choice and goes back.
+ */
 export default function RoomScreen() {
   const insets = useSafeAreaInsets();
+  const editing = useLocalSearchParams<{ edit?: string }>().edit === '1';
+  const current = usePreferencesStore((s) => s.room);
   const { summaries } = useCategorySummaries();
   const picks = usePreferencesStore((s) => s.stylePicks);
   const setRoom = usePreferencesStore((s) => s.setRoom);
@@ -42,19 +47,23 @@ export default function RoomScreen() {
   const choose = (room: RoomChoice | null) => {
     if (room) Haptics.selectionAsync().catch(() => {});
     setRoom(room);
-    router.push('/setup/budget');
+    if (editing) router.back();
+    else router.push('/setup/budget');
   };
 
   return (
     <View style={styles.screen}>
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: insets.top + space.md }]}
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingTop: insets.top + space.md, paddingBottom: editing ? insets.bottom + space.xl : space.xl },
+        ]}
         bounces={false}
         onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         <GlassIconButton icon="back" label="Back" onPress={() => router.back()} />
         <View style={styles.header}>
           <AppText variant="eyebrow" color={colors.inkMuted}>
-            STEP 2 OF 3
+            {editing ? 'SHOPPING FOR' : 'STEP 2 OF 3'}
           </AppText>
           <AppText variant="hero" accessibilityRole="header">
             What are you shopping for{' '}
@@ -63,7 +72,9 @@ export default function RoomScreen() {
             </AppText>
           </AppText>
           <AppText variant="body" color={colors.inkMuted}>
-            We&apos;ll open straight into it. You can explore every room later.
+            {editing
+              ? 'For you starts on this room. You can switch rooms any time.'
+              : "We'll open straight into it. You can explore every room later."}
           </AppText>
         </View>
 
@@ -74,9 +85,11 @@ export default function RoomScreen() {
               onPress={() => choose(r.id)}
               accessibilityRole="button"
               accessibilityLabel={`${r.label}. ${r.detail}`}
+              accessibilityState={editing ? { selected: r.id === current } : undefined}
               style={({ pressed }) => [
                 styles.tile,
                 { width: tile, height: Math.round(tile * 1.15) },
+                editing && r.id === current && styles.current,
                 pressed && styles.pressed,
               ]}>
               {r.cover ? (
@@ -101,9 +114,11 @@ export default function RoomScreen() {
           ))}
         </View>
       </ScrollView>
-      <View style={[styles.footer, { paddingBottom: insets.bottom + space.lg }]}>
-        <Button label="Skip" variant="ghost" onPress={() => choose(null)} />
-      </View>
+      {editing ? null : (
+        <View style={[styles.footer, { paddingBottom: insets.bottom + space.lg }]}>
+          <Button label="Skip" variant="ghost" onPress={() => choose(null)} />
+        </View>
+      )}
     </View>
   );
 }
@@ -122,6 +137,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.glassBorder,
   },
+  current: { borderColor: colors.keep, borderWidth: 2 },
   pressed: { transform: [{ scale: 0.98 }], borderColor: colors.keep },
   tileText: { padding: space.md, gap: 2 },
   footer: { paddingHorizontal: space.xl, paddingTop: space.sm },

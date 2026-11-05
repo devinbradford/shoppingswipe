@@ -58,12 +58,11 @@ export default function RootLayout() {
             contentStyle: { backgroundColor: colors.background },
             animation: reduceMotion ? 'fade' : 'slide_from_right',
           }}>
-          <Stack.Screen name="index" />
+          <Stack.Screen name="(tabs)" />
           <Stack.Screen name="intro" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
           <Stack.Screen name="building" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="deck/[category]" />
-          <Stack.Screen name="kept" />
           <Stack.Screen name="lists/[id]" />
           <Stack.Screen name="account" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
           <Stack.Screen name="auth-callback" />

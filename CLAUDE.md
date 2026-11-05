@@ -106,6 +106,14 @@ Onboarding (premium first launch):
 - `/building`: 1.7 s "Building your feed" moment, then straight into the chosen room's deck
 - No permission prompts during onboarding
 
+Navigation (custom CureAvo tab bar, `src/components/TabBar.tsx`):
+- Tabs in `src/app/(tabs)/`: For you (`index`) · Discover · Kept · Profile. Each tab keeps its place; haptic on switch
+- For you: one deck across every room (`useDeck()` with no room) plus room chips, preselected from the onboarding room. Onboarding now lands here. The first-launch redirect lives here
+- Room decks (`/deck/<room>`), product pages, setup and account open full screen above the tabs (no tab bar). Shared deck UI: `src/components/DeckView.tsx`
+- Kept tab badge: pieces kept since the tab was last opened (`keptSeenAt`)
+- Profile: styles (`/welcome`), shopping-for room and budget (`/setup/room?edit=1`, `/setup/budget?edit=1`), account, privacy/disclosure/contact links, reset
+- Checks passing: typecheck, lint, 133 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

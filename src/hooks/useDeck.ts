@@ -76,12 +76,13 @@ function toCard(r: RankedProduct): DeckCard {
 }
 
 /**
- * The swipe deck for one category. Loads unswiped products, ranks them with
+ * The swipe deck for one room (or every room when none is given). Loads unswiped products, ranks them with
  * the taste profile (built from every swipe in every category), and re-ranks
  * everything behind the two visible cards after each swipe.
  */
-export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): Deck {
-  const deckKey = subcategoryId ?? categoryId;
+export function useDeck(categoryId?: CategoryId, subcategoryId?: SubcategoryId): Deck {
+  // No room = every room (the For you deck).
+  const deckKey = subcategoryId ?? categoryId ?? 'all';
   const hydrated = useHydrated();
   const recordSwipe = useSwipeStore((s) => s.recordSwipe);
   const undoLastSwipe = useSwipeStore((s) => s.undoLastSwipe);
@@ -157,7 +158,13 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
       if (!top) return;
       const dwellMs = shownAt.current ? Date.now() - shownAt.current : undefined;
       if (dwellMs !== undefined) recordSignal(top.product.id, 'swipe_dwell', dwellMs);
-      recordSwipe({ id: newId(), productId: top.product.id, categoryId, direction, swipedAt: Date.now() });
+      recordSwipe({
+        id: newId(),
+        productId: top.product.id,
+        categoryId: top.product.categoryId,
+        direction,
+        swipedAt: Date.now(),
+      });
       const { swipes } = useSwipeStore.getState();
       const model = modelFor(known.current, bands.current);
       session.current = [
@@ -181,7 +188,7 @@ export function useDeck(categoryId: CategoryId, subcategoryId?: SubcategoryId): 
       questionState.current = qs;
       setQuestion(q);
     },
-    [cards, categoryId, deckKey, recordSwipe, question],
+    [cards, deckKey, recordSwipe, question],
   );
 
   const answerQuestion = useCallback(

@@ -23,6 +23,11 @@ const ICONS = {
   sync: { ios: 'arrow.triangle.2.circlepath', android: 'sync' },
   cloud: { ios: 'checkmark.icloud', android: 'cloud_done' },
   cloudOff: { ios: 'icloud.slash', android: 'cloud_off' },
+  sparkles: { ios: 'sparkles', android: 'auto_awesome' },
+  grid: { ios: 'square.grid.2x2', android: 'grid_view' },
+  heart: { ios: 'heart', android: 'favorite_border' },
+  mail: { ios: 'envelope', android: 'mail' },
+  shield: { ios: 'lock.shield', android: 'shield' },
 } satisfies Record<string, { ios: SFSymbol; android: AndroidSymbol }>;
 
 export type IconName = keyof typeof ICONS;

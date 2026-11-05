@@ -81,7 +81,36 @@ export function GlassTextButton({ label, onPress, hint }: { label: string; onPre
   );
 }
 
+/** Small selectable chip over a photo (For you room filter). Selected turns champagne. */
+export function GlassChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="radio"
+      accessibilityLabel={label}
+      accessibilityState={{ selected, checked: selected }}
+      aria-checked={selected}
+      hitSlop={{ top: 6, bottom: 6 }}
+      style={({ pressed }) => [styles.chip, selected && styles.chipOn, pressed && styles.pressed]}>
+      <AppText variant="label" color={selected ? colors.onInk : colors.onPhoto}>
+        {label}
+      </AppText>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  chip: {
+    minHeight: 36,
+    paddingHorizontal: space.md,
+    borderRadius: radii.pill,
+    backgroundColor: colors.glass,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chipOn: { backgroundColor: colors.keep, borderColor: colors.keep },
   pill: {
     minHeight: 44,
     paddingHorizontal: space.lg,
