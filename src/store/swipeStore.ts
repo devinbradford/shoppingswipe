@@ -22,6 +22,8 @@ interface SwipeState {
   removeSaved: (productId: string) => void;
   /** Add to the kept list without swiping (e.g. from the detail screen). */
   addSaved: (productId: string) => void;
+  /** Put a removed item back exactly where it was (Undo). */
+  restoreSaved: (item: SavedItem) => void;
   resetAll: () => void;
 }
 
@@ -64,6 +66,12 @@ export const useSwipeStore = create<SwipeState>()(
         if (get().saved.some((i) => i.productId === productId)) return;
         const item = { productId, savedAt: Date.now() };
         set((s) => ({ saved: [item, ...s.saved] }));
+        recordOps([{ type: 'saved.add', item }]);
+      },
+      restoreSaved: (item) => {
+        if (get().saved.some((i) => i.productId === item.productId)) return;
+        // The kept list is newest first.
+        set((s) => ({ saved: [...s.saved, item].sort((a, b) => b.savedAt - a.savedAt) }));
         recordOps([{ type: 'saved.add', item }]);
       },
       resetAll: () => set({ swipes: [], saved: [] }),

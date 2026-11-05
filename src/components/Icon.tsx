@@ -28,6 +28,11 @@ const ICONS = {
   heart: { ios: 'heart', android: 'favorite_border' },
   mail: { ios: 'envelope', android: 'mail' },
   shield: { ios: 'lock.shield', android: 'shield' },
+  plus: { ios: 'plus', android: 'add' },
+  share: { ios: 'square.and.arrow.up', android: 'share' },
+  sort: { ios: 'arrow.up.arrow.down', android: 'swap_vert' },
+  trash: { ios: 'trash', android: 'delete' },
+  list: { ios: 'rectangle.stack', android: 'collections_bookmark' },
 } satisfies Record<string, { ios: SFSymbol; android: AndroidSymbol }>;
 
 export type IconName = keyof typeof ICONS;

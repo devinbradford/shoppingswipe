@@ -1,11 +1,11 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { Product } from '@/domain/types';
 import { formatPrice } from '@/lib/format';
 import { colors, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
-import { GlassIconButton } from './Glass';
 import { Icon } from './Icon';
 import { ProductImage } from './ProductImage';
 
@@ -14,24 +14,37 @@ interface PhotoTileProps {
   retailerName?: string;
   height: number;
   onPress: () => void;
-  onRemove?: () => void;
-  removeLabel?: string;
+  /** Press and hold: opens the piece's menu (Add to list, Buy now, Remove). */
+  onLongPress?: () => void;
   /** Selection mode: true/false shows a checkbox; undefined means not selecting. */
   selected?: boolean;
 }
 
 /** Mood-board tile: the photo with the price and name set over its lower edge. */
-export function PhotoTile({ product, retailerName, height, onPress, onRemove, removeLabel, selected }: PhotoTileProps) {
+export function PhotoTile({ product, retailerName, height, onPress, onLongPress, selected }: PhotoTileProps) {
   const price = formatPrice(product.priceCents, product.currency);
   const selecting = selected !== undefined;
   return (
     <View style={{ height }}>
       <Pressable
         onPress={onPress}
+        onLongPress={
+          onLongPress && !selecting
+            ? () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                onLongPress();
+              }
+            : undefined
+        }
+        delayLongPress={350}
         accessibilityRole={selecting ? 'checkbox' : 'button'}
         accessibilityState={selecting ? { checked: selected } : undefined}
         accessibilityLabel={`${product.title}, ${price}${retailerName ? `, at ${retailerName}` : ''}`}
         accessibilityHint={selecting ? undefined : 'Opens product details'}
+        accessibilityActions={onLongPress && !selecting ? [{ name: 'longpress', label: 'More options' }] : undefined}
+        onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === 'longpress') onLongPress?.();
+        }}
         style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
         <ProductImage
           uri={product.imageUrls[0]}
@@ -55,11 +68,6 @@ export function PhotoTile({ product, retailerName, height, onPress, onRemove, re
         ) : null}
         {selected ? <View style={styles.selectedRing} pointerEvents="none" /> : null}
       </Pressable>
-      {onRemove && !selecting ? (
-        <View style={styles.remove}>
-          <GlassIconButton icon="close" label={removeLabel ?? `Remove ${product.title}`} onPress={onRemove} size={36} />
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -90,5 +98,4 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.keep,
   },
-  remove: { position: 'absolute', top: space.xs, right: space.xs },
 });

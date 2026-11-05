@@ -129,6 +129,14 @@ Product page (Step 5):
 - No dimensions or reviews yet: the sample catalog has none, and we don't invent them (real feeds in Phase 4)
 - Checks passing: typecheck, lint, 140 unit tests
 
+Kept and lists (Step 6):
+- Kept: running total ("7 pieces · $7,223"), list cover cards (2×2 photo collage + New list card), room chips with counts, sort sheet (Newest / price both ways). Rules in `src/domain/board.ts`
+- Long-press a piece (Kept or a list) for a menu: Add to list, Buy now, Remove. No × on tiles
+- Removing shows "Removed … · Undo" (`UndoToast`, `useUndoToast`); un-keep only counts as a taste signal once it sticks
+- List page: total, Share (phone share sheet with each piece's name, price, store and link via `outboundUrl`), Rename, Delete; clearer empty state
+- `useBuyNow` hook for Buy now outside the product page
+- Checks passing: typecheck, lint, 148 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.
