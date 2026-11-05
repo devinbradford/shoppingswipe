@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProductRepository } from '@/data';
 import type { CategoryId, Product, SubcategoryId, SwipeDirection } from '@/domain/types';
 import {
-  buildTasteModel,
   EMPTY_QUESTION_STATE,
   formatReasons,
   hashSeed,
@@ -21,7 +20,7 @@ import {
   type SkipReason,
 } from '@/recommendation';
 import { newId } from '@/lib/ids';
-import { usePreferencesStore } from '@/store/preferencesStore';
+import { currentTasteModel } from './tasteModel';
 import { recordSignal, useSignalStore } from '@/store/signalStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
@@ -54,21 +53,7 @@ export interface Deck {
   dismissQuestion: () => void;
 }
 
-/** Styles picked on first launch. */
-const picks = () => usePreferencesStore.getState().stylePicks;
-
-function modelFor(known: ReadonlyMap<string, Product>, bands: PriceBands) {
-  const { signals, feedback } = useSignalStore.getState();
-  return buildTasteModel({
-    swipes: useSwipeStore.getState().swipes,
-    products: known,
-    bands,
-    signals,
-    feedback,
-    seedStyles: picks(),
-    statedBudget: usePreferencesStore.getState().budget,
-  });
-}
+const modelFor = currentTasteModel;
 
 function toCard(r: RankedProduct): DeckCard {
   const labels = reasonLabels(r.reasons);

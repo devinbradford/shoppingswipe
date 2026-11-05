@@ -67,6 +67,15 @@ export default function RootLayout() {
           <Stack.Screen name="account" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
           <Stack.Screen name="auth-callback" />
           <Stack.Screen name="product/[id]" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
+          <Stack.Screen
+            name="photos/[id]"
+            options={{
+              presentation: 'transparentModal',
+              animation: 'fade',
+              gestureEnabled: false,
+              contentStyle: { backgroundColor: 'transparent' },
+            }}
+          />
         </Stack>
       </View>
     </GestureHandlerRootView>

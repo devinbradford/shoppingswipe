@@ -121,6 +121,14 @@ Swipe feel (Step 4):
 - Swipe up opens the product page; Undo flies the card back in from the side it left
 - Keep sends a small heart to the Kept tab (or the Kept button in room decks), which bounces (`KeepFlight`, `Pulse`)
 
+Product page (Step 5):
+- Full-screen photo with a details sheet you pull up (the sheet is the scroll content; the photo drifts behind it). Sticky bar: price, Keep heart, Buy now
+- "Why it's for you" (`whyForYou` / `formatWhy` in `src/recommendation/detail.ts`): what they like about it, plus "within your budget" once the budget is known. Hidden when there's nothing honest to say
+- "More like this" (`similarProducts`): look-alikes from the same room, nudged by taste, max two per brand, skipped pieces left out. Data via `useProductInsights`
+- Tap a photo → `/photos/[id]` viewer: pinch or double-tap zoom, pan when zoomed, swipe down to close (`ZoomableImage`)
+- No dimensions or reviews yet: the sample catalog has none, and we don't invent them (real feeds in Phase 4)
+- Checks passing: typecheck, lint, 140 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.
