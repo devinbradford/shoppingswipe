@@ -238,7 +238,10 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const positiveCount = keepCount + [...strongPositive].filter((id) => !kept.has(id)).length;
 
   // Decay by how many swipes came after each action.
-  const swipeTimes = input.swipes.filter((s) => products.has(s.productId)).map((s) => s.swipedAt).sort((a, b) => a - b);
+  const swipeTimes = input.swipes
+    .filter((s) => products.has(s.productId))
+    .map((s) => s.swipedAt)
+    .sort((a, b) => a - b);
   const newerSwipes = (at: number) => {
     let lo = 0;
     let hi = swipeTimes.length;

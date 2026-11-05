@@ -18,10 +18,7 @@ const handler = readFileSync(join(fnDir, 'handler.ts'), 'utf8')
   // Everything lives in one module, so nothing needs exporting.
   .replace(/^export (?=(async function|function|const|interface|type) )/gm, '');
 
-const index = readFileSync(join(fnDir, 'index.ts'), 'utf8').replace(
-  /^import \{[^}]*\} from '\.\/handler\.ts';\n/m,
-  '',
-);
+const index = readFileSync(join(fnDir, 'index.ts'), 'utf8').replace(/^import \{[^}]*\} from '\.\/handler\.ts';\n/m, '');
 
 if (index.includes("from './handler.ts'")) throw new Error('could not strip the handler import from index.ts');
 

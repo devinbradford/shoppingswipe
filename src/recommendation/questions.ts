@@ -107,13 +107,16 @@ export function nextQuestion(
   }
 
   const blocked = (featureKey: string) =>
-    model.muted.includes(featureKey) || model.fine.includes(featureKey) || state.asked.includes(`feature:${featureKey}`);
+    model.muted.includes(featureKey) ||
+    model.fine.includes(featureKey) ||
+    state.asked.includes(`feature:${featureKey}`);
   const lastFeatures = askableKeys(last.product, bands);
 
   // 1. A pattern of skips sharing what they just skipped.
   const windowSkips = session.slice(-options.patternWindow).filter((s) => s.direction === 'skip');
   const counts = new Map<string, number>();
-  for (const s of windowSkips) for (const f of askableKeys(s.product, bands)) counts.set(f.key, (counts.get(f.key) ?? 0) + 1);
+  for (const s of windowSkips)
+    for (const f of askableKeys(s.product, bands)) counts.set(f.key, (counts.get(f.key) ?? 0) + 1);
   const pattern = lastFeatures
     .filter((f) => (counts.get(f.key) ?? 0) >= options.patternSkips && !blocked(f.key))
     .sort((a, b) => (counts.get(b.key) ?? 0) - (counts.get(a.key) ?? 0) || PRIORITY[a.kind] - PRIORITY[b.kind])[0];

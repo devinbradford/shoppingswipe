@@ -29,7 +29,9 @@ const rows: [string, (s: Scorecard) => string][] = [
 for (const withPicks of [false, true]) {
   const t0 = Date.now();
   const cards = benchmark(catalog, { shoppers, withPicks, swipes: 60 });
-  console.log(`\n${withPicks ? 'WITH' : 'WITHOUT'} welcome-screen style picks — ${shoppers} shoppers, ${catalog.length} products, 60 swipes each (${((Date.now() - t0) / 1000).toFixed(0)}s)`);
+  console.log(
+    `\n${withPicks ? 'WITH' : 'WITHOUT'} welcome-screen style picks — ${shoppers} shoppers, ${catalog.length} products, 60 swipes each (${((Date.now() - t0) / 1000).toFixed(0)}s)`,
+  );
   console.log(['Metric'.padEnd(38), ...cards.map((c) => c.engine.padStart(16))].join(''));
   for (const [label, f] of rows) console.log([label.padEnd(38), ...cards.map((c) => f(c).padStart(16))].join(''));
 }

@@ -120,7 +120,9 @@ export async function handleWaitlistRequest(
   const cors = corsHeaders(origin, originAllowed);
 
   if (req.method === 'OPTIONS') {
-    return originAllowed ? new Response(null, { status: 204, headers: cors }) : json(403, { ok: false, error: 'forbidden' }, cors);
+    return originAllowed
+      ? new Response(null, { status: 204, headers: cors })
+      : json(403, { ok: false, error: 'forbidden' }, cors);
   }
   if (req.method !== 'POST') {
     return json(405, { ok: false, error: 'method_not_allowed' }, { ...cors, Allow: 'POST, OPTIONS' });
@@ -197,7 +199,12 @@ export async function handleWaitlistRequest(
     case 'created':
       if (deps.onNewSignup) {
         try {
-          await deps.onNewSignup({ email: record.email, source: record.source, consentVersion: record.consentVersion, consentText: record.consentText });
+          await deps.onNewSignup({
+            email: record.email,
+            source: record.source,
+            consentVersion: record.consentVersion,
+            consentText: record.consentText,
+          });
         } catch (error) {
           log('on_new_signup_failed', { message: error instanceof Error ? error.message : 'unknown' });
         }

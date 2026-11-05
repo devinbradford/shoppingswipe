@@ -33,7 +33,10 @@ function makeDeps(status: DbStatus | Error = 'created') {
 }
 
 function post(body: unknown, init: { origin?: string | null; contentType?: string; ip?: string } = {}) {
-  const headers = new Headers({ 'content-type': init.contentType ?? 'application/json', 'x-forwarded-for': init.ip ?? '203.0.113.7, 10.0.0.1' });
+  const headers = new Headers({
+    'content-type': init.contentType ?? 'application/json',
+    'x-forwarded-for': init.ip ?? '203.0.113.7, 10.0.0.1',
+  });
   if (init.origin !== null) headers.set('origin', init.origin ?? ORIGIN);
   return new Request('https://example.supabase.co/functions/v1/waitlist-signup', {
     method: 'POST',
@@ -42,7 +45,14 @@ function post(body: unknown, init: { origin?: string | null; contentType?: strin
   });
 }
 
-const valid = { email: '  Devin@Example.COM ', source: 'hero', consent: true, consentVersion: 'hero-v1', company: '', elapsedMs: 4000 };
+const valid = {
+  email: '  Devin@Example.COM ',
+  source: 'hero',
+  consent: true,
+  consentVersion: 'hero-v1',
+  company: '',
+  elapsedMs: 4000,
+};
 
 async function read(res: Response) {
   return { status: res.status, body: await res.json() };
@@ -56,10 +66,27 @@ describe('normalizeEmail', () => {
   });
 
   it.each([
-    '', 'plainaddress', '@example.com', 'devin@', 'devin@example', 'devin@@example.com', 'de vin@example.com',
-    'devin@exa mple.com', '.devin@example.com', 'devin.@example.com', 'de..vin@example.com', 'devin@-example.com',
-    'devin@example..com', 'devin@example.c', 'devin@example.123', '<script>@example.com', `${'a'.repeat(65)}@example.com`,
-    `devin@${'a'.repeat(250)}.com`, 'devin@exa\nmple.com', 'dev\tin@example.com', 'dévin@example.com',
+    '',
+    'plainaddress',
+    '@example.com',
+    'devin@',
+    'devin@example',
+    'devin@@example.com',
+    'de vin@example.com',
+    'devin@exa mple.com',
+    '.devin@example.com',
+    'devin.@example.com',
+    'de..vin@example.com',
+    'devin@-example.com',
+    'devin@example..com',
+    'devin@example.c',
+    'devin@example.123',
+    '<script>@example.com',
+    `${'a'.repeat(65)}@example.com`,
+    `devin@${'a'.repeat(250)}.com`,
+    'devin@exa\nmple.com',
+    'dev\tin@example.com',
+    'dévin@example.com',
   ])('rejects %j', (email) => {
     expect(normalizeEmail(email)).toBeNull();
   });
@@ -119,19 +146,26 @@ describe('handleWaitlistRequest', () => {
 
   it('accepts the footer form with its own disclosure', async () => {
     const { deps, saved } = makeDeps('created');
-    const res = await handleWaitlistRequest(post({ ...valid, source: 'footer', consentVersion: 'footer-v1' }), config, deps);
+    const res = await handleWaitlistRequest(
+      post({ ...valid, source: 'footer', consentVersion: 'footer-v1' }),
+      config,
+      deps,
+    );
     expect(res.status).toBe(200);
     expect(saved[0]).toMatchObject({ source: 'footer', consentText: CONSENT_DISCLOSURES['footer-v1'].text });
   });
 
-  it.each(['not-an-email', '', 'a@b', 'devin@example.c'])('rejects invalid email %j without touching the database', async (email) => {
-    const { deps, saved } = makeDeps();
-    expect(await read(await handleWaitlistRequest(post({ ...valid, email }), config, deps))).toEqual({
-      status: 400,
-      body: { ok: false, error: 'invalid_email' },
-    });
-    expect(saved).toHaveLength(0);
-  });
+  it.each(['not-an-email', '', 'a@b', 'devin@example.c'])(
+    'rejects invalid email %j without touching the database',
+    async (email) => {
+      const { deps, saved } = makeDeps();
+      expect(await read(await handleWaitlistRequest(post({ ...valid, email }), config, deps))).toEqual({
+        status: 400,
+        body: { ok: false, error: 'invalid_email' },
+      });
+      expect(saved).toHaveLength(0);
+    },
+  );
 
   it('requires consent that matches the form', async () => {
     const { deps, saved } = makeDeps();
@@ -155,9 +189,16 @@ describe('handleWaitlistRequest', () => {
   });
 
   it('silently drops honeypot and too-fast submissions', async () => {
-    for (const body of [{ ...valid, company: 'Acme' }, { ...valid, elapsedMs: 200 }, { ...valid, elapsedMs: undefined }]) {
+    for (const body of [
+      { ...valid, company: 'Acme' },
+      { ...valid, elapsedMs: 200 },
+      { ...valid, elapsedMs: undefined },
+    ]) {
       const { deps, saved, events } = makeDeps();
-      expect(await read(await handleWaitlistRequest(post(body), config, deps))).toEqual({ status: 200, body: { ok: true } });
+      expect(await read(await handleWaitlistRequest(post(body), config, deps))).toEqual({
+        status: 200,
+        body: { ok: true },
+      });
       expect(saved).toHaveLength(0);
       expect(events).toContain('spam_dropped');
     }

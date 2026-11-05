@@ -36,9 +36,13 @@ export const useSignalStore = create<SignalState>()(
           signals: [...s.signals, { id: newId(), productId, type, at: Date.now(), value }].slice(-MAX_SIGNALS),
         })),
       answerFeature: (featureKey, answer) =>
-        set((s) => ({ feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'feature', featureKey, answer }] })),
+        set((s) => ({
+          feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'feature', featureKey, answer }],
+        })),
       answerSkipReason: (productId, reason) =>
-        set((s) => ({ feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'skip_reason', productId, reason }] })),
+        set((s) => ({
+          feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'skip_reason', productId, reason }],
+        })),
       resetAll: () => set({ signals: [], feedback: [] }),
     }),
     {

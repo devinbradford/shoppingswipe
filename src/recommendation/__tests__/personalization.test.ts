@@ -115,15 +115,21 @@ describe('taste model v2', () => {
     const base = buildTasteModel({ swipes, products, bands: {} });
 
     const fine: Feedback[] = [{ id: 'f', at: 99, kind: 'feature', featureKey: 'material:boucle', answer: 'fine' }];
-    expect(affinity(buildTasteModel({ swipes, products, bands: {}, feedback: fine }), 'material:boucle').mean).toBeGreaterThan(
-      affinity(base, 'material:boucle').mean,
-    );
+    expect(
+      affinity(buildTasteModel({ swipes, products, bands: {}, feedback: fine }), 'material:boucle').mean,
+    ).toBeGreaterThan(affinity(base, 'material:boucle').mean);
 
     const less: Feedback[] = [{ id: 'l', at: 99, kind: 'feature', featureKey: 'color:sage', answer: 'less' }];
     const muted = buildTasteModel({ swipes, products, bands: {}, feedback: less });
     expect(affinity(muted, 'color:sage').mean).toBeLessThan(-1.5);
 
-    const why: Feedback[] = boucle.map((p, i) => ({ id: `w${i}`, at: 99, kind: 'skip_reason', productId: p.id, reason: 'color' }));
+    const why: Feedback[] = boucle.map((p, i) => ({
+      id: `w${i}`,
+      at: 99,
+      kind: 'skip_reason',
+      productId: p.id,
+      reason: 'color',
+    }));
     const blamed = buildTasteModel({ swipes, products, bands: {}, feedback: why });
     expect(affinity(blamed, 'material:boucle').mean).toBeGreaterThan(affinity(base, 'material:boucle').mean);
     expect(affinity(blamed, 'color:navy').mean).toBeLessThan(0);
@@ -131,8 +137,14 @@ describe('taste model v2', () => {
 
   it('learns a price ceiling relative to each product type', () => {
     const cheapSofas = [80000, 90000, 100000, 85000].map((c) => product({ priceCents: c }));
-    const bands = computePriceBands([30000, 60000, 90000, 150000, 250000, 350000].map((c) => product({ priceCents: c })));
-    const model = buildTasteModel({ swipes: cheapSofas.map((p, i) => swipe(p, 'keep', i)), products: byId(cheapSofas), bands });
+    const bands = computePriceBands(
+      [30000, 60000, 90000, 150000, 250000, 350000].map((c) => product({ priceCents: c })),
+    );
+    const model = buildTasteModel({
+      swipes: cheapSofas.map((p, i) => swipe(p, 'keep', i)),
+      products: byId(cheapSofas),
+      bands,
+    });
     expect(model.budget).not.toBeNull();
     expect(model.budget!.ceiling).toBeLessThan(priceRatio(product({ priceCents: 300000 }), bands));
     expect(model.budget!.ceiling).toBeGreaterThan(priceRatio(product({ priceCents: 100000 }), bands));
@@ -140,7 +152,9 @@ describe('taste model v2', () => {
 
   it('starts personal ranking after 3 positives or 3 style picks', () => {
     expect(isColdStartModel(EMPTY_MODEL)).toBe(true);
-    expect(isColdStartModel(buildTasteModel({ swipes: [], products: new Map(), bands: {}, seedStyles: ['a', 'b', 'c'] }))).toBe(false);
+    expect(
+      isColdStartModel(buildTasteModel({ swipes: [], products: new Map(), bands: {}, seedStyles: ['a', 'b', 'c'] })),
+    ).toBe(false);
   });
 });
 
@@ -163,20 +177,31 @@ describe('ranking v2', () => {
   });
 
   it('pushes pieces far over the learned budget down', () => {
-    const bands = computePriceBands([30000, 60000, 90000, 150000, 250000, 350000].map((c) => product({ priceCents: c })));
+    const bands = computePriceBands(
+      [30000, 60000, 90000, 150000, 250000, 350000].map((c) => product({ priceCents: c })),
+    );
     const cheap = [80000, 90000, 100000, 85000].map((c) => product({ priceCents: c, material: 'walnut' }));
     const m = buildTasteModel({ swipes: cheap.map((p, i) => swipe(p, 'keep', i)), products: byId(cheap), bands });
-    const [inBudget, pricey] = [product({ priceCents: 95000, material: 'walnut' }), product({ priceCents: 340000, material: 'walnut' })];
+    const [inBudget, pricey] = [
+      product({ priceCents: 95000, material: 'walnut' }),
+      product({ priceCents: 340000, material: 'walnut' }),
+    ];
     const ranked = rankDeck([pricey, inBudget], m, { bands, seed: 1, options: noExplore });
     expect(ranked[0].product.id).toBe(inBudget.id);
   });
 
   it('spreads look-alikes apart', () => {
-    const twins = Array.from({ length: 4 }, () => product({ styleTags: ['mid-century'], material: 'walnut', color: 'walnut' }));
+    const twins = Array.from({ length: 4 }, () =>
+      product({ styleTags: ['mid-century'], material: 'walnut', color: 'walnut' }),
+    );
     const others = Array.from({ length: 4 }, (_, i) =>
       product({ styleTags: ['mid-century'], material: ['oak', 'linen', 'boucle', 'velvet'][i], color: 'cream' }),
     );
-    const ranked = rankDeck([...twins, ...others], model, { bands: {}, seed: 2, options: { ...noExplore, diversityPenalty: 2 } });
+    const ranked = rankDeck([...twins, ...others], model, {
+      bands: {},
+      seed: 2,
+      options: { ...noExplore, diversityPenalty: 2 },
+    });
     for (let i = 1; i < 6; i++) {
       const a = ranked[i - 1].product;
       const b = ranked[i].product;
@@ -187,7 +212,10 @@ describe('ranking v2', () => {
   it('places a probe card every 7th slot, never a confident dislike, steady across re-ranks', () => {
     const catalog = generateCatalog({ perSubcategory: 40, seed: 3 }).filter((p) => p.categoryId === 'living-room');
     const ranked = rankDeck(catalog, model, { bands: computePriceBands(catalog), seed: 4 });
-    const probes = ranked.slice(0, 40).map((r, i) => (r.explored ? i : -1)).filter((i) => i >= 0);
+    const probes = ranked
+      .slice(0, 40)
+      .map((r, i) => (r.explored ? i : -1))
+      .filter((i) => i >= 0);
     expect(probes).toEqual([6, 13, 20, 27, 34]);
     const scored = scoreCandidates(catalog, model, { bands: computePriceBands(catalog), seed: 4 });
     const avoid = new Set(scored.filter((s) => s.avoid).map((s) => s.product.id));
@@ -196,7 +224,12 @@ describe('ranking v2', () => {
     const next = rerankDeck(ranked, model, { bands: computePriceBands(catalog), seed: 5, position: 1 });
     expect(next.slice(0, 2).map((r) => r.product.id)).toEqual(ranked.slice(0, 2).map((r) => r.product.id));
     // Deck position 1 + 2 pinned cards: the next probe lands at index 5 (overall card #7).
-    expect(next.slice(2, 12).map((r, i) => (r.explored ? i + 2 : -1)).filter((i) => i >= 0)).toEqual([5]);
+    expect(
+      next
+        .slice(2, 12)
+        .map((r, i) => (r.explored ? i + 2 : -1))
+        .filter((i) => i >= 0),
+    ).toEqual([5]);
   });
 
   it('opens with cards covering many styles, materials and colors', () => {
@@ -210,7 +243,10 @@ describe('ranking v2', () => {
     const catalog = generateCatalog({ perSubcategory: 1100 });
     const bands = computePriceBands(catalog);
     const m = buildTasteModel({
-      swipes: catalog.filter((_, i) => i % 97 === 0).slice(0, 60).map((p, i) => swipe(p, i % 3 ? 'keep' : 'skip', i)),
+      swipes: catalog
+        .filter((_, i) => i % 97 === 0)
+        .slice(0, 60)
+        .map((p, i) => swipe(p, i % 3 ? 'keep' : 'skip', i)),
       products: byId(catalog),
       bands,
     });
@@ -242,7 +278,12 @@ describe('questions', () => {
       s(product({ material: 'boucle', color: 'navy' }), 'skip'),
     ];
     const q = nextQuestion(session, empty, {}, EMPTY_QUESTION_STATE);
-    expect(q).toMatchObject({ type: 'feature', trigger: 'pattern', featureKey: 'material:boucle', title: 'Not into boucle?' });
+    expect(q).toMatchObject({
+      type: 'feature',
+      trigger: 'pattern',
+      featureKey: 'material:boucle',
+      title: 'Not into boucle?',
+    });
   });
 
   it('never asks after a keep, twice about the same thing, within 8 swipes, on a fast streak, or after 2 ignores', () => {
@@ -266,13 +307,20 @@ describe('questions', () => {
 
   it('asks "gone off walnut?" when an old favourite keeps getting skipped', () => {
     const keeps = Array.from({ length: 3 }, () => product({ material: 'walnut' }));
-    const model = buildTasteModel({ swipes: keeps.map((p, i) => swipe(p, 'keep', i)), products: byId(keeps), bands: {} });
+    const model = buildTasteModel({
+      swipes: keeps.map((p, i) => swipe(p, 'keep', i)),
+      products: byId(keeps),
+      bands: {},
+    });
     const session = [
       s(product({ material: 'walnut', color: 'black' }), 'skip'),
       s(product({ material: 'linen', color: 'cream' }), 'keep'),
       s(product({ material: 'walnut', color: 'rust' }), 'skip'),
     ];
-    expect(nextQuestion(session, model, {}, EMPTY_QUESTION_STATE)).toMatchObject({ trigger: 'mixed', title: 'Gone off walnut?' });
+    expect(nextQuestion(session, model, {}, EMPTY_QUESTION_STATE)).toMatchObject({
+      trigger: 'mixed',
+      title: 'Gone off walnut?',
+    });
   });
 
   it('asks "what put you off?" after skipping a strong For you pick', () => {

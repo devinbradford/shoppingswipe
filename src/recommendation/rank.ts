@@ -17,7 +17,14 @@
  *    and colors as possible, so the first handful of swipes teaches the most.
  */
 import type { Product } from '../domain/types';
-import { DEFAULT_OPTIONS, productFeatures, type Feature, type FeatureKind, type PriceBands, type RankedProduct } from './engine';
+import {
+  DEFAULT_OPTIONS,
+  productFeatures,
+  type Feature,
+  type FeatureKind,
+  type PriceBands,
+  type RankedProduct,
+} from './engine';
 import { affinity, priceRatio, type Affinity, type TasteModel } from './model';
 import { createRng, type Rng } from './random';
 
@@ -190,7 +197,12 @@ function firstCards(model: TasteModel): boolean {
 export function rankDeck(candidates: readonly Product[], model: TasteModel, rank: DeckRankOptions): RankedProduct[] {
   const options = rank.options ?? RANK_OPTIONS;
   if (firstCards(model)) {
-    return informativeStart(candidates, rank.seed).map((product) => ({ product, score: 0, reasons: [], explored: false }));
+    return informativeStart(candidates, rank.seed).map((product) => ({
+      product,
+      score: 0,
+      reasons: [],
+      explored: false,
+    }));
   }
 
   const scored = scoreCandidates(candidates, model, rank).sort(

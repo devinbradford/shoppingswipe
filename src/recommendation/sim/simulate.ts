@@ -95,7 +95,12 @@ export function utility(shopper: Shopper, product: Product, bands: PriceBands): 
 }
 
 function look(p: Product): string[] {
-  return [...p.styleTags.map((s) => `style:${s}`), `material:${p.material}`, `color:${p.color}`, `type:${p.subcategoryId}`];
+  return [
+    ...p.styleTags.map((s) => `style:${s}`),
+    `material:${p.material}`,
+    `color:${p.color}`,
+    `type:${p.subcategoryId}`,
+  ];
 }
 
 function jaccard(a: string[], b: string[]): number {
@@ -130,8 +135,7 @@ export function runSession(
   };
 
   const v2 = engine !== 'v1';
-  const model = () =>
-    buildTasteModel({ swipes, products, bands, signals, feedback, seedStyles: shopper.picks });
+  const model = () => buildTasteModel({ swipes, products, bands, signals, feedback, seedStyles: shopper.picks });
   const profile = () => buildTasteProfile(swipes, products, bands, undefined, shopper.picks);
   const seed = (n: number) => hashSeed(`${shopper.id}:${engine}:${n}`);
 
@@ -157,7 +161,13 @@ export function runSession(
     if (prevLook) result.similarities.push(jaccard(l, prevLook));
     prevLook = l;
 
-    swipes.push({ id: `s${i}`, productId: p.id, categoryId: p.categoryId, direction: keep ? 'keep' : 'skip', swipedAt: t });
+    swipes.push({
+      id: `s${i}`,
+      productId: p.id,
+      categoryId: p.categoryId,
+      direction: keep ? 'keep' : 'skip',
+      swipedAt: t,
+    });
     if (v2) {
       signals.push({ id: `d${i}`, productId: p.id, type: 'swipe_dwell', at: t, value: dwellMs });
       if (keep && u > 1) {
