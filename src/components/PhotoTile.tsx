@@ -16,12 +16,14 @@ interface PhotoTileProps {
   onPress: () => void;
   /** Press and hold: opens the piece's menu (Add to list, Buy now, Remove). */
   onLongPress?: () => void;
+  /** Small label in the corner, e.g. "BOUGHT". */
+  tag?: string;
   /** Selection mode: true/false shows a checkbox; undefined means not selecting. */
   selected?: boolean;
 }
 
 /** Mood-board tile: the photo with the price and name set over its lower edge. */
-export function PhotoTile({ product, retailerName, height, onPress, onLongPress, selected }: PhotoTileProps) {
+export function PhotoTile({ product, retailerName, height, onPress, onLongPress, tag, selected }: PhotoTileProps) {
   const price = formatPrice(product.priceCents, product.currency);
   const selecting = selected !== undefined;
   return (
@@ -39,7 +41,7 @@ export function PhotoTile({ product, retailerName, height, onPress, onLongPress,
         delayLongPress={350}
         accessibilityRole={selecting ? 'checkbox' : 'button'}
         accessibilityState={selecting ? { checked: selected } : undefined}
-        accessibilityLabel={`${product.title}, ${price}${retailerName ? `, at ${retailerName}` : ''}`}
+        accessibilityLabel={`${product.title}, ${price}${retailerName ? `, at ${retailerName}` : ''}${tag ? `, ${tag.toLowerCase()}` : ''}`}
         accessibilityHint={selecting ? undefined : 'Opens product details'}
         accessibilityActions={onLongPress && !selecting ? [{ name: 'longpress', label: 'More options' }] : undefined}
         onAccessibilityAction={(e) => {
@@ -61,6 +63,14 @@ export function PhotoTile({ product, retailerName, height, onPress, onLongPress,
             {product.title}
           </AppText>
         </View>
+        {tag && !selecting ? (
+          <View style={styles.tag} pointerEvents="none">
+            <Icon name="check" size={11} color={colors.onInk} />
+            <AppText variant="eyebrow" color={colors.onInk} style={styles.tagText}>
+              {tag}
+            </AppText>
+          </View>
+        ) : null}
         {selecting ? (
           <View style={[styles.check, selected && styles.checkOn]} pointerEvents="none">
             {selected ? <Icon name="check" size={16} color={colors.onInk} /> : null}
@@ -91,6 +101,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  tag: {
+    position: 'absolute',
+    top: space.sm,
+    left: space.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: space.sm,
+    paddingVertical: 3,
+    borderRadius: radii.pill,
+    backgroundColor: colors.keep,
+  },
+  tagText: { fontSize: 9, lineHeight: 12, letterSpacing: 1.4 },
   checkOn: { backgroundColor: colors.keep, borderColor: colors.keep },
   selectedRing: {
     ...StyleSheet.absoluteFill,

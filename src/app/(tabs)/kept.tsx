@@ -20,6 +20,7 @@ import { UndoToast } from '@/components/UndoToast';
 import { arrangeBoard, BOARD_SORTS, boardTotal, formatBoardTotal, roomCounts, type BoardSort } from '@/domain/board';
 import { CATEGORY_IDS, type CategoryId, type Product } from '@/domain/types';
 import { useBuyNow } from '@/hooks/useBuyNow';
+import { useBoughtIds } from '@/hooks/usePurchasePrompt';
 import { useCategorySummaries, useRetailerNames, useSavedProducts } from '@/hooks/useCatalog';
 import { useUndoToast } from '@/hooks/useUndoToast';
 import { useListCovers, useTransferFromKept, type TransferMode } from '@/hooks/useWishlists';
@@ -46,7 +47,8 @@ export default function KeptScreen() {
   const transfer = useTransferFromKept();
   const tabBarHeight = useBottomTabBarHeight();
   const markKeptSeen = usePreferencesStore((s) => s.markKeptSeen);
-  const { buy, error: buyError } = useBuyNow();
+  const { buy } = useBuyNow();
+  const boughtIds = useBoughtIds();
   const toast = useUndoToast();
   // Clears the "new" badge on the tab, now and when leaving (things kept while here aren't "new").
   useFocusEffect(
@@ -58,6 +60,7 @@ export default function KeptScreen() {
   const products = useMemo(() => (saved.status === 'ready' ? (saved.data ?? []) : []), [saved.status, saved.data]);
 
   const [room, setRoom] = useState<CategoryId | null>(null);
+  const [onlyBought, setOnlyBought] = useState(false);
   const [sort, setSort] = useState<BoardSort>('newest');
   const [sorting, setSorting] = useState(false);
   const [selecting, setSelecting] = useState(false);
@@ -71,7 +74,9 @@ export default function KeptScreen() {
   const counts = roomCounts(products);
   // A room filter whose last piece was removed falls back to everything.
   const activeRoom = room && counts[room] ? room : null;
-  const shown = arrangeBoard(products, { room: activeRoom, sort });
+  const boughtCount = products.filter((p) => boughtIds.has(p.id)).length;
+  const showBought = onlyBought && boughtCount > 0;
+  const shown = arrangeBoard(products, { room: activeRoom, sort, only: showBought ? boughtIds : undefined });
   const total = formatBoardTotal(boardTotal(shown), formatPrice);
   const roomLabel = (id: CategoryId) => summaries.find((s) => s.id === id)?.label ?? id;
   const sortLabel = BOARD_SORTS.find((s) => s.id === sort)?.label ?? 'Newest';
@@ -135,14 +140,35 @@ export default function KeptScreen() {
         contentContainerStyle={styles.chips}
         style={styles.flex}
         accessibilityLabel="Filter by room">
-        <Chip label="All" selected={!activeRoom} onPress={() => setRoom(null)} />
+        <Chip
+          label="All"
+          selected={!activeRoom && !showBought}
+          onPress={() => {
+            setRoom(null);
+            setOnlyBought(false);
+          }}
+        />
+        {boughtCount > 0 ? (
+          <Chip
+            label={`Bought  ${boughtCount}`}
+            accessibilityLabel={`Bought, ${pluralize(boughtCount, 'piece')}`}
+            selected={showBought}
+            onPress={() => {
+              setOnlyBought(!showBought);
+              setRoom(null);
+            }}
+          />
+        ) : null}
         {CATEGORY_IDS.filter((id) => counts[id]).map((id) => (
           <Chip
             key={id}
             label={`${roomLabel(id)}  ${counts[id]}`}
             accessibilityLabel={`${roomLabel(id)}, ${pluralize(counts[id] ?? 0, 'piece')}`}
-            selected={activeRoom === id}
-            onPress={() => setRoom(activeRoom === id ? null : id)}
+            selected={activeRoom === id && !showBought}
+            onPress={() => {
+              setOnlyBought(false);
+              setRoom(activeRoom === id && !showBought ? null : id);
+            }}
           />
         ))}
       </ScrollView>
@@ -197,10 +223,10 @@ export default function KeptScreen() {
             />
           ) : null}
         </View>
-        {notice || buyError ? (
-          <View style={[styles.notice, buyError ? styles.noticeError : null]} accessibilityLiveRegion="polite">
-            <AppText variant="bodySmall" color={buyError ? colors.skip : colors.keep}>
-              {buyError ?? notice}
+        {notice ? (
+          <View style={styles.notice} accessibilityLiveRegion="polite">
+            <AppText variant="bodySmall" color={colors.keep}>
+              {notice}
             </AppText>
           </View>
         ) : null}
@@ -220,6 +246,7 @@ export default function KeptScreen() {
                   selecting ? toggle(item.id) : router.push({ pathname: '/product/[id]', params: { id: item.id } })
                 }
                 onLongPress={() => setMenuFor(item)}
+                tag={boughtIds.has(item.id) ? 'BOUGHT' : undefined}
               />
             )}
           />
@@ -282,7 +309,7 @@ export default function KeptScreen() {
                 {
                   label: 'Buy now',
                   icon: 'external',
-                  onPress: () => void buy(menuFor, retailers.get(menuFor.retailerId)),
+                  onPress: () => buy(menuFor),
                 },
                 { label: 'Remove from kept', icon: 'trash', destructive: true, onPress: () => remove(menuFor) },
               ]
@@ -345,7 +372,6 @@ const styles = StyleSheet.create({
   titleText: { gap: 2, flexShrink: 1 },
   gutter: { paddingHorizontal: space.xl },
   notice: { marginHorizontal: space.xl, backgroundColor: colors.keepSoft, borderRadius: 12, padding: space.md },
-  noticeError: { backgroundColor: colors.skipSoft },
   section: { gap: space.md },
   covers: { gap: space.md, paddingHorizontal: space.xl },
   filterRow: { flexDirection: 'row', alignItems: 'center', paddingRight: space.lg, gap: space.sm },

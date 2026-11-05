@@ -12,6 +12,7 @@ import { ProfileRow, ProfileSection } from '@/components/ProfileRow';
 import { budgetAnchor, formatBudget, NO_LIMIT, type RoomChoice } from '@/domain/budget';
 import { useAuthStore } from '@/store/authStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { usePurchaseStore } from '@/store/purchaseStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, space } from '@/theme/tokens';
@@ -131,6 +132,7 @@ function ResetLink() {
   const resetSwipes = useSwipeStore((s) => s.resetAll);
   const resetLists = useWishlistStore((s) => s.resetAll);
   const resetPrefs = usePreferencesStore((s) => s.resetAll);
+  const resetPurchases = usePurchaseStore((s) => s.resetAll);
   const [confirm, setConfirm] = useState(false);
   return (
     <>
@@ -153,6 +155,7 @@ function ResetLink() {
           resetSwipes();
           resetLists();
           resetPrefs();
+          resetPurchases();
         }}
       />
     </>

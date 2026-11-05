@@ -18,6 +18,7 @@ import { UndoToast } from '@/components/UndoToast';
 import { boardTotal, formatBoardTotal, shareListText } from '@/domain/board';
 import type { Product } from '@/domain/types';
 import { useBuyNow } from '@/hooks/useBuyNow';
+import { useBoughtIds } from '@/hooks/usePurchasePrompt';
 import { useRetailerNames } from '@/hooks/useCatalog';
 import { useUndoToast } from '@/hooks/useUndoToast';
 import { useWishlistProducts } from '@/hooks/useWishlists';
@@ -39,7 +40,8 @@ export default function ListScreen() {
   const remove = useWishlistStore((s) => s.remove);
   const removeItems = useWishlistStore((s) => s.removeItems);
   const addToList = useWishlistStore((s) => s.add);
-  const { buy, error: buyError } = useBuyNow();
+  const { buy } = useBuyNow();
+  const boughtIds = useBoughtIds();
   const toast = useUndoToast();
   const [renaming, setRenaming] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -85,7 +87,7 @@ export default function ListScreen() {
     toast.show({ message: `Removed ${p.title}`, undo: () => addToList(listId, [p.id]) });
   };
 
-  const error = buyError ?? shareError;
+  const error = shareError;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -129,6 +131,7 @@ export default function ListScreen() {
                 retailerName={retailers.get(item.retailerId)}
                 onPress={() => router.push({ pathname: '/product/[id]', params: { id: item.id } })}
                 onLongPress={() => setMenuFor(item)}
+                tag={boughtIds.has(item.id) ? 'BOUGHT' : undefined}
               />
             )}
           />
@@ -183,7 +186,7 @@ export default function ListScreen() {
                 {
                   label: 'Buy now',
                   icon: 'external',
-                  onPress: () => void buy(menuFor, retailers.get(menuFor.retailerId)),
+                  onPress: () => buy(menuFor),
                 },
                 {
                   label: 'Remove from this list',

@@ -12,8 +12,10 @@ export type SignalType =
   | 'photo_browse'
   /** Added the product to a named list. */
   | 'list_add'
-  /** Tapped Buy now. The strongest sign of love there is. */
+  /** Tapped Buy now. A very strong sign of love. */
   | 'buy_click'
+  /** Said "Bought it" after coming back from the store. The strongest sign there is. */
+  | 'purchase'
   /** Removed a kept product from Kept later on: a change of heart. */
   | 'unsave'
   /** How long the card was on top before it was swiped (`value`, ms). */
@@ -58,6 +60,7 @@ export type Feedback = FeatureFeedback | SkipReasonFeedback;
  * per signal type, except photo browsing which is capped.
  */
 export const SIGNAL_WEIGHTS: Record<Exclude<SignalType, 'swipe_dwell'>, number> = {
+  purchase: 4,
   buy_click: 3,
   list_add: 2,
   detail_open: 0.6,

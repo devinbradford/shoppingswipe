@@ -27,6 +27,14 @@ describe('arrangeBoard', () => {
     expect(sample.map((p) => p.id)).toEqual(before);
   });
 
+  it('can narrow to a set of ids (e.g. bought pieces)', () => {
+    const only = new Set([sample[2].id, sample[0].id]);
+    expect(arrangeBoard(sample, { room: null, sort: 'newest', only }).map((p) => p.id)).toEqual([
+      sample[0].id,
+      sample[2].id,
+    ]);
+  });
+
   it('keeps equal prices in kept order', () => {
     const a = { ...sample[0], id: 'a', priceCents: 500 };
     const b = { ...sample[1], id: 'b', priceCents: 500 };

@@ -9,8 +9,10 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { PurchasePrompt } from '@/components/PurchasePrompt';
 import { StateView } from '@/components/StateView';
 import { useOnline } from '@/hooks/useOnline';
+import { usePurchasePrompt } from '@/hooks/usePurchasePrompt';
 import { startAuth } from '@/lib/auth';
 import { startSyncTriggers } from '@/sync/appSync';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
@@ -28,6 +30,7 @@ export default function RootLayout() {
   });
   const online = useOnline();
   const reduceMotion = useReduceMotion();
+  const purchase = usePurchasePrompt();
   // If fonts fail we still start, falling back to the system font.
   const ready = loaded || !!error;
 
@@ -76,7 +79,22 @@ export default function RootLayout() {
               contentStyle: { backgroundColor: 'transparent' },
             }}
           />
+          <Stack.Screen
+            name="handoff/[id]"
+            options={{ presentation: 'transparentModal', animation: 'fade', gestureEnabled: false }}
+          />
         </Stack>
+        {purchase.visit ? (
+          <PurchasePrompt
+            key={purchase.visit.productId}
+            title={purchase.visit.title}
+            storeName={purchase.visit.storeName}
+            onBought={purchase.bought}
+            onNotYet={purchase.notYet}
+            onIgnore={purchase.dismiss}
+            reduceMotion={reduceMotion}
+          />
+        ) : null}
       </View>
     </GestureHandlerRootView>
   );

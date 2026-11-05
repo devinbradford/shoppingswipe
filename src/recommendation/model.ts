@@ -235,7 +235,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
     const e = { productId: s.productId, weight: w, at: s.at, isSkip: false };
     seen.set(key, e);
     events.push(e);
-    if (s.type === 'list_add' || s.type === 'buy_click') strongPositive.add(s.productId);
+    if (s.type === 'list_add' || s.type === 'buy_click' || s.type === 'purchase') strongPositive.add(s.productId);
   }
   const positiveCount = keepCount + [...strongPositive].filter((id) => !kept.has(id)).length;
 

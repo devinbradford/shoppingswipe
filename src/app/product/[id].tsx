@@ -1,5 +1,4 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useState } from 'react';
 import {
   Pressable,
@@ -29,11 +28,12 @@ import { SimilarRow } from '@/components/SimilarRow';
 import { LoadingView, StateView } from '@/components/StateView';
 import type { Product, Retailer } from '@/domain/types';
 import { useProduct } from '@/hooks/useCatalog';
-import { useOnline } from '@/hooks/useOnline';
+import { useBuyNow } from '@/hooks/useBuyNow';
 import { useProductInsights } from '@/hooks/useProductInsights';
 import { useListsForProduct } from '@/hooks/useWishlists';
 import { formatPrice } from '@/lib/format';
-import { outboundUrl } from '@/lib/outboundLink';
+import { COMMISSION_NOTE } from '@/lib/disclosure';
+import { usePurchaseStore } from '@/store/purchaseStore';
 import { recordSignal } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
@@ -86,20 +86,20 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const [photo, setPhoto] = useState(0);
-  const [opening, setOpening] = useState(false);
   const isKept = useSwipeStore((s) => s.saved.some((i) => i.productId === product.id));
   const addSaved = useSwipeStore((s) => s.addSaved);
   const removeSaved = useSwipeStore((s) => s.removeSaved);
   const addToList = useWishlistStore((s) => s.add);
   const inLists = useListsForProduct(product.id);
   const [picking, setPicking] = useState(false);
-  const online = useOnline();
-  const [buyError, setBuyError] = useState<string | null>(null);
+  const { buy } = useBuyNow();
+  const boughtAt = usePurchaseStore((s) => s.bought.find((b) => b.productId === product.id)?.at);
   const { why, similar } = useProductInsights(product);
   const price = formatPrice(product.priceCents, product.currency);
   const retailerName = retailer?.name ?? 'the retailer';
 
-  const barHeight = 76 + Math.max(insets.bottom, space.md);
+  // Price/Keep/Buy row plus the commission note.
+  const barHeight = 98 + Math.max(insets.bottom, space.md);
   const sheetTop = Math.max(320, height - barHeight - PEEK);
 
   // Opening a product and flipping through its photos say a little about taste.
@@ -145,23 +145,6 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
       recordSignal(product.id, 'unsave');
     } else {
       addSaved(product.id);
-    }
-  };
-
-  const buy = async () => {
-    setBuyError(null);
-    if (!online) {
-      setBuyError(`You're offline. Connect to the internet to open ${retailerName}.`);
-      return;
-    }
-    setOpening(true);
-    recordSignal(product.id, 'buy_click');
-    try {
-      await WebBrowser.openBrowserAsync(outboundUrl(product));
-    } catch {
-      setBuyError(`Couldn't open ${retailerName}. Try again in a moment.`);
-    } finally {
-      setOpening(false);
     }
   };
 
@@ -220,6 +203,14 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
             {product.title}
           </AppText>
           <AppText variant="title">{price}</AppText>
+          {boughtAt ? (
+            <View style={styles.bought}>
+              <Icon name="check" size={14} color={colors.keep} />
+              <AppText variant="caption" color={colors.accentText}>
+                You bought this on {new Date(boughtAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </AppText>
+            </View>
+          ) : null}
           {why ? (
             <View style={styles.why} accessibilityLabel={`Why it's for you: ${why}`}>
               <View style={styles.whyDot} />
@@ -294,13 +285,6 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
       />
 
       <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, space.md) }]}>
-        {buyError ? (
-          <View style={styles.buyError} accessibilityRole="alert" accessibilityLiveRegion="polite">
-            <AppText variant="bodySmall" color={colors.skip}>
-              {buyError}
-            </AppText>
-          </View>
-        ) : null}
         <View style={styles.barRow}>
           <View style={styles.barPrice}>
             <AppText variant="heading" numberOfLines={1}>
@@ -324,11 +308,13 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
             icon="external"
             size="lg"
             style={styles.buy}
-            disabled={opening}
-            onPress={buy}
+            onPress={() => buy(product)}
             accessibilityHint={`Opens ${retailerName}'s website`}
           />
         </View>
+        <AppText variant="caption" color={colors.inkSubtle} style={styles.note}>
+          {COMMISSION_NOTE}
+        </AppText>
       </View>
     </View>
   );
@@ -453,10 +439,6 @@ const styles = StyleSheet.create({
   keepOn: { backgroundColor: colors.keep },
   pressed: { opacity: 0.8, transform: [{ scale: 0.96 }] },
   buy: { flex: 1 },
-  buyError: {
-    borderRadius: radii.sm,
-    paddingHorizontal: space.md,
-    paddingVertical: space.sm,
-    backgroundColor: colors.skipSoft,
-  },
+  note: { textAlign: 'center' },
+  bought: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
 });

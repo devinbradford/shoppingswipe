@@ -137,6 +137,13 @@ Kept and lists (Step 6):
 - `useBuyNow` hook for Buy now outside the product page
 - Checks passing: typecheck, lint, 148 unit tests
 
+Buying hand-off (Step 7):
+- Every Buy now goes to `/handoff/[id]`: ~1.1 s "Taking you to <store>" moment (Cancel available), then the store opens in a browser sheet inside the app (`visitStore` in `src/hooks/useBuyNow.ts`, always via `outboundUrl`). Network is checked right before opening; offline shows a calm message with Try again
+- Affiliate disclosure next to every Buy now (`COMMISSION_NOTE` in `src/lib/disclosure.ts`): product page bar and the hand-off screen
+- Back from the store: "Did you buy it?" pill at the top (`PurchasePrompt`, root layout). Asked once per product, fades after 15 s. "Bought it" = strongest taste signal (`purchase`, weight 4), adds to Kept with a BOUGHT tag and a Bought filter chip; product page shows "You bought this on …"
+- Purchases live on this phone only for now (`src/store/purchaseStore.ts`, rules in `src/domain/purchases.ts`); not synced yet
+- Checks passing: typecheck, lint, 153 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

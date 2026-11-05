@@ -18,9 +18,9 @@ export const BOARD_SORTS: { id: BoardSort; label: string }[] = [
  */
 export function arrangeBoard(
   products: readonly Product[],
-  { room, sort }: { room: CategoryId | null; sort: BoardSort },
+  { room, sort, only }: { room: CategoryId | null; sort: BoardSort; only?: ReadonlySet<string> },
 ): Product[] {
-  const shown = room ? products.filter((p) => p.categoryId === room) : [...products];
+  const shown = products.filter((p) => (!room || p.categoryId === room) && (!only || only.has(p.id)));
   if (sort === 'newest') return shown;
   const dir = sort === 'price-asc' ? 1 : -1;
   return shown
