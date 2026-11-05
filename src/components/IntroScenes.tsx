@@ -55,7 +55,9 @@ export function SwipeScene({ photos, reduceMotion }: { photos: string[]; reduceM
       opacity: 1 - Math.max(0, p - 0.75) * 4,
     };
   });
-  const under = useAnimatedStyle(() => ({ transform: [{ scale: 0.92 + 0.08 * t.get() }, { translateY: 18 * (1 - t.get()) }] }));
+  const under = useAnimatedStyle(() => ({
+    transform: [{ scale: 0.92 + 0.08 * t.get() }, { translateY: 18 * (1 - t.get()) }],
+  }));
   const stamp = useAnimatedStyle(() => ({ opacity: Math.min(1, t.get() * 3) }));
   return (
     <View style={styles.stage}>

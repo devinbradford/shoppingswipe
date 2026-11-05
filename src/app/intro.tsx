@@ -81,7 +81,12 @@ export default function IntroScreen() {
             </View>
           ))}
         </View>
-        <Pressable onPress={finish} accessibilityRole="button" accessibilityLabel="Skip intro" hitSlop={12} style={styles.skip}>
+        <Pressable
+          onPress={finish}
+          accessibilityRole="button"
+          accessibilityLabel="Skip intro"
+          hitSlop={12}
+          style={styles.skip}>
           <AppText variant="bodySmall" color={colors.inkMuted}>
             Skip
           </AppText>
@@ -135,7 +140,15 @@ const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'center', gap: space.lg, minHeight: 44 },
   pips: { flex: 1, flexDirection: 'row', gap: space.xs },
   pip: { flex: 1, height: 2, borderRadius: 1, backgroundColor: colors.pip, overflow: 'hidden' },
-  pipFill: { position: 'absolute', left: 0, top: 0, bottom: 0, right: 0, backgroundColor: colors.pipActive, transformOrigin: 'left' },
+  pipFill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: colors.pipActive,
+    transformOrigin: 'left',
+  },
   full: { transform: [{ scaleX: 1 }] },
   skip: { minHeight: 44, minWidth: 44, alignItems: 'flex-end', justifyContent: 'center' },
   body: { flex: 1, justifyContent: 'center', gap: space.xxl },

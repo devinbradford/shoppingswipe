@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { ProductImage } from '@/components/ProductImage';
+import { STYLE_PHOTOS, stylePhoto } from '@/data/stylePhotos';
 import { useStyleOptions } from '@/hooks/useCatalog';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { usePreferencesStore } from '@/store/preferencesStore';
@@ -52,17 +53,19 @@ export default function BuildingScreen() {
     return [...picks.map(titleCase), ...extra].slice(0, 6);
   }, [picks, params.tags]);
 
-  // Cover photos for the picked styles (fall back to the most common styles).
+  // The room photos of the picked styles, topped up with catalog covers if needed.
   const covers = useMemo(() => {
-    if (styleOptions.status !== 'ready') return [];
-    const byTag = new Map(styleOptions.data.map((s) => [s.tag, s.coverUrl]));
-    const chosen = picks.map((p) => byTag.get(p)).filter((u): u is string => !!u);
-    const rest = styleOptions.data.map((s) => s.coverUrl).filter((u): u is string => !!u && !chosen.includes(u));
-    return [...chosen, ...rest].slice(0, 3);
+    const own = picks.map(stylePhoto).filter((x) => x !== undefined);
+    const fallback =
+      styleOptions.status === 'ready'
+        ? styleOptions.data.map((s) => s.coverUrl).filter((u): u is string => !!u)
+        : STYLE_PHOTOS.map((p) => p.source);
+    return [...own, ...fallback].slice(0, 3);
   }, [styleOptions, picks]);
 
   useEffect(() => {
-    if (covers.length) Image.prefetch(covers).catch(() => {});
+    const urls = covers.filter((c): c is string => typeof c === 'string');
+    if (urls.length) Image.prefetch(urls).catch(() => {});
   }, [covers]);
 
   const fan = useSharedValue(0);
@@ -90,7 +93,7 @@ export default function BuildingScreen() {
       <View style={styles.stage} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
         <View style={styles.glow} />
         {[0, 1, 2].map((i) => (
-          <FeedCard key={i} index={i} uri={covers[i]} fan={fan} settle={settle} reduceMotion={reduceMotion} />
+          <FeedCard key={i} index={i} source={covers[i]} fan={fan} settle={settle} reduceMotion={reduceMotion} />
         ))}
       </View>
 
@@ -102,7 +105,10 @@ export default function BuildingScreen() {
         </Animated.View>
         <Animated.View entering={reduceMotion ? undefined : FadeInDown.delay(120).duration(420)}>
           <AppText variant="hero" style={styles.center} accessibilityRole="header">
-            Made for <AppText variant="hero" color={colors.accentText} style={styles.italic}>you.</AppText>
+            Made for{' '}
+            <AppText variant="hero" color={colors.accentText} style={styles.italic}>
+              you.
+            </AppText>
           </AppText>
         </Animated.View>
         {tags.length ? (
@@ -142,13 +148,14 @@ function Tag({ label, delay, reduceMotion }: { label: string; delay: number; red
 
 function FeedCard({
   index,
-  uri,
+  source,
   fan,
   settle,
   reduceMotion,
 }: {
   index: number;
-  uri?: string;
+  /** A bundled room photo, or a catalog photo URL. */
+  source?: number | string;
   fan: SharedValue<number>;
   settle: SharedValue<number>;
   reduceMotion: boolean;
@@ -163,17 +170,31 @@ function FeedCard({
     const y = (1 - f) * 70 + Math.abs(side) * 14 * (1 - s) + s * Math.abs(side) * 8;
     const rotate = side * 9 * f * (1 - s) + side * 2.5 * s;
     const scale = 0.9 + 0.1 * f - (side !== 0 ? 0.04 * s : 0);
-    return { opacity: Math.min(1, f * 1.4), transform: [{ translateX: x }, { translateY: y }, { rotate: `${rotate}deg` }, { scale }] };
+    return {
+      opacity: Math.min(1, f * 1.4),
+      transform: [{ translateX: x }, { translateY: y }, { rotate: `${rotate}deg` }, { scale }],
+    };
   });
   return (
     <Animated.View style={[styles.card, { zIndex: side === 0 ? 3 : 2 - index }, style]}>
-      <ProductImage uri={uri} style={StyleSheet.absoluteFill} />
+      {/* Catalog photos are web addresses; bundled room photos are asset references. */}
+      {typeof source === 'string' || source === undefined ? (
+        <ProductImage uri={source} style={StyleSheet.absoluteFill} />
+      ) : (
+        <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" />
+      )}
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background, paddingHorizontal: space.xl, justifyContent: 'center', gap: space.xxl },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingHorizontal: space.xl,
+    justifyContent: 'center',
+    gap: space.xxl,
+  },
   stage: { height: CARD_H + 60, alignItems: 'center', justifyContent: 'center' },
   glow: {
     position: 'absolute',
@@ -198,7 +219,14 @@ const styles = StyleSheet.create({
   copy: { alignItems: 'center', gap: space.md },
   center: { textAlign: 'center' },
   italic: { fontFamily: fonts.serifItalic },
-  tags: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: space.sm, marginTop: space.sm, maxWidth: 340 },
+  tags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: space.sm,
+    marginTop: space.sm,
+    maxWidth: 340,
+  },
   tag: {
     paddingHorizontal: space.md,
     paddingVertical: space.xs + 2,

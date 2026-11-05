@@ -1,4 +1,4 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -7,14 +7,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
-import { ProductImage } from '@/components/ProductImage';
-import { LoadingView, StateView } from '@/components/StateView';
+import { StylePhotoCard } from '@/components/StylePhotoCard';
+import { STYLE_PHOTOS } from '@/data/stylePhotos';
 import { MAX_STYLE_PICKS, MIN_STYLE_PICKS, pickerCta, toggleStylePick } from '@/domain/tastePicker';
 import { useStyleOptions } from '@/hooks/useCatalog';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { colors, fonts, space } from '@/theme/tokens';
 
 const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const GAP = space.sm + 2;
 
 /** First-launch taste picker: tap 3–5 styles so the deck is personal from the first card. */
 export default function WelcomeScreen() {
@@ -27,78 +28,93 @@ export default function WelcomeScreen() {
   const [picks, setPicks] = useState<string[]>(saved);
   const ready = picks.length >= MIN_STYLE_PICKS;
   const full = picks.length >= MAX_STYLE_PICKS;
-  const styleList = options.status === 'ready' ? options.data : [];
-  const heroUrl = styleList.find((s) => s.coverUrl)?.coverUrl;
+  // Styles in the catalog that don't have a room photo yet are offered as small chips.
+  const moreStyles =
+    options.status === 'ready'
+      ? options.data.map((s) => s.tag).filter((tag) => !STYLE_PHOTOS.some((p) => p.tag === tag))
+      : [];
+  const [width, setWidth] = useState(0);
+  const cardWidth = Math.max(80, Math.floor((width - 2 * space.xl - 2 * GAP) / 3));
+  const toggle = (tag: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    setPicks((p) => toggleStylePick(p, tag));
+  };
 
   const leave = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scroll} bounces={false}>
-        <View style={styles.hero}>
-          <ProductImage uri={heroUrl} style={StyleSheet.absoluteFill} priority="high" />
-          <LinearGradient
-            colors={[colors.scrimMid, colors.scrimLight, colors.scrimLight, colors.scrim, colors.background]}
-            locations={[0, 0.22, 0.42, 0.78, 1]}
-            style={StyleSheet.absoluteFill}
-          />
-          <AppText variant="eyebrow" color={colors.onPhoto} style={[styles.brand, { top: insets.top + space.lg }]}>
+      <ScrollView
+        contentContainerStyle={[styles.scroll, { paddingTop: insets.top + space.lg }]}
+        bounces={false}
+        onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
+        <View style={styles.header}>
+          <AppText variant="eyebrow" color={colors.inkMuted}>
             CUREAVO
           </AppText>
-          <View style={styles.heroText}>
-            <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
-              {onboarded ? 'Your styles' : 'What feels like '}
-              {onboarded ? null : (
-                <AppText variant="hero" color={colors.accentText} style={styles.italic}>
-                  home?
-                </AppText>
-              )}
-            </AppText>
-            <AppText variant="body" color={colors.inkMuted}>
-              Pick {MIN_STYLE_PICKS} to {MAX_STYLE_PICKS} styles. Your first deck is built around them, and it keeps
-              learning as you swipe.
-            </AppText>
-          </View>
+          <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
+            {onboarded ? 'Your styles' : 'What feels like '}
+            {onboarded ? null : (
+              <AppText variant="hero" color={colors.accentText} style={styles.italic}>
+                home?
+              </AppText>
+            )}
+          </AppText>
+          <AppText variant="body" color={colors.inkMuted}>
+            Tap {MIN_STYLE_PICKS} to {MAX_STYLE_PICKS} rooms you&apos;d love to live in. Your first deck is built around
+            them.
+          </AppText>
         </View>
 
-        <View style={styles.body}>
-          <View style={styles.countRow}>
+        <View style={styles.countRow}>
+          <AppText variant="eyebrow" color={colors.inkMuted}>
+            STYLES
+          </AppText>
+          <AppText variant="bodySmall" accessibilityLiveRegion="polite">
+            {picks.length} of {MAX_STYLE_PICKS}
+          </AppText>
+        </View>
+
+        <View style={styles.grid}>
+          {STYLE_PHOTOS.map((s) => {
+            const on = picks.includes(s.tag);
+            return (
+              <StylePhotoCard
+                key={s.tag}
+                label={titleCase(s.tag)}
+                source={s.source}
+                width={cardWidth}
+                selected={on}
+                dimmed={full && !on}
+                onPress={() => toggle(s.tag)}
+              />
+            );
+          })}
+        </View>
+
+        {moreStyles.length ? (
+          <View style={styles.more}>
             <AppText variant="eyebrow" color={colors.inkMuted}>
-              STYLES
+              MORE STYLES
             </AppText>
-            <AppText variant="bodySmall" accessibilityLiveRegion="polite">
-              {picks.length} of {MAX_STYLE_PICKS}
-            </AppText>
-          </View>
-          {options.status === 'ready' ? (
             <View style={styles.chips}>
-              {styleList.map((s) => {
-                const on = picks.includes(s.tag);
+              {moreStyles.map((tag) => {
+                const on = picks.includes(tag);
                 return (
                   <Chip
-                    key={s.tag}
-                    label={titleCase(s.tag)}
-                    size="lg"
+                    key={tag}
+                    label={titleCase(tag)}
                     selected={on}
                     checkWhenSelected
                     disabled={full && !on}
                     accessibilityHint={full && !on ? 'You can pick up to 5. Unpick one to choose this.' : undefined}
-                    onPress={() => setPicks((p) => toggleStylePick(p, s.tag))}
+                    onPress={() => toggle(tag)}
                   />
                 );
               })}
             </View>
-          ) : options.status === 'error' ? (
-            <StateView
-              icon="refresh"
-              title="Couldn't load styles"
-              message="You can skip this and start swiping."
-              primary={{ label: 'Try again', onPress: options.reload }}
-            />
-          ) : (
-            <LoadingView label="Loading styles" />
-          )}
-        </View>
+          </View>
+        ) : null}
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + space.lg }]}>
@@ -129,12 +145,9 @@ export default function WelcomeScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingBottom: space.xl },
-  hero: { height: 400, justifyContent: 'flex-end' },
-  brand: { position: 'absolute', left: space.xl },
-  heroText: { paddingHorizontal: space.xl, gap: space.md },
+  scroll: { paddingHorizontal: space.xl, paddingBottom: space.xl, gap: space.lg },
+  header: { gap: space.md, paddingTop: space.md },
   italic: { fontFamily: fonts.serifItalic },
-  body: { paddingHorizontal: space.xl, paddingTop: space.xl, gap: space.lg },
   countRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -143,6 +156,8 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     paddingTop: space.md,
   },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm + 2 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP },
+  more: { gap: space.sm, paddingTop: space.xs },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   footer: { paddingHorizontal: space.xl, paddingTop: space.md, gap: space.xs },
 });
