@@ -14,6 +14,7 @@ const ICONS = {
   search: { ios: 'magnifyingglass', android: 'search' },
   external: { ios: 'arrow.up.right', android: 'arrow_outward' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right' },
+  chevronDown: { ios: 'chevron.down', android: 'expand_more' },
   refresh: { ios: 'arrow.clockwise', android: 'refresh' },
   offline: { ios: 'wifi.slash', android: 'wifi_off' },
   bag: { ios: 'bag', android: 'shopping_bag' },

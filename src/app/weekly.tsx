@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -16,6 +17,11 @@ import { colors, space } from '@/theme/tokens';
 export default function WeeklyScreen() {
   const weekly = useWeekly();
   const insets = useSafeAreaInsets();
+  const { markSeen } = weekly;
+  // Opening it clears the "new" dot on For you.
+  useEffect(() => {
+    if (weekly.ids) markSeen();
+  }, [weekly.ids, markSeen]);
   if (!weekly.ids) {
     return (
       <View style={[styles.screen, { paddingTop: insets.top + space.lg }]}>

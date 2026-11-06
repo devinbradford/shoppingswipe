@@ -17,6 +17,9 @@ interface RetentionState {
   welcome: { since: number; at: number } | null;
   /** This week's picks, chosen once per week so they don't shuffle. */
   weekly: { key: string; ids: string[] } | null;
+  /** The week whose weekly 10 they've opened (clears the "new" dot). */
+  weeklySeenKey: string | null;
+  markWeeklySeen: (key: string) => void;
   /** Weekly reminder: null until they decide. */
   reminder: 'on' | 'off' | null;
   /** Id of the scheduled local notification, to cancel it later. */
@@ -36,6 +39,8 @@ export const useRetentionStore = create<RetentionState>()(
       visitDays: [],
       welcome: null,
       weekly: null,
+      weeklySeenKey: null,
+      markWeeklySeen: (key) => set({ weeklySeenKey: key }),
       reminder: null,
       reminderId: null,
       opened: (now) => {
@@ -50,7 +55,7 @@ export const useRetentionStore = create<RetentionState>()(
       dismissWelcome: () => set({ welcome: null }),
       setWeekly: (weekly) => set({ weekly }),
       setReminder: (reminder, reminderId) => set({ reminder, reminderId }),
-      resetAll: () => set({ visitDays: [], welcome: null, weekly: null }),
+      resetAll: () => set({ visitDays: [], welcome: null, weekly: null, weeklySeenKey: null }),
     }),
     {
       name: 'cureavo.retention.v1',
@@ -59,6 +64,7 @@ export const useRetentionStore = create<RetentionState>()(
         lastActiveAt: s.lastActiveAt,
         visitDays: s.visitDays,
         weekly: s.weekly,
+        weeklySeenKey: s.weeklySeenKey,
         reminder: s.reminder,
         reminderId: s.reminderId,
       }),

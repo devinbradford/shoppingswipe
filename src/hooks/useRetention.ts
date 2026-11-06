@@ -37,6 +37,9 @@ export interface Weekly {
   ids: string[] | null;
   /** Picks not swiped yet. */
   remaining: number;
+  /** Not opened yet this week. */
+  isNew: boolean;
+  markSeen: () => void;
 }
 
 /** "Your weekly 10": chosen once per week (Monday) from their taste, then fixed for the week. */
@@ -78,7 +81,10 @@ export function useWeekly(): Weekly {
     return current.ids.filter((id) => !swiped.has(id)).length;
   }, [current, swipes]);
 
-  return { label: weekLabel(now), ids: current?.ids ?? null, remaining };
+  const seenKey = useRetentionStore((s) => s.weeklySeenKey);
+  const markWeeklySeen = useRetentionStore((s) => s.markWeeklySeen);
+  const markSeen = useCallback(() => markWeeklySeen(key), [markWeeklySeen, key]);
+  return { label: weekLabel(now), ids: current?.ids ?? null, remaining, isNew: !!current && seenKey !== key, markSeen };
 }
 
 /** The weekly reminder: whether to offer it, and turning it on or off. */

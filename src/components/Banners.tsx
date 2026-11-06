@@ -3,46 +3,12 @@ import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 
 import { colors, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
-import { Icon, type IconName } from './Icon';
+import { Icon } from './Icon';
 import { ProductImage } from './ProductImage';
 
 interface BannerProps {
   onClose: () => void;
   reduceMotion?: boolean;
-}
-
-/** One-line glass pill over the deck: icon, title, subtitle, close. Tap to open. */
-export function BannerPill({
-  icon,
-  title,
-  subtitle,
-  onPress,
-  onClose,
-  reduceMotion,
-}: BannerProps & { icon: IconName; title: string; subtitle: string; onPress: () => void }) {
-  return (
-    <Animated.View
-      entering={reduceMotion ? undefined : FadeInDown.duration(260)}
-      exiting={reduceMotion ? undefined : FadeOut.duration(160)}
-      style={styles.pill}>
-      <Pressable
-        onPress={onPress}
-        accessibilityRole="button"
-        accessibilityLabel={`${title}. ${subtitle}`}
-        style={({ pressed }) => [styles.main, pressed && styles.pressed]}>
-        <Icon name={icon} size={16} color={colors.keep} />
-        <View style={styles.text}>
-          <AppText variant="label" color={colors.onPhoto} numberOfLines={1}>
-            {title}
-          </AppText>
-          <AppText variant="caption" color={colors.accentText} numberOfLines={1}>
-            {subtitle}
-          </AppText>
-        </View>
-      </Pressable>
-      <CloseButton onPress={onClose} />
-    </Animated.View>
-  );
 }
 
 /** "Welcome back · 12 pieces picked for you since Tuesday", with three small photos. */
@@ -80,57 +46,6 @@ export function WelcomeBackCard({
         </View>
       </Pressable>
       <CloseButton onPress={onClose} />
-    </Animated.View>
-  );
-}
-
-/** Our own card before the phone's permission prompt: what we'd send, and how often. */
-export function ReminderOfferCard({
-  onYes,
-  onNo,
-  busy,
-  reduceMotion,
-}: {
-  onYes: () => void;
-  onNo: () => void;
-  busy?: boolean;
-  reduceMotion?: boolean;
-}) {
-  return (
-    <Animated.View
-      entering={reduceMotion ? undefined : FadeInDown.duration(260)}
-      exiting={reduceMotion ? undefined : FadeOut.duration(160)}
-      style={[styles.pill, styles.offer]}
-      accessibilityLabel="Want a heads-up when your weekly 10 is ready? One reminder on Monday mornings, nothing else.">
-      <View style={styles.offerText}>
-        <AppText variant="label" color={colors.onPhoto}>
-          Want a heads-up on Mondays?
-        </AppText>
-        <AppText variant="caption" color={colors.inkMuted}>
-          One reminder when your weekly 10 is ready. Nothing else.
-        </AppText>
-      </View>
-      <View style={styles.offerButtons}>
-        <Pressable
-          onPress={onNo}
-          accessibilityRole="button"
-          accessibilityLabel="No thanks"
-          style={({ pressed }) => [styles.offerButton, pressed && styles.pressed]}>
-          <AppText variant="label" color={colors.inkMuted}>
-            No thanks
-          </AppText>
-        </Pressable>
-        <Pressable
-          onPress={onYes}
-          disabled={busy}
-          accessibilityRole="button"
-          accessibilityLabel="Remind me"
-          style={({ pressed }) => [styles.offerButton, styles.offerYes, pressed && styles.pressed]}>
-          <AppText variant="label" color={colors.onInk}>
-            Remind me
-          </AppText>
-        </Pressable>
-      </View>
     </Animated.View>
   );
 }
@@ -187,19 +102,4 @@ const styles = StyleSheet.create({
     borderColor: colors.background,
   },
   thumbOverlap: { marginLeft: -14 },
-  offer: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    alignSelf: 'stretch',
-    marginHorizontal: space.lg,
-    borderRadius: radii.lg,
-    padding: space.md,
-    paddingLeft: space.lg,
-    gap: space.sm,
-    backgroundColor: colors.surface,
-  },
-  offerText: { gap: 2 },
-  offerButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: space.sm },
-  offerButton: { minHeight: 44, paddingHorizontal: space.lg, borderRadius: radii.pill, justifyContent: 'center' },
-  offerYes: { backgroundColor: colors.keep },
 });

@@ -156,7 +156,8 @@ Coming back (Step 9):
 - Welcome back: after a new day and 12+ hours away, a card on For you ("30+ pieces picked for you since Tuesday" + 3 photos), once per return
 - "Your weekly 10" (`pickWeekly` in `src/recommendation/weekly.ts`): best expected matches, no confident dislikes, max 2 per type and brand; chosen once per Monday-starting week and fixed; `/weekly` deck (useDeck with `onlyIds`) and a finish screen. Starts after 10 swipes or style picks
 - Weekly reminder: local notification only (works in Expo Go; server push needs a dev build). Offered only after 2 visit days + 5 keeps, via our own card first, then the phone's prompt; Mondays 9:00; tap opens `/weekly`. Profile → Notifications toggle. Web preview remembers the choice but schedules nothing (`src/lib/notifications.ts`)
-- One For you banner at a time: welcome back > taste reveal > reminder offer > weekly 10
+- For you header is ONE control (`DeckSwitcher`): "FOR YOU · ALL ROOMS ⌄" opens a small menu with the rooms, then shortcuts (Your weekly 10, What we've learned). A champagne dot on the pill means something new inside. No chips or banners over the photo (Devin: "the whole app should feel seamless")
+- Welcome back card fades on its own after 6 s; the reminder offer lives on the weekly finish screen and in Profile, not over the deck
 - Honest copy: "picked for you", never "new arrivals" (catalog is static until Phase 4)
 - `expo-notifications` installed (SDK 58 version, offline install); plugin in app.json
 - Checks passing: typecheck, lint, 173 unit tests
