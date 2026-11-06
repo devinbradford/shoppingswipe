@@ -1,4 +1,4 @@
-import { formatPrice, timeAgo } from '../format';
+import { brandLine, formatPrice, timeAgo } from '../format';
 
 describe('formatting', () => {
   it('formats prices', () => {
@@ -13,5 +13,14 @@ describe('formatting', () => {
     expect(timeAgo(now - 2 * 3_600_000, now)).toBe('2 h ago');
     expect(timeAgo(now - 26 * 3_600_000, now)).toBe('yesterday');
     expect(timeAgo(now - 3 * 86_400_000, now)).toBe('3 days ago');
+  });
+});
+
+describe('brandLine', () => {
+  it('joins brand and store, or shows just the store', () => {
+    expect(brandLine('Halden', 'Northpine Supply')).toBe('Halden · Northpine Supply');
+    expect(brandLine('', 'Super Area Rugs')).toBe('Super Area Rugs');
+    expect(brandLine('Super Area Rugs', 'super area rugs')).toBe('super area rugs');
+    expect(brandLine('Halden', '')).toBe('Halden');
   });
 });

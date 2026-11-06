@@ -33,7 +33,7 @@ import { useBuyNow } from '@/hooks/useBuyNow';
 import { useUndoToast } from '@/hooks/useUndoToast';
 import { useProductInsights } from '@/hooks/useProductInsights';
 import { useListsForProduct } from '@/hooks/useWishlists';
-import { formatPrice } from '@/lib/format';
+import { brandLine, formatPrice } from '@/lib/format';
 import { COMMISSION_NOTE } from '@/lib/disclosure';
 import { usePurchaseStore } from '@/store/purchaseStore';
 import { recordSignal } from '@/store/signalStore';
@@ -208,7 +208,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
         <View style={[styles.sheet, { minHeight: height - insets.top - space.xxxl }]}>
           <View style={styles.handle} />
           <AppText variant="eyebrow" color={colors.inkMuted} numberOfLines={1}>
-            {`${product.brand} · ${retailerName}`.toUpperCase()}
+            {brandLine(product.brand, retailerName).toUpperCase()}
           </AppText>
           <AppText variant="heading" accessibilityRole="header" numberOfLines={2}>
             {product.title}

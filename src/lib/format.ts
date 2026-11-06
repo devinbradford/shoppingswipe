@@ -32,3 +32,11 @@ export function timeAgo(then: number, now = Date.now()): string {
   const d = Math.round(h / 24);
   return d === 1 ? 'yesterday' : `${d} days ago`;
 }
+
+/** "Halden · Northpine Supply", or just the store when there's no separate brand (common in real feeds). */
+export function brandLine(brand: string | undefined, store: string | undefined): string {
+  const b = (brand ?? '').trim();
+  const s = (store ?? '').trim();
+  if (!b || b.toLowerCase() === s.toLowerCase()) return s;
+  return s ? `${b} · ${s}` : b;
+}

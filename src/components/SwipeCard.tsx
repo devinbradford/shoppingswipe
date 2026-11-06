@@ -17,7 +17,7 @@ import Animated, {
 import { scheduleOnRN } from 'react-native-worklets';
 
 import type { SwipeDirection } from '@/domain/types';
-import { formatPrice } from '@/lib/format';
+import { brandLine, formatPrice } from '@/lib/format';
 import { colors, motion, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -281,7 +281,7 @@ export function SwipeCard({
         onLayout={onLayout}
         pointerEvents={isTop ? 'auto' : 'none'}
         accessible={isTop}
-        accessibilityLabel={`${product.title}, ${price}, ${product.material}, ${product.color}, ${product.brand} at ${retailerName}${forYou ? `. Picked for you: ${forYou}` : ''}`}
+        accessibilityLabel={`${product.title}, ${price}, ${product.material}, ${product.color}, ${product.brand ? `${product.brand} ` : ''}at ${retailerName}${forYou ? `. Picked for you: ${forYou}` : ''}`}
         accessibilityHint="Swipe up or down for Keep, Skip and more actions. Double tap for details."
         accessibilityActions={[
           { name: 'keep', label: 'Keep' },
@@ -357,7 +357,7 @@ export function SwipeCard({
             {product.title}
           </AppText>
           <AppText variant="eyebrow" color={colors.inkMuted} numberOfLines={1} style={styles.meta}>
-            {`${product.brand} · ${retailerName}`.toUpperCase()}
+            {brandLine(product.brand, retailerName).toUpperCase()}
           </AppText>
         </View>
 
