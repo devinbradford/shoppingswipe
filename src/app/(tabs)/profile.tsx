@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { ProfileRow, ProfileSection } from '@/components/ProfileRow';
-import { budgetAnchor, formatBudget, NO_LIMIT, type RoomChoice } from '@/domain/budget';
+import { budgetAnchor, formatBudget, type RoomChoice } from '@/domain/budget';
 import { useReminder } from '@/hooks/useRetention';
 import { useTaste } from '@/hooks/useTaste';
 import { useRetentionStore } from '@/store/retentionStore';
@@ -46,7 +46,7 @@ export default function ProfileScreen() {
 
   const budgetText = budget
     ? `${formatBudget(budget.maxCents / 100)} for ${anchor.subcategoryId === budget.subcategoryId ? anchor.noun : 'a key piece'}`
-    : formatBudget(NO_LIMIT);
+    : `No limit set for ${anchor.noun}`;
   const openSite = (path: string) => WebBrowser.openBrowserAsync(`${SITE}${path}`).catch(() => {});
 
   return (
@@ -98,6 +98,7 @@ export default function ProfileScreen() {
                   ? 'Off · notifications are blocked in your phone settings'
                   : 'Off'
             }
+            toggle={reminder.on}
             onPress={() => void (reminder.on ? reminder.turnOff() : reminder.turnOn())}
             hint={reminder.on ? 'Turns the reminder off' : 'Turns on one reminder on Monday mornings'}
           />

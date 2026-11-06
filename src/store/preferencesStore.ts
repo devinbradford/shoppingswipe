@@ -25,6 +25,9 @@ interface PreferencesState {
   /** The one-time "Your taste is taking shape" card in For you was seen or closed. */
   tasteRevealSeen: boolean;
   markTasteRevealSeen: () => void;
+  /** The one-time "press and hold a piece" tip on Kept was used or dismissed. */
+  holdTipSeen: boolean;
+  markHoldTipSeen: () => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -45,6 +48,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       markKeptSeen: () => set({ keptSeenAt: Date.now() }),
       tasteRevealSeen: false,
       markTasteRevealSeen: () => set({ tasteRevealSeen: true }),
+      holdTipSeen: false,
+      markHoldTipSeen: () => set({ holdTipSeen: true }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -66,6 +71,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         budget: s.budget,
         keptSeenAt: s.keptSeenAt,
         tasteRevealSeen: s.tasteRevealSeen,
+        holdTipSeen: s.holdTipSeen,
       }),
     },
   ),

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { colors, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
@@ -14,14 +14,18 @@ interface ProfileRowProps {
   hint?: string;
   /** Show the "opens elsewhere" arrow instead of the chevron. */
   external?: boolean;
+  /** An on/off row: shows a switch (no chevron); tapping anywhere flips it. */
+  toggle?: boolean;
 }
 
 /** A tappable settings row: icon, title, value, chevron. */
-export function ProfileRow({ icon, title, detail, onPress, hint, external }: ProfileRowProps) {
+export function ProfileRow({ icon, title, detail, onPress, hint, external, toggle }: ProfileRowProps) {
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole={external ? 'link' : 'button'}
+      accessibilityRole={toggle !== undefined ? 'switch' : external ? 'link' : 'button'}
+      accessibilityState={toggle !== undefined ? { checked: toggle } : undefined}
+      aria-checked={toggle}
       accessibilityLabel={detail ? `${title}. ${detail}` : title}
       accessibilityHint={hint}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
@@ -34,7 +38,18 @@ export function ProfileRow({ icon, title, detail, onPress, hint, external }: Pro
           </AppText>
         ) : null}
       </View>
-      <Icon name={external ? 'external' : 'chevronRight'} size={16} color={colors.inkMuted} />
+      {toggle !== undefined ? (
+        <Switch
+          value={toggle}
+          onValueChange={onPress}
+          trackColor={{ false: colors.border, true: colors.keep }}
+          thumbColor={colors.ink}
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+        />
+      ) : (
+        <Icon name={external ? 'external' : 'chevronRight'} size={16} color={colors.inkMuted} />
+      )}
     </Pressable>
   );
 }

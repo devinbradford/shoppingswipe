@@ -47,6 +47,8 @@ export default function KeptScreen() {
   const transfer = useTransferFromKept();
   const tabBarHeight = useBottomTabBarHeight();
   const markKeptSeen = usePreferencesStore((s) => s.markKeptSeen);
+  const holdTipSeen = usePreferencesStore((s) => s.holdTipSeen);
+  const markHoldTipSeen = usePreferencesStore((s) => s.markHoldTipSeen);
   const { buy } = useBuyNow();
   const boughtIds = useBoughtIds();
   const toast = useUndoToast();
@@ -132,8 +134,20 @@ export default function KeptScreen() {
     </View>
   );
 
+  const sortShort = sort === 'newest' ? 'Newest' : sort === 'price-asc' ? 'Price ↑' : 'Price ↓';
   const filterRow = (
     <View style={styles.filterRow}>
+      <Pressable
+        onPress={() => setSorting(true)}
+        accessibilityRole="button"
+        accessibilityLabel={`Sort: ${sortLabel}. Change`}
+        hitSlop={6}
+        style={({ pressed }) => [styles.sort, sort !== 'newest' && styles.sortOn, pressed && styles.pressed]}>
+        <Icon name="sort" size={14} color={sort === 'newest' ? colors.inkMuted : colors.keep} />
+        <AppText variant="bodySmall" color={sort === 'newest' ? colors.ink : colors.accentText}>
+          {sortShort}
+        </AppText>
+      </Pressable>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -172,14 +186,6 @@ export default function KeptScreen() {
           />
         ))}
       </ScrollView>
-      <Pressable
-        onPress={() => setSorting(true)}
-        accessibilityRole="button"
-        accessibilityLabel={`Sort: ${sortLabel}`}
-        hitSlop={6}
-        style={({ pressed }) => [styles.sort, pressed && styles.pressed]}>
-        <Icon name="sort" size={16} color={sort === 'newest' ? colors.inkMuted : colors.keep} />
-      </Pressable>
     </View>
   );
 
@@ -232,8 +238,23 @@ export default function KeptScreen() {
         ) : null}
         {saved.status === 'ready' && (products.length > 0 || lists.length > 0) ? listsRow : null}
         {products.length > 0 ? filterRow : null}
+        {products.length > 0 && !holdTipSeen && !selecting ? (
+          <View style={styles.tip} accessibilityLiveRegion="polite">
+            <Icon name="info" size={14} color={colors.keep} />
+            <AppText variant="caption" color={colors.inkMuted} style={styles.flex}>
+              Tip: press and hold a piece to add it to a list, buy it or remove it.
+            </AppText>
+            <Pressable onPress={markHoldTipSeen} accessibilityRole="button" accessibilityLabel="Got it" hitSlop={8}>
+              <AppText variant="caption" color={colors.keep}>
+                Got it
+              </AppText>
+            </Pressable>
+          </View>
+        ) : null}
         {products.length > 0 ? (
           <MasonryGrid
+            // Price order reads left to right, row by row; Newest keeps the even mood-board columns.
+            order={sort === 'newest' ? 'balanced' : 'rows'}
             items={shown}
             keyOf={(p) => p.id}
             renderItem={(item, height) => (
@@ -245,7 +266,10 @@ export default function KeptScreen() {
                 onPress={() =>
                   selecting ? toggle(item.id) : router.push({ pathname: '/product/[id]', params: { id: item.id } })
                 }
-                onLongPress={() => setMenuFor(item)}
+                onLongPress={() => {
+                  markHoldTipSeen();
+                  setMenuFor(item);
+                }}
                 tag={boughtIds.has(item.id) ? 'BOUGHT' : undefined}
               />
             )}
@@ -257,16 +281,27 @@ export default function KeptScreen() {
 
       {selecting ? (
         <View style={[styles.selectBar, { paddingBottom: tabBarHeight + space.sm }]}>
-          <AppText variant="label" style={styles.flex}>
-            {selected.size === 0 ? 'None selected' : `${selected.size} selected`}
+          <View style={styles.selectRow}>
+            <AppText variant="label" style={styles.flex}>
+              {selected.size === 0 ? 'None selected' : `${selected.size} selected`}
+            </AppText>
+            <Button
+              label="Add to list"
+              variant="secondary"
+              disabled={selected.size === 0}
+              onPress={() => setPicker('copy')}
+              accessibilityHint="Adds them to a list and keeps them in Kept"
+            />
+            <Button
+              label="Move to list"
+              disabled={selected.size === 0}
+              onPress={() => setPicker('move')}
+              accessibilityHint="Moves them into a list and takes them out of Kept"
+            />
+          </View>
+          <AppText variant="caption" color={colors.inkMuted}>
+            Add keeps them in Kept too. Move takes them out of Kept.
           </AppText>
-          <Button
-            label="Copy to list"
-            variant="secondary"
-            disabled={selected.size === 0}
-            onPress={() => setPicker('copy')}
-          />
-          <Button label="Move to list" disabled={selected.size === 0} onPress={() => setPicker('move')} />
         </View>
       ) : null}
 
@@ -274,7 +309,7 @@ export default function KeptScreen() {
         <UndoToast
           id={toast.toast.id}
           message={toast.toast.message}
-          onUndo={toast.undo}
+          onUndo={toast.toast.undo ? toast.undo : undefined}
           onExpire={toast.expire}
           bottom={tabBarHeight + space.md}
         />
@@ -334,14 +369,18 @@ export default function KeptScreen() {
         title={
           picker === 'move'
             ? `Move ${pluralize(selected.size, 'item')} to…`
-            : `Copy ${pluralize(selected.size, 'item')} to…`
+            : `Add ${pluralize(selected.size, 'item')} to…`
         }
         onClose={() => setPicker(null)}
         onPick={(listId) => {
           const ids = [...selected];
           const name = useWishlistStore.getState().lists.find((l) => l.id === listId)?.name ?? 'list';
           transfer(ids, listId, picker ?? 'copy');
-          setNotice(`${picker === 'move' ? 'Moved' : 'Copied'} ${pluralize(ids.length, 'item')} to ${name}.`);
+          setNotice(
+            picker === 'move'
+              ? `Moved ${pluralize(ids.length, 'item')} to ${name}. They're no longer in Kept.`
+              : `Added ${pluralize(ids.length, 'item')} to ${name}. They're still in Kept too.`,
+          );
           stopSelecting();
         }}
       />
@@ -374,24 +413,37 @@ const styles = StyleSheet.create({
   notice: { marginHorizontal: space.xl, backgroundColor: colors.keepSoft, borderRadius: 12, padding: space.md },
   section: { gap: space.md },
   covers: { gap: space.md, paddingHorizontal: space.xl },
-  filterRow: { flexDirection: 'row', alignItems: 'center', paddingRight: space.lg, gap: space.sm },
-  chips: { gap: space.sm, paddingLeft: space.xl, paddingRight: space.sm, alignItems: 'center' },
+  filterRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  chips: { gap: space.sm, paddingRight: space.xl, alignItems: 'center' },
   sort: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: space.xs,
+    minHeight: 44,
+    paddingHorizontal: space.md,
+    borderRadius: 22,
     borderWidth: 1,
     borderColor: colors.glassBorder,
+    marginLeft: space.xl,
   },
+  sortOn: { borderColor: colors.accentGlassBorder, backgroundColor: colors.accentGlass },
+  tip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    marginHorizontal: space.xl,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+    borderRadius: 12,
+    backgroundColor: colors.surface,
+  },
+  selectRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+
   pressed: { opacity: 0.7 },
   flex: { flex: 1 },
   empty: { flex: 1, minHeight: 360 },
   selectBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
+    gap: space.xs,
     paddingHorizontal: space.lg,
     paddingTop: space.md,
     borderTopWidth: StyleSheet.hairlineWidth,

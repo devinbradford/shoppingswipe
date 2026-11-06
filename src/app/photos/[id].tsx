@@ -75,7 +75,7 @@ export default function PhotoViewer() {
         ) : (
           <View />
         )}
-        <GlassIconButton icon="close" label="Close photos" onPress={() => router.back()} />
+        <GlassIconButton icon="close" label="Close photos" onPress={() => router.back()} immediate />
       </Animated.View>
       <Animated.View style={[styles.hint, { bottom: insets.bottom + space.lg }, chrome]} pointerEvents="none">
         <AppText variant="caption" color={colors.inkMuted}>

@@ -146,7 +146,14 @@ export function DeckView({
             />
           </Animated.View>
           <Animated.View style={[styles.undo, undoButton]}>
-            <GlassIconButton icon="undo" label="Undo last swipe" onPress={onUndo} disabled={!deck.canUndo} size={46} />
+            <GlassIconButton
+              icon="undo"
+              label="Undo last swipe"
+              caption="UNDO"
+              onPress={onUndo}
+              disabled={!deck.canUndo}
+              size={46}
+            />
           </Animated.View>
           <Animated.View style={keepButton}>
             <GlassIconButton

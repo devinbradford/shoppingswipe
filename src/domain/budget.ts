@@ -23,25 +23,25 @@ const ANCHORS: Record<RoomChoice, BudgetAnchor> = {
   'living-room': {
     subcategoryId: 'sofas',
     noun: 'a sofa',
-    stops: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000, 0],
+    stops: [500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 3000, 4000, 0],
     defaultIndex: 4,
   },
   bedroom: {
     subcategoryId: 'bed-frames',
     noun: 'a bed frame',
-    stops: [300, 500, 750, 1000, 1250, 1500, 2000, 0],
+    stops: [300, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 0],
     defaultIndex: 3,
   },
   'kitchen-dining': {
     subcategoryId: 'dining-tables',
     noun: 'a dining table',
-    stops: [300, 500, 750, 1000, 1500, 2000, 2500, 0],
+    stops: [300, 500, 750, 1000, 1250, 1500, 2000, 2500, 3000, 0],
     defaultIndex: 3,
   },
   browsing: {
     subcategoryId: 'sofas',
     noun: 'a sofa',
-    stops: [500, 750, 1000, 1250, 1500, 2000, 2500, 3000, 0],
+    stops: [500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 3000, 4000, 0],
     defaultIndex: 4,
   },
 };
@@ -77,4 +77,31 @@ export function budgetIndex(anchor: BudgetAnchor, answer: BudgetAnswer | null): 
   if (answer.subcategoryId !== anchor.subcategoryId) return anchor.defaultIndex;
   const i = anchor.stops.indexOf(answer.maxCents / 100);
   return i >= 0 ? i : anchor.defaultIndex;
+}
+
+/** A typed amount (whole dollars) as a saved answer; 0 or less means no limit. */
+export function budgetFromDollars(anchor: BudgetAnchor, dollars: number): BudgetAnswer | null {
+  const d = Math.round(dollars);
+  return d > 0 ? { subcategoryId: anchor.subcategoryId, maxCents: d * 100 } : null;
+}
+
+/** The slider stop closest to an amount (never the "no limit" stop for a real amount). */
+export function nearestIndex(anchor: BudgetAnchor, dollars: number): number {
+  let best = 0;
+  anchor.stops.forEach((stop, i) => {
+    if (stop !== NO_LIMIT && Math.abs(stop - dollars) < Math.abs(anchor.stops[best] - dollars)) best = i;
+  });
+  return best;
+}
+
+/** Turns what they typed ("$2,000", "2k", "1800") into whole dollars, or null if it isn't a sensible amount. */
+export function parseDollars(text: string): number | null {
+  const t = text
+    .trim()
+    .toLowerCase()
+    .replace(/[$,\s]/g, '');
+  const m = t.match(/^(\d+(?:\.\d+)?)(k?)$/);
+  if (!m) return null;
+  const n = Number(m[1]) * (m[2] ? 1000 : 1);
+  return n >= 50 && n <= 100000 ? Math.round(n) : null;
 }

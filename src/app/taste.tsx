@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { AccessibilityInfo, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionSheet } from '@/components/ActionSheet';
 import { AppText } from '@/components/AppText';
@@ -12,6 +12,8 @@ import { LoadingView, StateView } from '@/components/StateView';
 import { StyleTraitCard, TraitChip } from '@/components/TasteTraits';
 import { formatBudget } from '@/domain/budget';
 import { useTaste } from '@/hooks/useTaste';
+import { useUndoToast } from '@/hooks/useUndoToast';
+import { UndoToast } from '@/components/UndoToast';
 import { formatPrice, pluralize } from '@/lib/format';
 import type { Trait } from '@/recommendation';
 import { usePreferencesStore } from '@/store/preferencesStore';
@@ -24,6 +26,8 @@ export default function TasteScreen() {
   const stated = usePreferencesStore((s) => s.budget);
   const answerFeature = useSignalStore((s) => s.answerFeature);
   const startFresh = useSignalStore((s) => s.startFresh);
+  const toast = useUndoToast();
+  const insets = useSafeAreaInsets();
   const [adjusting, setAdjusting] = useState<Trait | null>(null);
   const [confirmFresh, setConfirmFresh] = useState(false);
   const s = taste.summary;
@@ -37,6 +41,14 @@ export default function TasteScreen() {
           ? `Showing less ${trait.label}.`
           : `Forgot ${trait.label}.`;
     AccessibilityInfo.announceForAccessibility(`${what} Your feed has been updated.`);
+    toast.show({
+      message:
+        answer === 'less'
+          ? `Got it: less ${trait.label}. It's now under Less your thing.`
+          : answer === 'more'
+            ? `Got it: more ${trait.label} in your feed.`
+            : `Forgot ${trait.label}.`,
+    });
   };
 
   return (
@@ -163,6 +175,14 @@ export default function TasteScreen() {
         </ScrollView>
       )}
 
+      {toast.toast ? (
+        <UndoToast
+          id={toast.toast.id}
+          message={toast.toast.message}
+          onExpire={toast.expire}
+          bottom={insets.bottom + space.lg}
+        />
+      ) : null}
       <ActionSheet
         visible={adjusting !== null}
         title={adjusting ? adjusting.label.charAt(0).toUpperCase() + adjusting.label.slice(1) : ''}

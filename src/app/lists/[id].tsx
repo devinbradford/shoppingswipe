@@ -162,7 +162,7 @@ export default function ListScreen() {
         <UndoToast
           id={toast.toast.id}
           message={toast.toast.message}
-          onUndo={toast.undo}
+          onUndo={toast.toast.undo ? toast.undo : undefined}
           onExpire={toast.expire}
           bottom={insets.bottom + space.lg}
         />

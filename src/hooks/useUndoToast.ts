@@ -2,8 +2,8 @@ import { useCallback, useRef, useState } from 'react';
 
 export interface UndoMessage {
   message: string;
-  /** Put things back. */
-  undo: () => void;
+  /** Put things back. Leave out for a plain confirmation. */
+  undo?: () => void;
   /** It stuck (timed out, or another message replaced it). */
   commit?: () => void;
 }
@@ -20,7 +20,7 @@ export function useUndoToast() {
     setToast(next);
   }, []);
   const undo = useCallback(() => {
-    current.current?.undo();
+    current.current?.undo?.();
     current.current = null;
     setToast(null);
   }, []);

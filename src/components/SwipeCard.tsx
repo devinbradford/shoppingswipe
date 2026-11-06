@@ -281,7 +281,7 @@ export function SwipeCard({
         onLayout={onLayout}
         pointerEvents={isTop ? 'auto' : 'none'}
         accessible={isTop}
-        accessibilityLabel={`${product.title}, ${price}, ${product.brand} at ${retailerName}`}
+        accessibilityLabel={`${product.title}, ${price}, ${product.material}, ${product.color}, ${product.brand} at ${retailerName}${forYou ? `. Picked for you: ${forYou}` : ''}`}
         accessibilityHint="Swipe up or down for Keep, Skip and more actions. Double tap for details."
         accessibilityActions={[
           { name: 'keep', label: 'Keep' },
@@ -297,7 +297,10 @@ export function SwipeCard({
           if (e.nativeEvent.actionName === 'increment') nextPhoto();
           if (e.nativeEvent.actionName === 'decrement') setPhoto((p) => Math.max(0, p - 1));
         }}
-        importantForAccessibility={isTop ? 'yes' : 'no-hide-descendants'}>
+        importantForAccessibility={isTop ? 'yes' : 'no-hide-descendants'}
+        // iPhone screen readers ignore importantForAccessibility: hide the card underneath explicitly.
+        accessibilityElementsHidden={!isTop}
+        aria-hidden={!isTop}>
         {/* The photo ignores touches so the card's own gestures always get them. */}
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
           <ProductImage

@@ -2,7 +2,16 @@ import { generateCatalog } from '../../data/sample/catalog';
 import { computePriceBands } from '../../recommendation/engine';
 import { buildTasteModel, priceRatio } from '../../recommendation/model';
 import { rankDeck } from '../../recommendation/rank';
-import { budgetAnchor, budgetAnswer, budgetIndex, formatBudget, NO_LIMIT } from '../budget';
+import {
+  budgetAnchor,
+  budgetAnswer,
+  budgetFromDollars,
+  budgetIndex,
+  formatBudget,
+  nearestIndex,
+  NO_LIMIT,
+  parseDollars,
+} from '../budget';
 
 describe('budget question', () => {
   it('asks about the key piece for each room, sofas when just browsing', () => {
@@ -92,5 +101,26 @@ describe('budgetIndex', () => {
   });
   it('starts on the default when the saved answer is for another piece', () => {
     expect(budgetIndex(budgetAnchor('bedroom'), budgetAnswer(sofa, 0))).toBe(budgetAnchor('bedroom').defaultIndex);
+  });
+});
+
+describe('typed budgets', () => {
+  const sofa = budgetAnchor('living-room');
+  it('reads what people type', () => {
+    expect(parseDollars('$2,000')).toBe(2000);
+    expect(parseDollars(' 1800 ')).toBe(1800);
+    expect(parseDollars('2k')).toBe(2000);
+    expect(parseDollars('1.5k')).toBe(1500);
+    expect(parseDollars('abc')).toBeNull();
+    expect(parseDollars('5')).toBeNull();
+  });
+  it('saves any amount and finds the nearest slider stop', () => {
+    expect(budgetFromDollars(sofa, 1850)).toEqual({ subcategoryId: 'sofas', maxCents: 185000 });
+    expect(budgetFromDollars(sofa, 0)).toBeNull();
+    expect(sofa.stops[nearestIndex(sofa, 1850)]).toBe(1750);
+    expect(sofa.stops[nearestIndex(sofa, 99999)]).toBe(4000);
+  });
+  it('has $2,000 as a sofa stop', () => {
+    expect(sofa.stops).toContain(2000);
   });
 });

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, radii, space } from '@/theme/tokens';
@@ -33,9 +33,9 @@ export function PurchasePrompt({
 
   return (
     <Animated.View
-      entering={reduceMotion ? undefined : FadeInUp.duration(220)}
-      exiting={reduceMotion ? undefined : FadeOutUp.duration(180)}
-      style={[styles.wrap, { top: insets.top + space.sm }]}
+      entering={reduceMotion ? undefined : FadeInDown.duration(220)}
+      // Sits just above the bottom bar (Buy now / tabs) so it never covers Close or Back.
+      style={[styles.wrap, { bottom: insets.bottom + 112 }]}
       accessibilityLiveRegion="polite"
       accessibilityLabel={`Back from ${storeName}. Did you buy ${title}?`}>
       <View style={styles.text}>

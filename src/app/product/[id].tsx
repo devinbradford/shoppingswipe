@@ -25,10 +25,12 @@ import { Icon } from '@/components/Icon';
 import { ProductImage } from '@/components/ProductImage';
 import { ListPickerSheet } from '@/components/ListPickerSheet';
 import { SimilarRow } from '@/components/SimilarRow';
+import { UndoToast } from '@/components/UndoToast';
 import { LoadingView, StateView } from '@/components/StateView';
 import type { Product, Retailer } from '@/domain/types';
 import { useProduct } from '@/hooks/useCatalog';
 import { useBuyNow } from '@/hooks/useBuyNow';
+import { useUndoToast } from '@/hooks/useUndoToast';
 import { useProductInsights } from '@/hooks/useProductInsights';
 import { useListsForProduct } from '@/hooks/useWishlists';
 import { formatPrice } from '@/lib/format';
@@ -89,6 +91,8 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
   const isKept = useSwipeStore((s) => s.saved.some((i) => i.productId === product.id));
   const addSaved = useSwipeStore((s) => s.addSaved);
   const removeSaved = useSwipeStore((s) => s.removeSaved);
+  const restoreSaved = useSwipeStore((s) => s.restoreSaved);
+  const toast = useUndoToast();
   const addToList = useWishlistStore((s) => s.add);
   const inLists = useListsForProduct(product.id);
   const [picking, setPicking] = useState(false);
@@ -141,10 +145,17 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
 
   const toggleKeep = () => {
     if (isKept) {
+      const item = useSwipeStore.getState().saved.find((i) => i.productId === product.id);
       removeSaved(product.id);
-      recordSignal(product.id, 'unsave');
+      toast.show({
+        message: 'Removed from Kept',
+        undo: item ? () => restoreSaved(item) : undefined,
+        // Only an un-keep that sticks says something about taste.
+        commit: () => recordSignal(product.id, 'unsave'),
+      });
     } else {
       addSaved(product.id);
+      toast.show({ message: 'Kept' });
     }
   };
 
@@ -284,6 +295,15 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
         }}
       />
 
+      {toast.toast ? (
+        <UndoToast
+          id={toast.toast.id}
+          message={toast.toast.message}
+          onUndo={toast.toast.undo ? toast.undo : undefined}
+          onExpire={toast.expire}
+          bottom={barHeight + space.sm}
+        />
+      ) : null}
       <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, space.md) }]}>
         <View style={styles.barRow}>
           <View style={styles.barPrice}>
@@ -374,20 +394,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     marginBottom: space.md,
   },
-  why: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
-    maxWidth: '100%',
-    paddingHorizontal: space.md + 2,
-    paddingVertical: space.sm,
-    borderRadius: radii.pill,
-    backgroundColor: colors.accentGlass,
-    borderWidth: 1,
-    borderColor: colors.accentGlassBorder,
-    marginTop: space.xs,
-  },
+  why: { flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.xs },
+
   whyDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.keep },
   whyText: { flexShrink: 1 },
   description: { marginTop: space.lg },

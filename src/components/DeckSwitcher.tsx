@@ -61,8 +61,14 @@ export function DeckSwitcher({
             setOpen(true);
           }}
           accessibilityRole="button"
-          accessibilityLabel={`${title.toLowerCase()}, ${current}${hasNew ? ', something new inside' : ''}`}
-          accessibilityHint="Choose a room, or open your weekly 10"
+          accessibilityLabel={`Showing ${current}. Opens a menu with rooms${extras.length ? `, ${extras.map((e) => e.label).join(', ')}` : ''}${
+            hasNew
+              ? `. New: ${extras
+                  .filter((e) => e.isNew)
+                  .map((e) => e.label)
+                  .join(', ')}`
+              : ''
+          }`}
           hitSlop={8}
           style={({ pressed }) => [styles.pill, pressed && styles.pressed]}>
           <AppText variant="eyebrow" color={colors.onPhoto}>
@@ -91,7 +97,8 @@ export function DeckSwitcher({
         <Animated.View
           entering={reduceMotion ? undefined : FadeInUp.duration(180)}
           style={[styles.menu, { top: Math.max(top, insets.top) + 52 }]}
-          accessibilityViewIsModal>
+          accessibilityViewIsModal
+          onAccessibilityEscape={() => setOpen(false)}>
           {rooms.map((o) => (
             <Row key={o.id} option={o} onPress={() => pick(o)} radio />
           ))}

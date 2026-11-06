@@ -13,10 +13,19 @@ interface MasonryGridProps<T> {
   /** Horizontal padding of the screen around the grid. */
   gutter?: number;
   gap?: number;
+  /** "balanced" fills the shorter column (even bottoms); "rows" alternates left/right so order reads row by row. */
+  order?: 'balanced' | 'rows';
 }
 
 /** Two columns of tiles with varying heights, filled left-right in order. */
-export function MasonryGrid<T>({ items, keyOf, renderItem, gutter = space.xl, gap = space.md }: MasonryGridProps<T>) {
+export function MasonryGrid<T>({
+  items,
+  keyOf,
+  renderItem,
+  gutter = space.xl,
+  gap = space.md,
+  order = 'balanced',
+}: MasonryGridProps<T>) {
   const { width } = useWindowDimensions();
   const colWidth = (width - gutter * 2 - gap) / 2;
   const columns: { item: T; height: number }[][] = [[], []];
@@ -24,7 +33,7 @@ export function MasonryGrid<T>({ items, keyOf, renderItem, gutter = space.xl, ga
   items.forEach((item, i) => {
     const h = Math.round(colWidth * RATIOS[i % RATIOS.length]);
     // Put each tile in the shorter column so the bottoms stay roughly even.
-    const col = heights[0] <= heights[1] ? 0 : 1;
+    const col = order === 'rows' ? i % 2 : heights[0] <= heights[1] ? 0 : 1;
     columns[col].push({ item, height: h });
     heights[col] += h + gap;
   });

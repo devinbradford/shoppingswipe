@@ -11,10 +11,12 @@ import { FilterSheet } from '@/components/FilterSheet';
 import { ProductGridItem } from '@/components/ProductGridItem';
 import { RoomSection } from '@/components/RoomSection';
 import { SearchField } from '@/components/SearchField';
+import { WeeklyTile } from '@/components/WeeklyTile';
 import { LoadingView, StateView } from '@/components/StateView';
 import { countActiveFilters, EMPTY_FILTERS, type SearchFilters } from '@/domain/filters';
 import type { Product } from '@/domain/types';
 import { useCategorySummaries, useFilterOptions, useProductSearch, useRetailerNames } from '@/hooks/useCatalog';
+import { useWeekly } from '@/hooks/useRetention';
 import { formatPrice, pluralize } from '@/lib/format';
 import { colors, space } from '@/theme/tokens';
 
@@ -23,6 +25,7 @@ export default function DiscoverScreen() {
   const [filters, setFilters] = useState<SearchFilters>(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
+  const weekly = useWeekly();
   const categories = useCategorySummaries();
   const search = useProductSearch(query, filters);
   const options = useFilterOptions(query);
@@ -39,6 +42,13 @@ export default function DiscoverScreen() {
       <AppText variant="hero" accessibilityRole="header">
         Discover
       </AppText>
+      {weekly.ids && weekly.remaining > 0 && !searching ? (
+        <WeeklyTile
+          subtitle={`${weekly.label} · ${weekly.remaining} left · picked for your taste`}
+          isNew={weekly.isNew}
+          onPress={() => router.push('/weekly')}
+        />
+      ) : null}
       <AppText variant="body" color={colors.inkMuted}>
         Pick a room or a piece of furniture and swipe. Right to keep, left to skip.
       </AppText>

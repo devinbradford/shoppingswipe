@@ -21,6 +21,8 @@ interface GlassIconButtonProps {
   disabled?: boolean;
   /** Small spaced capitals shown under the button (e.g. "SKIP"). */
   caption?: string;
+  /** Act on touch-down, so a gesture underneath (e.g. photo zoom) can't swallow the first tap. */
+  immediate?: boolean;
 }
 
 /** Round button over a photo: glass for secondary actions, champagne for Keep. */
@@ -32,10 +34,12 @@ export function GlassIconButton({
   tone = 'glass',
   disabled,
   caption,
+  immediate,
 }: GlassIconButtonProps) {
   const button = (
     <Pressable
-      onPress={onPress}
+      onPress={immediate ? undefined : onPress}
+      onPressIn={immediate ? onPress : undefined}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityLabel={label}
