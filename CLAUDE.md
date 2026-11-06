@@ -160,12 +160,13 @@ Coming back (Step 9):
 - Welcome back card fades on its own after 6 s; the reminder offer lives on the weekly finish screen and in Profile, not over the deck
 - Honest copy: "picked for you", never "new arrivals" (catalog is static until Phase 4)
 - `expo-notifications` installed (SDK 58 version, offline install); plugin in app.json
+- Checks passing (Step 9): typecheck, lint, 173 unit tests
 
 Usability test with AI testers (Devin's idea) and fixes:
 - 4 personas (rushed first-timer, careful planner, returning shopper, screen-reader user) did 43 tasks through a logging remote control (scratchpad tooling, not in the repo). Sighted testers: 30/31 done, ~1.5× the shortest tap count. Screen-reader results after task 2 were unreliable (harness), so only code-confirmed a11y findings were used
 - Fixed (Devin chose all): weekly 10 tile on Discover (`WeeklyTile`); descriptive menu pill label + escape to close; one-time "press and hold" tip on Kept (`holdTipSeen`); labelled sort chip; price-sorted boards read row by row (`MasonryGrid order="rows"`); "Add to list" vs "Move to list" explained; un-keep on product page → "Removed from Kept · Undo" (`UndoToast` now also does plain confirmations); "Show me less" confirmation; reminder row is a real switch (`ProfileRow toggle`); "Did you buy it?" moved above the bottom bar and closes instantly; budget: finer stops + tap to type any amount (`parseDollars`, `budgetFromDollars`, `nearestIndex`), Profile row says "for a sofa"; UNDO caption; zoom ✕ acts on touch-down; "Why it's for you" is plain text; card spoken label includes material, colour and "Picked for you: …"; card underneath hidden from iPhone screen readers (`accessibilityElementsHidden`)
 - Next: a short test with ~5 real people
-- Checks passing: typecheck, lint, 173 unit tests
+- Checks passing: typecheck, lint, 176 unit tests
 
 ## Phase plan
 
