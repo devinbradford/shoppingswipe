@@ -20,6 +20,8 @@ interface SignalState {
   record: (productId: string, type: SignalType, value?: number) => void;
   answerFeature: (featureKey: string, answer: FeatureFeedback['answer']) => void;
   answerSkipReason: (productId: string, reason: SkipReason) => void;
+  /** "Your taste" → Start fresh: forget everything learned so far (Kept and lists stay). */
+  startFresh: () => void;
   resetAll: () => void;
 }
 
@@ -43,6 +45,7 @@ export const useSignalStore = create<SignalState>()(
         set((s) => ({
           feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'skip_reason', productId, reason }],
         })),
+      startFresh: () => set((s) => ({ feedback: [...s.feedback, { id: newId(), at: Date.now(), kind: 'reset' }] })),
       resetAll: () => set({ signals: [], feedback: [] }),
     }),
     {

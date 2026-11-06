@@ -67,6 +67,7 @@ export default function RootLayout() {
           <Stack.Screen name="building" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="lists/[id]" />
+          <Stack.Screen name="taste" />
           <Stack.Screen name="account" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
           <Stack.Screen name="auth-callback" />
           <Stack.Screen name="product/[id]" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />

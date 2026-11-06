@@ -10,6 +10,7 @@ import { AppText } from '@/components/AppText';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { ProfileRow, ProfileSection } from '@/components/ProfileRow';
 import { budgetAnchor, formatBudget, NO_LIMIT, type RoomChoice } from '@/domain/budget';
+import { useTaste } from '@/hooks/useTaste';
 import { useAuthStore } from '@/store/authStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { usePurchaseStore } from '@/store/purchaseStore';
@@ -36,6 +37,7 @@ export default function ProfileScreen() {
   const room = usePreferencesStore((s) => s.room);
   const budget = usePreferencesStore((s) => s.budget);
   const auth = useAuthStore();
+  const taste = useTaste();
   const anchor = budgetAnchor(room);
   const version = Constants.expoConfig?.version;
 
@@ -54,7 +56,14 @@ export default function ProfileScreen() {
         <ProfileSection title="YOUR TASTE">
           <ProfileRow
             icon="sparkles"
-            title="Your styles"
+            title="What we've learned"
+            detail={taste.summary?.headline ?? 'Still learning. Keep swiping'}
+            onPress={() => router.push('/taste')}
+            hint="See and adjust what CureAvo learned about your taste"
+          />
+          <ProfileRow
+            icon="heart"
+            title="Starting styles"
             detail={picks.length > 0 ? picks.map(titleCase).join(' · ') : 'None picked yet'}
             onPress={() => router.push('/welcome')}
             hint="Change the styles your feed starts from"

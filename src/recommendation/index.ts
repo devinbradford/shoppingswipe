@@ -5,3 +5,4 @@ export * from './model';
 export * from './rank';
 export * from './questions';
 export * from './detail';
+export * from './summary';

@@ -144,6 +144,13 @@ Buying hand-off (Step 7):
 - Purchases live on this phone only for now (`src/store/purchaseStore.ts`, rules in `src/domain/purchases.ts`); not synced yet
 - Checks passing: typecheck, lint, 153 unit tests
 
+Your taste (Step 8):
+- `/taste`: headline ("Mid-century, walnut and olive"), styles as photo cards, materials and colours as chips, price band for their room's key piece, "Less your thing", Start fresh. Plain words, no scores
+- `tasteSummary` (`src/recommendation/summary.ts`): names a trait only with a clear lean (±0.5) AND 2:1 agreeing evidence. Tuned on simulated shoppers: likes right 90–99%, dislikes ~85%; a test guards ≥85%. Stages: learning (<10 swipes) / shaping / confident
+- Tap a trait: Show me more (`boosted`, prior +1.2), Show me less (muted), Forget this (drops evidence before that moment). Start fresh = `reset` feedback: nothing before it counts; Kept, lists and budget stay
+- Find it: Profile → "What we've learned", and a one-time "Your taste is taking shape" pill in For you after 30 swipes (`tasteRevealSeen`)
+- Checks passing: typecheck, lint, 164 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

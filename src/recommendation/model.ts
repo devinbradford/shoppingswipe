@@ -50,6 +50,8 @@ export interface ModelOptions {
   /** Starting effect of a first-launch style pick, and of a "less of this" answer. */
   seedPrior: number;
   mutedPrior: number;
+  /** Starting effect of a "show me more" answer. */
+  boostPrior: number;
 }
 
 export const MODEL_OPTIONS: ModelOptions = {
@@ -63,6 +65,7 @@ export const MODEL_OPTIONS: ModelOptions = {
   priorSd: 1,
   seedPrior: 0.8,
   mutedPrior: -2.5,
+  boostPrior: 1.2,
 };
 
 export interface Evidence {
@@ -104,6 +107,8 @@ export interface TasteModel {
   budget: Budget | null;
   /** Features the shopper asked to see less of. */
   muted: string[];
+  /** Features the shopper asked to see more of. */
+  boosted: string[];
   /** Features the shopper said their skips weren't about. */
   fine: string[];
   keepCount: number;
@@ -139,6 +144,7 @@ export const EMPTY_MODEL: TasteModel = {
   shortMass: 0,
   budget: null,
   muted: [],
+  boosted: [],
   fine: [],
   keepCount: 0,
   swipeCount: 0,
@@ -184,14 +190,26 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const signals = input.signals ?? [];
   const feedback = input.feedback ?? [];
 
-  // Latest answers win.
-  const featureAnswers = new Map<string, 'less' | 'fine'>();
+  // "Start fresh": nothing before the latest reset counts.
+  const resets = feedback.filter((f) => f.kind === 'reset').map((f) => f.at);
+  const resetAt = resets.length > 0 ? Math.max(...resets) : -Infinity;
+  const swipes = input.swipes.filter((s) => s.swipedAt > resetAt);
+
+  // Latest answers win. "Forget" clears the answer and the evidence gathered before it.
+  const featureAnswers = new Map<string, 'less' | 'fine' | 'more'>();
+  const forgotAt = new Map<string, number>();
   const skipReasons = new Map<string, SkipReason>();
   for (const f of [...feedback].sort((a, b) => a.at - b.at)) {
-    if (f.kind === 'feature') featureAnswers.set(f.featureKey, f.answer);
-    else skipReasons.set(f.productId, f.reason);
+    if (f.at <= resetAt) continue;
+    if (f.kind === 'feature') {
+      if (f.answer === 'forget') {
+        featureAnswers.delete(f.featureKey);
+        forgotAt.set(f.featureKey, f.at);
+      } else featureAnswers.set(f.featureKey, f.answer);
+    } else if (f.kind === 'skip_reason') skipReasons.set(f.productId, f.reason);
   }
   const muted = [...featureAnswers].filter(([, a]) => a === 'less').map(([k]) => k);
+  const boosted = [...featureAnswers].filter(([, a]) => a === 'more').map(([k]) => k);
   const fine = new Set([...featureAnswers].filter(([, a]) => a === 'fine').map(([k]) => k));
 
   // Dwell per product (latest).
@@ -201,7 +219,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const events: WeightedEvent[] = [];
   let keepCount = 0;
   const kept = new Set<string>();
-  for (const s of input.swipes) {
+  for (const s of swipes) {
     if (!products.has(s.productId)) continue;
     if (s.direction === 'keep') {
       keepCount++;
@@ -218,7 +236,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const seen = new Map<string, WeightedEvent>();
   const strongPositive = new Set<string>();
   for (const s of signals) {
-    if (s.type === 'swipe_dwell' || !products.has(s.productId)) continue;
+    if (s.type === 'swipe_dwell' || !products.has(s.productId) || s.at <= resetAt) continue;
     const key = `${s.type}:${s.productId}`;
     const w = SIGNAL_WEIGHTS[s.type];
     const prev = seen.get(key);
@@ -240,7 +258,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const positiveCount = keepCount + [...strongPositive].filter((id) => !kept.has(id)).length;
 
   // Decay by how many swipes came after each action.
-  const swipeTimes = input.swipes
+  const swipeTimes = swipes
     .filter((s) => products.has(s.productId))
     .map((s) => s.swipedAt)
     .sort((a, b) => a - b);
@@ -291,6 +309,8 @@ export function buildTasteModel(input: TasteInput): TasteModel {
 
     for (const f of productFeatures(product, bands)) {
       labels[f.key] ??= f.label;
+      // "Forget this": evidence from before they asked doesn't count.
+      if ((forgotAt.get(f.key) ?? -1) >= e.at) continue;
       let w = e.weight;
       if (e.isSkip) {
         // "Those skips weren't about bouclé": skips stop counting against it.
@@ -308,7 +328,10 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   }
 
   // First-launch style picks: older than any real swipe, so they fade.
-  const seeds = [...new Set((input.seedStyles ?? []).map((s) => s.toLowerCase()))];
+  const seeds =
+    resets.length > 0
+      ? []
+      : [...new Set((input.seedStyles ?? []).map((s) => s.toLowerCase()))].filter((s) => !forgotAt.has(`style:${s}`));
   const seedDecay = Math.pow(0.5, swipeTimes.length / options.longHalfLife);
   for (const style of seeds) {
     const key = `style:${style}`;
@@ -319,6 +342,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
   const priorMean: Record<string, number> = {};
   for (const style of seeds) priorMean[`style:${style}`] = options.seedPrior * seedDecay;
   for (const key of muted) priorMean[key] = options.mutedPrior;
+  for (const key of boosted) priorMean[key] = options.boostPrior;
   const fit = fitPreferences(samples, priorMean, new Set(muted), options.priorSd);
 
   return {
@@ -341,6 +365,7 @@ export function buildTasteModel(input: TasteInput): TasteModel {
         : null,
     ),
     muted,
+    boosted,
     fine: [...fine],
     keepCount,
     swipeCount: swipeTimes.length,

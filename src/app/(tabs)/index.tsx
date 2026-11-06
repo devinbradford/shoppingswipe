@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { DeckView } from '@/components/DeckView';
 import { GlassChip, GlassPill } from '@/components/Glass';
+import { TasteRevealPill } from '@/components/TasteRevealPill';
 import type { RoomChoice } from '@/domain/budget';
 import type { CategoryId } from '@/domain/types';
 import { useRetailerNames } from '@/hooks/useCatalog';
@@ -23,6 +24,9 @@ const ROOMS: { id: CategoryId | null; label: string }[] = [
   { id: 'bedroom', label: 'Bedroom' },
   { id: 'kitchen-dining', label: 'Kitchen & dining' },
 ];
+
+/** Swipes before the one-time "Your taste is taking shape" moment. */
+const REVEAL_AFTER = 30;
 
 const toRoom = (choice: RoomChoice | null): CategoryId | null => (choice && choice !== 'browsing' ? choice : null);
 
@@ -54,6 +58,10 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
   const keptTab = { x: width * 0.625, y: height - tabBarHeight + 20 };
   const showCount = deck.status === 'ready' && deck.cards.length > 0;
   const roomLabel = ROOMS.find((r) => r.id === room)?.label ?? 'All';
+  const swipeCount = useSwipeStore((s) => s.swipes.length);
+  const revealSeen = usePreferencesStore((s) => s.tasteRevealSeen);
+  const markRevealSeen = usePreferencesStore((s) => s.markTasteRevealSeen);
+  const showReveal = !revealSeen && swipeCount >= REVEAL_AFTER;
 
   return (
     <View style={styles.screen}>
@@ -93,6 +101,16 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
                 <GlassChip key={r.label} label={r.label} selected={r.id === room} onPress={() => setRoom(r.id)} />
               ))}
             </ScrollView>
+            {showReveal ? (
+              <TasteRevealPill
+                reduceMotion={reduceMotion}
+                onClose={markRevealSeen}
+                onOpen={() => {
+                  markRevealSeen();
+                  router.push('/taste');
+                }}
+              />
+            ) : null}
           </View>
         }
       />

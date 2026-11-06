@@ -22,6 +22,9 @@ interface PreferencesState {
   /** When the Kept tab was last opened (epoch ms). Drives the "new" badge. */
   keptSeenAt: number;
   markKeptSeen: () => void;
+  /** The one-time "Your taste is taking shape" card in For you was seen or closed. */
+  tasteRevealSeen: boolean;
+  markTasteRevealSeen: () => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -40,6 +43,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       setBudget: (budget) => set({ budget }),
       keptSeenAt: 0,
       markKeptSeen: () => set({ keptSeenAt: Date.now() }),
+      tasteRevealSeen: false,
+      markTasteRevealSeen: () => set({ tasteRevealSeen: true }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -48,7 +53,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         set({ onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks: get().stylePicks, onboarded: true } }]);
       },
-      resetAll: () => set({ stylePicks: [], onboarded: false, room: null, budget: null }),
+      resetAll: () => set({ stylePicks: [], onboarded: false, room: null, budget: null, tasteRevealSeen: false }),
     }),
     {
       name: 'swipeshop.preferences.v1',
@@ -60,6 +65,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         room: s.room,
         budget: s.budget,
         keptSeenAt: s.keptSeenAt,
+        tasteRevealSeen: s.tasteRevealSeen,
       }),
     },
   ),

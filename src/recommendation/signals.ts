@@ -31,14 +31,18 @@ export interface EngagementSignal {
   value?: number;
 }
 
-/** Feature-level answer: "Not into bouclé?" → less (show less) or fine (those skips weren't about bouclé). */
+/**
+ * Feature-level answer. From the question pill: "Not into bouclé?" → less (show less) or fine
+ * (those skips weren't about bouclé). From the Your taste screen: more (show more of it),
+ * less, or forget (drop everything learned about it so far).
+ */
 export interface FeatureFeedback {
   id: string;
   at: number;
   kind: 'feature';
   /** Taste-profile key, e.g. `material:boucle`. */
   featureKey: string;
-  answer: 'less' | 'fine';
+  answer: 'less' | 'fine' | 'more' | 'forget';
 }
 
 export type SkipReason = 'style' | 'price' | 'color' | 'material';
@@ -52,7 +56,14 @@ export interface SkipReasonFeedback {
   reason: SkipReason;
 }
 
-export type Feedback = FeatureFeedback | SkipReasonFeedback;
+/** "Start fresh" on the Your taste screen: everything learned before `at` is forgotten. */
+export interface ResetFeedback {
+  id: string;
+  at: number;
+  kind: 'reset';
+}
+
+export type Feedback = FeatureFeedback | SkipReasonFeedback | ResetFeedback;
 
 /**
  * How much each action says about taste, in "keeps". A keep is +1, a plain
