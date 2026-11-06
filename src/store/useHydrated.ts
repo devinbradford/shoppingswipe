@@ -2,10 +2,19 @@ import { useSyncExternalStore } from 'react';
 
 import { useOutboxStore } from './outboxStore';
 import { usePreferencesStore } from './preferencesStore';
+import { usePurchaseStore } from './purchaseStore';
+import { useRetentionStore } from './retentionStore';
 import { useSwipeStore } from './swipeStore';
 import { useWishlistStore } from './wishlistStore';
 
-const stores = [useSwipeStore, useWishlistStore, usePreferencesStore, useOutboxStore];
+const stores = [
+  useSwipeStore,
+  useWishlistStore,
+  usePreferencesStore,
+  useOutboxStore,
+  usePurchaseStore,
+  useRetentionStore,
+];
 
 const subscribe = (onChange: () => void) => {
   const unsubs = stores.map((s) => s.persist.onFinishHydration(onChange));

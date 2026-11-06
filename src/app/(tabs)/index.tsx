@@ -7,12 +7,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { DeckView } from '@/components/DeckView';
 import { GlassChip, GlassPill } from '@/components/Glass';
+import { BannerPill, ReminderOfferCard, WelcomeBackCard } from '@/components/Banners';
 import { TasteRevealPill } from '@/components/TasteRevealPill';
 import type { RoomChoice } from '@/domain/budget';
 import type { CategoryId } from '@/domain/types';
 import { useRetailerNames } from '@/hooks/useCatalog';
 import { useDeck } from '@/hooks/useDeck';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { useReminder, useWeekly } from '@/hooks/useRetention';
+import { sinceLabel } from '@/domain/retention';
+import { useRetentionStore } from '@/store/retentionStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
@@ -62,6 +66,50 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
   const revealSeen = usePreferencesStore((s) => s.tasteRevealSeen);
   const markRevealSeen = usePreferencesStore((s) => s.markTasteRevealSeen);
   const showReveal = !revealSeen && swipeCount >= REVEAL_AFTER;
+  const welcome = useRetentionStore((s) => s.welcome);
+  const dismissWelcome = useRetentionStore((s) => s.dismissWelcome);
+  const weekly = useWeekly();
+  const reminder = useReminder();
+  const [weeklyClosed, setWeeklyClosed] = useState(false);
+  // "Picked for you": cards with a taste reason, or simply what's lined up next.
+  const picked = deck.cards.filter((c) => c.forYou).length || deck.cards.length;
+
+  // One banner at a time, most timely first.
+  const banner =
+    welcome && deck.cards.length > 0 ? (
+      <WelcomeBackCard
+        subtitle={`${picked >= 30 ? '30+' : picked} ${picked === 1 ? 'piece' : 'pieces'} picked for you ${sinceLabel(welcome.since, welcome.at)}`}
+        photos={deck.cards.slice(0, 3).map((c) => c.product.imageUrls[0])}
+        onPress={dismissWelcome}
+        onClose={dismissWelcome}
+        reduceMotion={reduceMotion}
+      />
+    ) : showReveal ? (
+      <TasteRevealPill
+        reduceMotion={reduceMotion}
+        onClose={markRevealSeen}
+        onOpen={() => {
+          markRevealSeen();
+          router.push('/taste');
+        }}
+      />
+    ) : reminder.offer && weekly.ids ? (
+      <ReminderOfferCard
+        onYes={() => void reminder.turnOn()}
+        onNo={reminder.decline}
+        busy={reminder.busy}
+        reduceMotion={reduceMotion}
+      />
+    ) : weekly.ids && weekly.remaining > 0 && !weeklyClosed ? (
+      <BannerPill
+        icon="sparkles"
+        title="Your weekly 10"
+        subtitle={`${weekly.label} · ${weekly.remaining} left`}
+        onPress={() => router.push('/weekly')}
+        onClose={() => setWeeklyClosed(true)}
+        reduceMotion={reduceMotion}
+      />
+    ) : null;
 
   return (
     <View style={styles.screen}>
@@ -101,16 +149,7 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
                 <GlassChip key={r.label} label={r.label} selected={r.id === room} onPress={() => setRoom(r.id)} />
               ))}
             </ScrollView>
-            {showReveal ? (
-              <TasteRevealPill
-                reduceMotion={reduceMotion}
-                onClose={markRevealSeen}
-                onOpen={() => {
-                  markRevealSeen();
-                  router.push('/taste');
-                }}
-              />
-            ) : null}
+            {banner}
           </View>
         }
       />

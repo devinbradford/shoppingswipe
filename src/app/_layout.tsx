@@ -13,6 +13,8 @@ import { PurchasePrompt } from '@/components/PurchasePrompt';
 import { StateView } from '@/components/StateView';
 import { useOnline } from '@/hooks/useOnline';
 import { usePurchasePrompt } from '@/hooks/usePurchasePrompt';
+import { useVisitTracking } from '@/hooks/useRetention';
+import { startNotifications } from '@/lib/notifications';
 import { startAuth } from '@/lib/auth';
 import { startSyncTriggers } from '@/sync/appSync';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
@@ -31,6 +33,7 @@ export default function RootLayout() {
   const online = useOnline();
   const reduceMotion = useReduceMotion();
   const purchase = usePurchasePrompt();
+  useVisitTracking();
   // If fonts fail we still start, falling back to the system font.
   const ready = loaded || !!error;
 
@@ -42,9 +45,11 @@ export default function RootLayout() {
   useEffect(() => {
     const stopAuth = startAuth();
     const stopSync = startSyncTriggers();
+    const stopNotifications = startNotifications();
     return () => {
       stopAuth();
       stopSync();
+      stopNotifications();
     };
   }, []);
 
@@ -68,6 +73,7 @@ export default function RootLayout() {
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="lists/[id]" />
           <Stack.Screen name="taste" />
+          <Stack.Screen name="weekly" />
           <Stack.Screen name="account" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />
           <Stack.Screen name="auth-callback" />
           <Stack.Screen name="product/[id]" options={{ animation: reduceMotion ? 'fade' : 'slide_from_bottom' }} />

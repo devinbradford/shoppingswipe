@@ -65,9 +65,15 @@ function toCard(r: RankedProduct): DeckCard {
  * the taste profile (built from every swipe in every category), and re-ranks
  * everything behind the two visible cards after each swipe.
  */
-export function useDeck(categoryId?: CategoryId, subcategoryId?: SubcategoryId): Deck {
+export function useDeck(
+  categoryId?: CategoryId,
+  subcategoryId?: SubcategoryId,
+  /** Only these products (e.g. this week's 10), in place of a room. */
+  onlyIds?: readonly string[],
+): Deck {
+  const onlyKey = onlyIds?.join(',') ?? null;
   // No room = every room (the For you deck).
-  const deckKey = subcategoryId ?? categoryId ?? 'all';
+  const deckKey = onlyKey !== null ? `only:${onlyKey}` : (subcategoryId ?? categoryId ?? 'all');
   const hydrated = useHydrated();
   const recordSwipe = useSwipeStore((s) => s.recordSwipe);
   const undoLastSwipe = useSwipeStore((s) => s.undoLastSwipe);
@@ -107,7 +113,9 @@ export function useDeck(categoryId?: CategoryId, subcategoryId?: SubcategoryId):
 
     (async () => {
       const [candidates, seenProducts, priceBands] = await Promise.all([
-        repo.listProducts({ categoryId, subcategoryId, excludeIds: swipedIds }),
+        onlyKey !== null
+          ? repo.getProducts(onlyKey ? onlyKey.split(',') : []).then((ps) => ps.filter((p) => !swipedIds.has(p.id)))
+          : repo.listProducts({ categoryId, subcategoryId, excludeIds: swipedIds }),
         repo.getProducts([...new Set([...swipedIds, ...engagedIds])]),
         repo.getPriceBands(),
       ]);
@@ -135,7 +143,7 @@ export function useDeck(categoryId?: CategoryId, subcategoryId?: SubcategoryId):
     return () => {
       cancelled = true;
     };
-  }, [hydrated, categoryId, subcategoryId, deckKey, attempt]);
+  }, [hydrated, categoryId, subcategoryId, onlyKey, deckKey, attempt]);
 
   const swipe = useCallback(
     (direction: SwipeDirection) => {

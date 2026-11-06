@@ -151,6 +151,16 @@ Your taste (Step 8):
 - Find it: Profile → "What we've learned", and a one-time "Your taste is taking shape" pill in For you after 30 swipes (`tasteRevealSeen`)
 - Checks passing: typecheck, lint, 164 unit tests
 
+Coming back (Step 9):
+- Visits tracked on the phone (`src/store/retentionStore.ts`, rules in `src/domain/retention.ts`, `useVisitTracking` in the root layout). No streaks or badges by design
+- Welcome back: after a new day and 12+ hours away, a card on For you ("30+ pieces picked for you since Tuesday" + 3 photos), once per return
+- "Your weekly 10" (`pickWeekly` in `src/recommendation/weekly.ts`): best expected matches, no confident dislikes, max 2 per type and brand; chosen once per Monday-starting week and fixed; `/weekly` deck (useDeck with `onlyIds`) and a finish screen. Starts after 10 swipes or style picks
+- Weekly reminder: local notification only (works in Expo Go; server push needs a dev build). Offered only after 2 visit days + 5 keeps, via our own card first, then the phone's prompt; Mondays 9:00; tap opens `/weekly`. Profile → Notifications toggle. Web preview remembers the choice but schedules nothing (`src/lib/notifications.ts`)
+- One For you banner at a time: welcome back > taste reveal > reminder offer > weekly 10
+- Honest copy: "picked for you", never "new arrivals" (catalog is static until Phase 4)
+- `expo-notifications` installed (SDK 58 version, offline install); plugin in app.json
+- Checks passing: typecheck, lint, 173 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

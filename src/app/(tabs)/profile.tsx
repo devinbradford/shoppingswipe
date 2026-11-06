@@ -10,7 +10,9 @@ import { AppText } from '@/components/AppText';
 import { ConfirmSheet } from '@/components/ConfirmSheet';
 import { ProfileRow, ProfileSection } from '@/components/ProfileRow';
 import { budgetAnchor, formatBudget, NO_LIMIT, type RoomChoice } from '@/domain/budget';
+import { useReminder } from '@/hooks/useRetention';
 import { useTaste } from '@/hooks/useTaste';
+import { useRetentionStore } from '@/store/retentionStore';
 import { useAuthStore } from '@/store/authStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { usePurchaseStore } from '@/store/purchaseStore';
@@ -38,6 +40,7 @@ export default function ProfileScreen() {
   const budget = usePreferencesStore((s) => s.budget);
   const auth = useAuthStore();
   const taste = useTaste();
+  const reminder = useReminder();
   const anchor = budgetAnchor(room);
   const version = Constants.expoConfig?.version;
 
@@ -81,6 +84,22 @@ export default function ProfileScreen() {
             detail={budgetText}
             onPress={() => router.push({ pathname: '/setup/budget', params: { edit: '1' } })}
             hint="A soft limit; pricier pieces still show up, just less often"
+          />
+        </ProfileSection>
+
+        <ProfileSection title="NOTIFICATIONS">
+          <ProfileRow
+            icon="mail"
+            title="Weekly 10 reminder"
+            detail={
+              reminder.on
+                ? 'On · Monday mornings, once a week'
+                : reminder.blocked
+                  ? 'Off · notifications are blocked in your phone settings'
+                  : 'Off'
+            }
+            onPress={() => void (reminder.on ? reminder.turnOff() : reminder.turnOn())}
+            hint={reminder.on ? 'Turns the reminder off' : 'Turns on one reminder on Monday mornings'}
           />
         </ProfileSection>
 
@@ -142,6 +161,7 @@ function ResetLink() {
   const resetLists = useWishlistStore((s) => s.resetAll);
   const resetPrefs = usePreferencesStore((s) => s.resetAll);
   const resetPurchases = usePurchaseStore((s) => s.resetAll);
+  const resetRetention = useRetentionStore((s) => s.resetAll);
   const [confirm, setConfirm] = useState(false);
   return (
     <>
@@ -165,6 +185,7 @@ function ResetLink() {
           resetLists();
           resetPrefs();
           resetPurchases();
+          resetRetention();
         }}
       />
     </>
