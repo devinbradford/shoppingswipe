@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
+  FadeIn,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -45,7 +46,28 @@ function useLoop(reduceMotion: boolean, playMs: number, waitMs = 500, holdMs = 5
   return t;
 }
 
-/** Slide 1: a card swipes right with a Keep stamp; the next card steps up. */
+/** Welcome slide: one large still photo that settles gently into place. */
+export function WelcomeScene({
+  photo,
+  width,
+  height,
+  reduceMotion,
+}: {
+  photo?: string;
+  width: number;
+  height: number;
+  reduceMotion: boolean;
+}) {
+  return (
+    <Animated.View
+      entering={reduceMotion ? undefined : FadeIn.duration(600).easing(Easing.out(Easing.cubic))}
+      style={[styles.hero, { width, height }]}>
+      <ProductImage uri={photo} style={StyleSheet.absoluteFill} />
+    </Animated.View>
+  );
+}
+
+/** A card swipes right with a Keep stamp; the next card steps up. */
 export function SwipeScene({ photos, reduceMotion }: { photos: string[]; reduceMotion: boolean }) {
   const t = useLoop(reduceMotion, 850, 600, 350, 0.45);
   const top = useAnimatedStyle(() => {
@@ -163,6 +185,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: CARD_W,
     height: CARD_H,
+    borderRadius: radii.lg,
+    overflow: 'hidden',
+    backgroundColor: colors.placeholder,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    boxShadow: `0 22px 44px ${colors.shadow}99`,
+  },
+  hero: {
     borderRadius: radii.lg,
     overflow: 'hidden',
     backgroundColor: colors.placeholder,
