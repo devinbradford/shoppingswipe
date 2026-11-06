@@ -3,21 +3,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProductRepository } from '@/data';
 import type { CategoryId, Product, SubcategoryId, SwipeDirection } from '@/domain/types';
 import {
-  EMPTY_QUESTION_STATE,
   formatReasons,
   hashSeed,
   isColdStartModel,
-  markAsked,
-  nextQuestion,
   rankDeck,
   reasonLabels,
   rerankDeck,
   type PriceBands,
-  type Question,
-  type QuestionState,
   type RankedProduct,
   type SessionSwipe,
-  type SkipReason,
 } from '@/recommendation';
 import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
@@ -45,12 +39,6 @@ export interface Deck {
   undo: () => void;
   canUndo: boolean;
   retry: () => void;
-  /** A quick question after a telling skip, or null. Shown briefly; ignoring it is fine. */
-  question: Question | null;
-  /** Feature questions: 'less' or 'fine'. "What put you off?": a SkipReason. */
-  answerQuestion: (answer: 'less' | 'fine' | SkipReason) => void;
-  /** The question faded or was closed without an answer. */
-  dismissQuestion: () => void;
 }
 
 const modelFor = currentTasteModel;
@@ -88,10 +76,8 @@ export function useDeck(
   /** Every product we know about (candidates + previously swiped), for profile rebuilds. */
   const known = useRef(new Map<string, Product>());
   const bands = useRef<PriceBands>({});
-  /** This visit's swipes, for deciding when to ask a question. */
+  /** This visit's swipes (their position drives probes and variety in ranking). */
   const session = useRef<SessionSwipe[]>([]);
-  const questionState = useRef<QuestionState>(EMPTY_QUESTION_STATE);
-  const [question, setQuestion] = useState<Question | null>(null);
   /** When the current top card appeared, for how long it was looked at. */
   const shownAt = useRef(0);
   const topId = cards[0]?.product.id;
@@ -128,8 +114,6 @@ export function useDeck(
         seed: hashSeed(`${deckKey}:${swipes.length}`),
       });
       session.current = [];
-      questionState.current = EMPTY_QUESTION_STATE;
-      setQuestion(null);
       setCards(ranked.map(toCard));
       setColdStart(isColdStartModel(model));
       setHistory([]);
@@ -172,48 +156,9 @@ export function useDeck(
       setCards(next.map(toCard));
       setColdStart(isColdStartModel(model));
       setHistory((h) => [...h, top]);
-
-      // A question still showing when they swipe on counts as ignored.
-      let qs = questionState.current;
-      if (question) qs = { ...qs, ignoredStreak: qs.ignoredStreak + 1 };
-      const q = nextQuestion(session.current, model, bands.current, qs);
-      if (q) qs = markAsked(qs, q, session.current.length);
-      questionState.current = qs;
-      setQuestion(q);
     },
-    [cards, deckKey, recordSwipe, question],
+    [cards, deckKey, recordSwipe],
   );
-
-  const answerQuestion = useCallback(
-    (answer: 'less' | 'fine' | SkipReason) => {
-      if (!question) return;
-      const store = useSignalStore.getState();
-      if (question.type === 'feature' && (answer === 'less' || answer === 'fine')) {
-        store.answerFeature(question.featureKey, answer);
-      } else if (question.type === 'why' && answer !== 'less' && answer !== 'fine') {
-        store.answerSkipReason(question.productId, answer);
-      }
-      questionState.current = { ...questionState.current, ignoredStreak: 0 };
-      setQuestion(null);
-      // Apply the answer straight away, behind the cards already on screen.
-      const { swipes } = useSwipeStore.getState();
-      const model = modelFor(known.current, bands.current);
-      setCards((c) =>
-        rerankDeck(c, model, {
-          bands: bands.current,
-          seed: hashSeed(`${deckKey}:${swipes.length}:answer`),
-          position: session.current.length,
-        }).map(toCard),
-      );
-    },
-    [question, deckKey],
-  );
-
-  const dismissQuestion = useCallback(() => {
-    if (!question) return;
-    questionState.current = { ...questionState.current, ignoredStreak: questionState.current.ignoredStreak + 1 };
-    setQuestion(null);
-  }, [question]);
 
   const lastInSession = history.at(-1);
   const canUndo = lastInSession !== undefined;
@@ -228,7 +173,6 @@ export function useDeck(
     }
     undoLastSwipe();
     session.current = session.current.slice(0, -1);
-    setQuestion(null);
     const model = modelFor(known.current, bands.current);
     setCards((c) => [lastInSession, ...c]);
     setColdStart(isColdStartModel(model));
@@ -240,5 +184,5 @@ export function useDeck(
     setAttempt((n) => n + 1);
   }, []);
 
-  return { status, error, cards, coldStart, swipe, undo, canUndo, retry, question, answerQuestion, dismissQuestion };
+  return { status, error, cards, coldStart, swipe, undo, canUndo, retry };
 }

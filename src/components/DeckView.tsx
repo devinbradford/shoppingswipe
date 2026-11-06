@@ -11,7 +11,6 @@ import { recordSignal } from '@/store/signalStore';
 import { space } from '@/theme/tokens';
 import { GlassIconButton } from './Glass';
 import { KeepFlight } from './KeepFlight';
-import { QuestionPill } from './QuestionPill';
 import { LoadingView, StateView, type StateAction } from './StateView';
 import { SwipeDeck, type SwipeDeckHandle } from './SwipeDeck';
 
@@ -33,7 +32,7 @@ interface DeckViewProps {
 }
 
 /**
- * The full-screen swipe deck with its Skip / Undo / Keep buttons, question pill
+ * The full-screen swipe deck with its Skip / Undo / Keep buttons
  * and loading, error and empty states. Used by For you and the room decks.
  */
 export function DeckView({
@@ -134,18 +133,6 @@ export function DeckView({
 
       {topBar}
 
-      {showDeck && deck.question ? (
-        // Floats over the bottom of the photo, just above the price and name, so nothing is covered.
-        <View style={[styles.question, { bottom: infoBottom + QUESTION_ABOVE_INFO }]} pointerEvents="box-none">
-          <QuestionPill
-            question={deck.question}
-            onAnswer={deck.answerQuestion}
-            onDismiss={deck.dismissQuestion}
-            reduceMotion={reduceMotion}
-          />
-        </View>
-      ) : null}
-
       {showDeck ? (
         <View style={[styles.actions, { bottom: actionsBottom }]} pointerEvents="box-none">
           <Animated.View style={skipButton}>
@@ -183,9 +170,6 @@ export function DeckView({
   );
 }
 
-/** The price, name and store line take about this much room above `infoBottom`. */
-const QUESTION_ABOVE_INFO = 200;
-
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   stateArea: { flex: 1 },
@@ -199,5 +183,4 @@ const styles = StyleSheet.create({
     gap: space.xxl,
   },
   undo: { paddingTop: 10 },
-  question: { position: 'absolute', left: 0, right: 0 },
 });
