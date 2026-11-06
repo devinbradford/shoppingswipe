@@ -57,6 +57,7 @@ export class SupabaseProductRepository implements ProductRepository {
         const { data, error } = await this.db
           .from('products')
           .select('id, subcategory_id, price_cents, style_tags, image_urls')
+          .eq('is_active', true)
           .order('id')
           .range(from, from + 999);
         if (error) throw new Error(error.message);
@@ -99,7 +100,9 @@ export class SupabaseProductRepository implements ProductRepository {
   async listProducts({ categoryId, subcategoryId, search, excludeIds, filters, limit }: ProductQuery = {}): Promise<
     Product[]
   > {
-    let q = this.db.from('products').select(PRODUCT_COLUMNS);
+    // Discontinued products (a feed stopped listing them) never appear in decks or search.
+    // Saved ones still open by id (getProduct/getProducts), so Kept and lists don't lose them.
+    let q = this.db.from('products').select(PRODUCT_COLUMNS).eq('is_active', true);
     if (categoryId) q = q.eq('category_id', categoryId);
     if (subcategoryId) q = q.eq('subcategory_id', subcategoryId);
     if (filters?.categoryIds.length) q = q.in('category_id', filters.categoryIds);

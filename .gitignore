@@ -46,3 +46,4 @@ example
 .env
 .env.*
 !.env.example
+.feeds/

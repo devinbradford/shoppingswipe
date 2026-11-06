@@ -60,7 +60,9 @@
     "seed": "tsx scripts/generate-seed.ts && tsx scripts/build-setup-sql.ts",
     "setup-sql": "tsx scripts/build-setup-sql.ts",
     "bundle-waitlist": "tsx scripts/bundle-waitlist-function.ts",
-    "engine-report": "tsx scripts/engine-report.ts"
+    "engine-report": "tsx scripts/engine-report.ts",
+    "import-feed": "tsx scripts/import-feed.ts",
+    "bundle-import": "tsx scripts/bundle-import-function.ts"
   },
   "private": true,
   "jest": {

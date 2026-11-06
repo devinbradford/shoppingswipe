@@ -168,6 +168,16 @@ Usability test with AI testers (Devin's idea) and fixes:
 - Next: a short test with ~5 real people
 - Checks passing: typecheck, lint, 176 unit tests
 
+Phase 4 started: product feed import (Devin chose: nightly automatic, keyword rules now / AI tagging later, broken items hidden + report):
+- Engine `src/feeds/` (pure, relative imports, tested): CSV reader, Awin adapter (`awinRowToItem`, `AWIN_COLUMNS`), keyword sorting into our 11 types with out-of-scope rules (outdoor, kids, mattresses, rug pads…), colour/material/style reading, size grouping by parent id or name+colour (rugs show 5'×8'), basic checks, injected-probe health check (photo loads and isn't a tiny placeholder; store page still that product), per-feed cap with variety, report with skip reasons + examples
+- Nightly job `supabase/functions/import-feeds/` (handler.ts tested with fakes; index.ts = Deno + PostgREST via fetch, no deps). Deploy the bundle `supabase/dashboard/import-feeds.ts` (`npm run bundle-import`, esbuild). Secrets: AWIN_API_KEY, IMPORT_FEEDS_SECRET (x-import-secret header). Empty/failed downloads change nothing; products not refreshed in a run are set inactive
+- Migration `20261107000000_product_feeds.sql`: `feed_sources`, `import_runs`, `import_report` view (security_invoker); all server-only (verified anon gets permission denied). Verified on a throwaway Postgres 16 plus an end-to-end run of the bundled function
+- `SupabaseProductRepository` now hides inactive products from decks/search (saved ones still open by id)
+- Local check: `npm run import-feed -- feed.csv.gz [--check]` (real feeds go in `.feeds/`, git-ignored)
+- First real feed (Super Area Rugs, Awin 88509 / fid 107031) is stale: all photo links 404 and product pages 404 or redirect to a collection, so the health check correctly imports 0. Devin to contact the advertiser
+- Setup guide: `docs/PRODUCT-FEEDS.md`. Going live needs the Phase 3 Supabase setup first
+- Checks passing: typecheck, lint, 195 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.
