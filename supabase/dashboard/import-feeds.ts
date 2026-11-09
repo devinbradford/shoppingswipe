@@ -4,9 +4,6 @@
 // Name the function exactly: import-feeds. Turn OFF "Verify JWT" for it (it checks IMPORT_FEEDS_SECRET).
 // @ts-nocheck
 
-// supabase/functions/import-feeds/index.ts
-import { gunzipSync } from "node:zlib";
-
 // src/feeds/csv.ts
 function parseCsv(text, delimiter = ",", keep) {
   const source = text.charCodeAt(0) === 65279 ? text.slice(1) : text;
@@ -146,9 +143,9 @@ function splitVariantName(name) {
   const head = clean.slice(0, at).trim();
   const tail = clean.slice(at + 3).trim();
   if (tail.includes("/")) {
-    const [colour, ...rest2] = tail.split("/");
+    const [colour, ...rest] = tail.split("/");
     const base = head.replace(/\s+in (multiple sizes( & shapes)?|\d+ sizes)\b/i, "").trim();
-    return { title: `${base} in ${colour.trim()}`, colour: colour.trim(), size: rest2.join("/").trim() };
+    return { title: `${base} in ${colour.trim()}`, colour: colour.trim(), size: rest.join("/").trim() };
   }
   if (looksLikeSize(tail)) return { title: head, colour: null, size: tail };
   return { title: clean, colour: null, size: "" };
@@ -450,10 +447,10 @@ function splitShopifyTitle(title) {
   const finish = options.length - 1;
   const colourIndex = named >= 0 ? named : options.length > 1 && !looksLikeSizeOption(options[finish]) ? finish : -1;
   const colour = colourIndex >= 0 ? options[colourIndex] : "";
-  const rest2 = options.filter((_, i) => i !== colourIndex);
+  const rest = options.filter((_, i) => i !== colourIndex);
   if (colourIndex < 0 && options.length === 1 && !looksLikeSizeOption(options[0]))
     return { base: clean.slice(0, at).trim(), colour: options[0], size: "" };
-  return { base: clean.slice(0, at).trim(), colour, size: rest2.join(" / ") };
+  return { base: clean.slice(0, at).trim(), colour, size: rest.join(" / ") };
 }
 function looksLikeSizeOption(option) {
   return /\d|\b(pieces?|sets?|pack|pairs?|twin|full|queen|king|small|medium|large|standard)\b/i.test(option);
@@ -748,42 +745,9 @@ async function importOne(source, deps2) {
   return result;
 }
 
-// supabase/functions/import-feeds/index.ts
-var SUPABASE_URL = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
-var SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-var AWIN_KEY = Deno.env.get("AWIN_API_KEY") ?? "";
-var SECRET = Deno.env.get("IMPORT_FEEDS_SECRET") ?? "";
-var GOOGLE_FEED_URL = Deno.env.get("AWIN_GOOGLE_FEED_URL") ?? "";
+// supabase/functions/import-feeds/supabase.ts
+import { gunzipSync } from "node:zlib";
 var isGoogleFeed = (source) => /^F\d+$/i.test(source.feed_id.trim());
-var googleFeed = null;
-function downloadGoogleFeed() {
-  if (!GOOGLE_FEED_URL) throw new Error("AWIN_GOOGLE_FEED_URL secret is not set.");
-  googleFeed ??= (async () => {
-    const res = await fetch(GOOGLE_FEED_URL, { signal: AbortSignal.timeout(12e4) });
-    if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check AWIN_GOOGLE_FEED_URL.`);
-    return gunzipText(res);
-  })();
-  googleFeed.catch(() => googleFeed = null);
-  return googleFeed;
-}
-var json = (status, body) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
-async function rest(path, init = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...init,
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${SERVICE_KEY}`,
-      "content-type": "application/json",
-      ...init.prefer ? { Prefer: init.prefer } : {}
-    }
-  });
-  if (!res.ok) throw new Error(`Database ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  return res;
-}
-function awinFeedUrl(source) {
-  const cols = AWIN_COLUMNS.join(",");
-  return `https://productdata.awin.com/datafeed/download/apikey/${encodeURIComponent(AWIN_KEY)}/language/en/fid/${encodeURIComponent(source.feed_id)}/columns/${cols}/format/csv/delimiter/%2C/compression/gzip/adultcontent/0/`;
-}
 async function gunzipText(res) {
   const buf = new Uint8Array(await res.arrayBuffer());
   const gz = buf[0] === 31 && buf[1] === 139;
@@ -806,64 +770,108 @@ var probe = async (url, kind) => {
     size: len && len !== "*" ? Number(len) : kind === "image" ? body.byteLength : null
   };
 };
-var deps = {
-  async listSources(onlyId) {
-    const filter = onlyId ? `&id=eq.${encodeURIComponent(onlyId)}` : "";
-    return (await rest(`feed_sources?select=*${filter}&order=id`)).json();
-  },
-  async download(source) {
-    if (isGoogleFeed(source)) return downloadGoogleFeed();
-    if (!AWIN_KEY) throw new Error("AWIN_API_KEY secret is not set.");
-    const res = await fetch(awinFeedUrl(source), { signal: AbortSignal.timeout(12e4) });
-    if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check the feed id and AWIN_API_KEY.`);
-    return gunzipText(res);
-  },
-  async saveRetailer(source) {
-    await rest("retailers?on_conflict=id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: JSON.stringify({ id: source.id, name: source.name, domain: source.domain })
+function makeDeps(cfg) {
+  const base = cfg.supabaseUrl.replace(/\/$/, "");
+  const isJwt = cfg.serviceKey.startsWith("eyJ");
+  async function rest(path, init = {}) {
+    const res = await fetch(`${base}/rest/v1/${path}`, {
+      ...init,
+      headers: {
+        apikey: cfg.serviceKey,
+        ...isJwt ? { Authorization: `Bearer ${cfg.serviceKey}` } : {},
+        "content-type": "application/json",
+        ...init.prefer ? { Prefer: init.prefer } : {}
+      }
     });
-  },
-  async upsertProducts(rows) {
-    await rest("products?on_conflict=id", {
-      method: "POST",
-      prefer: "resolution=merge-duplicates,return=minimal",
-      body: JSON.stringify(rows)
-    });
-  },
-  async deactivateStale(retailerId, before) {
-    const res = await rest(
-      `products?retailer_id=eq.${encodeURIComponent(retailerId)}&is_active=eq.true&updated_at=lt.${encodeURIComponent(before)}`,
-      { method: "PATCH", prefer: "return=representation", body: JSON.stringify({ is_active: false }) }
-    );
-    return (await res.json()).length;
-  },
-  async startRun(sourceId) {
-    const res = await rest("import_runs?select=id", {
-      method: "POST",
-      prefer: "return=representation",
-      body: JSON.stringify({ source_id: sourceId })
-    });
-    return (await res.json())[0].id;
-  },
-  async finishRun(runId, r) {
-    await rest(`import_runs?id=eq.${runId}`, {
-      method: "PATCH",
-      prefer: "return=minimal",
-      body: JSON.stringify({
-        finished_at: (/* @__PURE__ */ new Date()).toISOString(),
-        status: r.status,
-        imported: r.imported ?? null,
-        deactivated: r.deactivated ?? null,
-        report: r.report ?? null,
-        error: r.error ?? null
-      })
-    });
-  },
-  probe,
-  now: () => /* @__PURE__ */ new Date()
-};
+    if (!res.ok) throw new Error(`Database ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    return res;
+  }
+  let googleFeed = null;
+  function downloadGoogleFeed() {
+    if (!cfg.googleFeedUrl) return Promise.reject(new Error("AWIN_GOOGLE_FEED_URL is not set."));
+    googleFeed ??= (async () => {
+      const res = await fetch(cfg.googleFeedUrl, { signal: AbortSignal.timeout(12e4) });
+      if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check AWIN_GOOGLE_FEED_URL.`);
+      return gunzipText(res);
+    })();
+    googleFeed.catch(() => googleFeed = null);
+    return googleFeed;
+  }
+  function awinFeedUrl(source) {
+    const cols = AWIN_COLUMNS.join(",");
+    return `https://productdata.awin.com/datafeed/download/apikey/${encodeURIComponent(cfg.awinKey ?? "")}/language/en/fid/${encodeURIComponent(source.feed_id)}/columns/${cols}/format/csv/delimiter/%2C/compression/gzip/adultcontent/0/`;
+  }
+  return {
+    async listSources(onlyId) {
+      const filter = onlyId ? `&id=eq.${encodeURIComponent(onlyId)}` : "";
+      return (await rest(`feed_sources?select=*${filter}&order=id`)).json();
+    },
+    async download(source) {
+      if (isGoogleFeed(source)) return downloadGoogleFeed();
+      if (!cfg.awinKey) throw new Error("AWIN_API_KEY is not set.");
+      const res = await fetch(awinFeedUrl(source), { signal: AbortSignal.timeout(12e4) });
+      if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check the feed id and AWIN_API_KEY.`);
+      return gunzipText(res);
+    },
+    async saveRetailer(source) {
+      await rest("retailers?on_conflict=id", {
+        method: "POST",
+        prefer: "resolution=merge-duplicates,return=minimal",
+        body: JSON.stringify({ id: source.id, name: source.name, domain: source.domain })
+      });
+    },
+    async upsertProducts(rows) {
+      await rest("products?on_conflict=id", {
+        method: "POST",
+        prefer: "resolution=merge-duplicates,return=minimal",
+        body: JSON.stringify(rows)
+      });
+    },
+    async deactivateStale(retailerId, before) {
+      const res = await rest(
+        `products?retailer_id=eq.${encodeURIComponent(retailerId)}&is_active=eq.true&updated_at=lt.${encodeURIComponent(before)}`,
+        { method: "PATCH", prefer: "return=representation", body: JSON.stringify({ is_active: false }) }
+      );
+      return (await res.json()).length;
+    },
+    async startRun(sourceId) {
+      const res = await rest("import_runs?select=id", {
+        method: "POST",
+        prefer: "return=representation",
+        body: JSON.stringify({ source_id: sourceId })
+      });
+      return (await res.json())[0].id;
+    },
+    async finishRun(runId, r) {
+      await rest(`import_runs?id=eq.${runId}`, {
+        method: "PATCH",
+        prefer: "return=minimal",
+        body: JSON.stringify({
+          finished_at: (/* @__PURE__ */ new Date()).toISOString(),
+          status: r.status,
+          imported: r.imported ?? null,
+          deactivated: r.deactivated ?? null,
+          report: r.report ?? null,
+          error: r.error ?? null
+        })
+      });
+    },
+    probe,
+    now: () => /* @__PURE__ */ new Date()
+  };
+}
+
+// supabase/functions/import-feeds/index.ts
+var SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+var SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+var SECRET = Deno.env.get("IMPORT_FEEDS_SECRET") ?? "";
+var deps = makeDeps({
+  supabaseUrl: SUPABASE_URL,
+  serviceKey: SERVICE_KEY,
+  googleFeedUrl: Deno.env.get("AWIN_GOOGLE_FEED_URL"),
+  awinKey: Deno.env.get("AWIN_API_KEY")
+});
+var json = (status, body) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json(405, { error: "Use POST." });
   if (!SECRET || req.headers.get("x-import-secret") !== SECRET) return json(401, { error: "Not allowed." });

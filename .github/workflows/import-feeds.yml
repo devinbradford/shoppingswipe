@@ -1,0 +1,39 @@
+# Nightly product import: downloads each brand's Awin feed, checks photos and store
+# pages, and updates the catalog in Supabase. See docs/PRODUCT-FEEDS.md.
+name: Nightly product import
+
+on:
+  schedule:
+    - cron: '17 8 * * *' # every day at 08:17 UTC (3:17 am US Eastern)
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'One store only (e.g. awin-92307). Leave empty for all stores.'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: import-feeds
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The import code has no dependencies; only the TypeScript runner is needed.
+      - name: Run import
+        run: npx --yes tsx@4.23.15 scripts/run-imports.ts "$SOURCE"
+        env:
+          SOURCE: ${{ inputs.source }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          AWIN_GOOGLE_FEED_URL: ${{ secrets.AWIN_GOOGLE_FEED_URL }}
+          AWIN_API_KEY: ${{ secrets.AWIN_API_KEY }}
