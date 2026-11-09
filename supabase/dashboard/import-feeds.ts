@@ -8,44 +8,89 @@
 import { gunzipSync } from "node:zlib";
 
 // src/feeds/csv.ts
-function parseCsv(text, delimiter = ",") {
-  const records = parseRecords(text.replace(/^﻿/, ""), delimiter);
-  const header = records.shift();
-  if (!header) return [];
-  return records.filter((r) => r.length > 1 || (r[0] ?? "").trim() !== "").map((r) => Object.fromEntries(header.map((h, i) => [h.trim(), r[i] ?? ""])));
-}
-function parseRecords(text, delimiter) {
+function parseCsv(text, delimiter = ",", keep) {
+  const source = text.charCodeAt(0) === 65279 ? text.slice(1) : text;
   const out = [];
-  let row = [];
-  let field = "";
-  let quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (quoted) {
-      if (c === '"') {
-        if (text[i + 1] === '"') {
-          field += '"';
-          i++;
-        } else quoted = false;
-      } else field += c;
-    } else if (c === '"' && field === "") {
-      quoted = true;
-    } else if (c === delimiter) {
-      row.push(field);
-      field = "";
-    } else if (c === "\n" || c === "\r") {
-      if (c === "\r" && text[i + 1] === "\n") i++;
-      row.push(field);
-      out.push(row);
-      row = [];
-      field = "";
-    } else field += c;
-  }
-  if (field !== "" || row.length > 0) {
-    row.push(field);
-    out.push(row);
+  let header = null;
+  for (const record of records(source, delimiter)) {
+    if (!header) {
+      header = record.map((h) => h.trim());
+      continue;
+    }
+    if (record.length <= 1 && (record[0] ?? "").trim() === "") continue;
+    const row = {};
+    for (let i = 0; i < header.length; i++) row[header[i]] = record[i] ?? "";
+    if (!keep || keep(row)) out.push(row);
   }
   return out;
+}
+function* records(text, delimiter) {
+  const n = text.length;
+  let pos = 0;
+  let nextDelim = -1;
+  let nextNl = -1;
+  let nextCr = -1;
+  const find = (ch, cached) => cached >= pos || cached === n ? cached : seek(text, ch, pos, n);
+  while (pos < n) {
+    const row = [];
+    for (; ; ) {
+      let field;
+      if (text[pos] === '"') {
+        let end = pos + 1;
+        let doubled = false;
+        for (; ; ) {
+          const q = text.indexOf('"', end);
+          if (q < 0) {
+            end = n;
+            break;
+          }
+          if (text[q + 1] === '"') {
+            doubled = true;
+            end = q + 2;
+            continue;
+          }
+          end = q;
+          break;
+        }
+        field = text.slice(pos + 1, end);
+        if (doubled) field = field.replace(/""/g, '"');
+        pos = Math.min(n, end + 1);
+        nextDelim = find(delimiter, nextDelim);
+        nextNl = find("\n", nextNl);
+        nextCr = find("\r", nextCr);
+        const stop = Math.min(nextDelim, nextNl, nextCr);
+        if (stop > pos) {
+          field += text.slice(pos, stop);
+          pos = stop;
+        }
+      } else {
+        nextDelim = find(delimiter, nextDelim);
+        nextNl = find("\n", nextNl);
+        nextCr = find("\r", nextCr);
+        const stop = Math.min(nextDelim, nextNl, nextCr);
+        field = text.slice(pos, stop);
+        pos = stop;
+      }
+      row.push(field);
+      if (pos >= n) break;
+      const c = text[pos];
+      if (c === delimiter) {
+        pos++;
+        if (pos >= n) {
+          row.push("");
+          break;
+        }
+        continue;
+      }
+      pos += c === "\r" && text[pos + 1] === "\n" ? 2 : 1;
+      break;
+    }
+    yield row;
+  }
+}
+function seek(text, ch, from, n) {
+  const i = text.indexOf(ch, from);
+  return i < 0 ? n : i;
 }
 
 // src/feeds/text.ts
@@ -423,12 +468,17 @@ function googleRowToItem(row) {
   const availability = (row.availability ?? "").toLowerCase().replace(/\s+/g, "_");
   const groupBase = (row.item_group_id ?? "").trim() || (merchantUrl ? urlPath(merchantUrl) : name.base.toLowerCase());
   const advertiser = (row.advertiser_id ?? row["\uFEFFadvertiser_id"] ?? "").trim();
+  let description;
   return {
     externalId: (row.id ?? "").trim(),
     groupKey: `${advertiser}|${groupBase}|${name.colour.toLowerCase()}`,
     title: name.colour ? `${name.base} in ${name.colour}` : name.base,
     sizeLabel: name.size,
-    description: stripCss(cleanText(row.description)),
+    // Cleaned only when read (most rows are left out before that), and only the start:
+    // the app shows at most 600 characters.
+    get description() {
+      return description ??= stripCss(cleanText((row.description ?? "").slice(0, 3e3)));
+    },
     priceCents,
     currency: regular.currency,
     imageUrls: images,
@@ -676,7 +726,7 @@ async function importOne(source, deps2) {
   const startedAt = deps2.now().toISOString();
   let result;
   try {
-    const rows = parseCsv(await deps2.download(source)).filter((r) => {
+    const rows = parseCsv(await deps2.download(source), ",", (r) => {
       const store = (r.merchant_id || r.advertiser_id || "").trim();
       return !store || store === source.advertiser_id;
     });

@@ -98,7 +98,7 @@ async function importOne(source: FeedSource, deps: ImportDeps): Promise<RunResul
   let result: RunResult;
   try {
     // A combined download (several stores in one file) holds other stores' rows too.
-    const rows = parseCsv(await deps.download(source)).filter((r) => {
+    const rows = parseCsv(await deps.download(source), ',', (r) => {
       const store = (r.merchant_id || r.advertiser_id || '').trim();
       return !store || store === source.advertiser_id;
     });

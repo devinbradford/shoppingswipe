@@ -106,12 +106,17 @@ export function googleRowToItem(row: Record<string, string>): FeedItem {
   // Variants of one product share a product page (or an item group); each colour is its own card.
   const groupBase = (row.item_group_id ?? '').trim() || (merchantUrl ? urlPath(merchantUrl) : name.base.toLowerCase());
   const advertiser = (row.advertiser_id ?? row['﻿advertiser_id'] ?? '').trim();
+  let description: string | undefined;
   return {
     externalId: (row.id ?? '').trim(),
     groupKey: `${advertiser}|${groupBase}|${name.colour.toLowerCase()}`,
     title: name.colour ? `${name.base} in ${name.colour}` : name.base,
     sizeLabel: name.size,
-    description: stripCss(cleanText(row.description)),
+    // Cleaned only when read (most rows are left out before that), and only the start:
+    // the app shows at most 600 characters.
+    get description() {
+      return (description ??= stripCss(cleanText((row.description ?? '').slice(0, 3000))));
+    },
     priceCents,
     currency: regular.currency,
     imageUrls: images,
