@@ -90,6 +90,14 @@ describe('nightly import', () => {
     expect(calls.runs[0].report?.skipped).toMatchObject({ 'image-broken': 2 });
   });
 
+  it('takes only its own store’s rows from a combined download', async () => {
+    const other = line('3', 'Other Store Sofa', '999').replace(',9,https', ',77,https');
+    const { deps, calls } = fakeDeps([FEED, other].join('\n'));
+    await runImports(deps);
+    expect(calls.upserted.map((r) => r.title)).not.toContain('Other Store Sofa');
+    expect(calls.upserted).toHaveLength(2);
+  });
+
   it('can run a single store', async () => {
     const { deps } = fakeDeps(FEED, { listSources: async (only) => [{ ...SOURCE, id: only ?? 'x' }] });
     const out = await runImports(deps, 'awin-77');

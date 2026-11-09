@@ -140,7 +140,8 @@ describe('importFeed', () => {
     // Sizes grouped; the 5' x 8' is the one shown.
     const maui = products.find((p) => p.title.startsWith('Maui'))!;
     expect(maui.priceCents).toBe(33400);
-    expect(maui.id).toBe('awin-9-2');
+    // Ids come from the product group, so they don't change when a size sells out.
+    expect(maui.id).toMatch(/^awin-9-[0-9a-z]{8,}$/);
     expect(maui.productUrl).toBe('https://track.example.com/click?p=2&a=1&m=9');
     expect(maui).toMatchObject({ categoryId: 'living-room', subcategoryId: 'rugs', color: 'black' });
     // Stock-code "brands" are dropped; real ones kept.

@@ -37,7 +37,27 @@ const OUT_OF_SCOPE: RegExp[] = [
   /\brug pads?\b|\bbath (rug|mat)\b|\bdoor ?mat\b|\btable runners?\b/,
   /\b(slipcover|furniture cover|cushion cover|replacement cushion)\b/,
   /\b(sample|swatch|gift card)\b/,
+  /\bfiling cabinets?\b|\bfile cabinets?\b|\bthrow pillows?\b|\bsofa (pads?|covers?|protectors?)\b/,
 ];
+
+/**
+ * Phrases that contain one of our type words but name something else
+ * ("sofa table" is a console, "bench for king beds" is a bench). Removed before sorting.
+ */
+const NOT_THE_TYPE: RegExp[] = [
+  /\b(sofa|couch)\b[\w\s-]{0,24}?\btables?\b/g,
+  /\b(for|with|beside|behind) (the |your )?(sofa|couch)( ?(and|or|&|\/) ?(sofa|couch)| (sofa|couch))?\b/g,
+  /\b(end|side|snack|c[- ]shaped) tables?\b/g,
+  /\bsofa (footrests?|stools?)\b/g,
+  /\b(bed|dining|dining table|table|entryway) bench(es)?\b/g,
+  /\bsofa consoles?\b/g,
+  /\bbehind (the )?(sofa|couch)\b/g,
+  /\bsectional (sideboards?|design|cabinets?)\b/g,
+  /\bend[- ]of[- ]bed\b/g,
+  /\bfor (queen|king|full|twin)( size)? beds?\b/g,
+];
+
+const withoutLookalikes = (text: string) => NOT_THE_TYPE.reduce((t, re) => t.replace(re, ' '), text);
 
 /** Most specific first: "dining chair" before "chair", "bar stool" before "stool". */
 const TYPE_RULES: [SubcategoryId, RegExp][] = [
@@ -70,10 +90,13 @@ export type TypeResult = { type: SubcategoryId } | { skip: 'not-our-category' | 
 
 /** Sorts an item by its title first (most reliable), then the retailer's category text. */
 export function classifyType(title: string, categoryText: string): TypeResult {
-  const t = title.toLowerCase();
-  const all = `${t} ${categoryText.toLowerCase()}`;
+  const t = withoutLookalikes(title.toLowerCase());
+  const all = `${t} ${withoutLookalikes(categoryText.toLowerCase())}`;
   // Rugs described as "indoor/outdoor" are welcome; outdoor-only furniture isn't.
-  const scopeText = all.replace(/indoor\s*\/?\s*(and |& )?outdoor/g, 'indoor');
+  // Google's "Home & Garden" category is the whole home, not the garden.
+  const scopeText = `${title.toLowerCase()} ${categoryText.toLowerCase()}`
+    .replace(/indoor\s*\/?\s*(and |& )?outdoor/g, 'indoor')
+    .replace(/\bhome (&|and) garden\b/g, 'home');
   if (OUT_OF_SCOPE.some((re) => re.test(scopeText))) return { skip: 'out-of-scope' };
   for (const source of [t, all]) {
     for (const [type, re] of TYPE_RULES) if (re.test(source)) return { type };
@@ -136,6 +159,12 @@ const STYLES: [RegExp, string][] = [
   [/\bsolid\b|minimal|simple|clean lines|understated/, 'minimal'],
   [/modern|contemporary|geometric|abstract|sleek/, 'modern'],
 ];
+
+/** True when a short phrase names a colour ("Black Oak", "Cream"): used to spot the colour option of a variant. */
+export function namesColour(text: string): boolean {
+  const t = text.toLowerCase();
+  return COLOURS.some(([re]) => re.test(t));
+}
 
 export function readColour(title: string, colourField: string, description: string): string {
   // Prefer the feed's own field, then "… in <Colour>" at the end of the name, then name, then description.

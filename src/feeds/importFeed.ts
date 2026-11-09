@@ -11,6 +11,7 @@
  * Broken products are left out and counted in the report (Devin's call).
  */
 import { awinRowToItem, urlPath } from './awin';
+import { googleRowToItem, isGoogleRow } from './google';
 import { classifyType, readColour, readMaterial, readStyles, roomOf } from './classify';
 import { clip, sizeArea } from './text';
 import type { FeedItem, ImportedProduct, ImportReport, Probe, SkipReason } from './types';
@@ -57,7 +58,7 @@ export async function importFeed(
   const groups = new Map<string, { type: SubcategoryId; items: FeedItem[] }>();
   const leftOut = new Set<string>();
   for (const row of rows) {
-    const item = awinRowToItem(row);
+    const item = isGoogleRow(row) ? googleRowToItem(row) : awinRowToItem(row);
     if (!item.title || !item.externalId) continue;
     const c = classifyType(item.title, item.categoryText);
     if ('skip' in c) {
@@ -94,7 +95,8 @@ export async function importFeed(
       continue;
     }
     candidates.push({
-      id: `${source.retailerId}-${pick.externalId}`,
+      // From the product group, not the chosen size, so it stays the same when a size sells out.
+      id: `${source.retailerId}-${stableId(pick.groupKey)}`,
       externalId: pick.externalId,
       categoryId: roomOf(type),
       subcategoryId: type,
@@ -194,4 +196,17 @@ async function mapLimit<T, R>(items: readonly T[], limit: number, fn: (item: T) 
   };
   await Promise.all(Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, worker));
   return out;
+}
+
+/** Short, stable id for a product group: two 32-bit FNV-1a hashes (64 bits), base 36. */
+export function stableId(key: string): string {
+  const fnv = (seed: number) => {
+    let h = seed;
+    for (let i = 0; i < key.length; i++) {
+      h ^= key.charCodeAt(i);
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    return h.toString(36);
+  };
+  return `${fnv(0x811c9dc5)}${fnv(0x050c5d1f)}`;
 }

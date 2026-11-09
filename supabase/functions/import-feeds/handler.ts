@@ -17,7 +17,7 @@ export interface FeedSource {
 
 export interface ImportDeps {
   listSources(onlyId?: string): Promise<FeedSource[]>;
-  /** The feed as CSV text. */
+  /** The feed as CSV text (may include other stores; rows are matched on advertiser_id). */
   download(source: FeedSource): Promise<string>;
   saveRetailer(source: FeedSource): Promise<void>;
   upsertProducts(rows: ProductRow[]): Promise<void>;
@@ -97,7 +97,11 @@ async function importOne(source: FeedSource, deps: ImportDeps): Promise<RunResul
   const startedAt = deps.now().toISOString();
   let result: RunResult;
   try {
-    const rows = parseCsv(await deps.download(source));
+    // A combined download (several stores in one file) holds other stores' rows too.
+    const rows = parseCsv(await deps.download(source)).filter((r) => {
+      const store = (r.merchant_id || r.advertiser_id || '').trim();
+      return !store || store === source.advertiser_id;
+    });
     // An empty or unreadable download is a problem with the feed, not "everything was discontinued":
     // change nothing in the catalog.
     if (rows.length === 0) throw new Error('The feed came back empty, so nothing was changed.');

@@ -235,8 +235,22 @@ var OUT_OF_SCOPE = [
   /\b(mattress|mattress topper|box spring|bed sheet|duvet|comforter|pillowcase)\b/,
   /\brug pads?\b|\bbath (rug|mat)\b|\bdoor ?mat\b|\btable runners?\b/,
   /\b(slipcover|furniture cover|cushion cover|replacement cushion)\b/,
-  /\b(sample|swatch|gift card)\b/
+  /\b(sample|swatch|gift card)\b/,
+  /\bfiling cabinets?\b|\bfile cabinets?\b|\bthrow pillows?\b|\bsofa (pads?|covers?|protectors?)\b/
 ];
+var NOT_THE_TYPE = [
+  /\b(sofa|couch)\b[\w\s-]{0,24}?\btables?\b/g,
+  /\b(for|with|beside|behind) (the |your )?(sofa|couch)( ?(and|or|&|\/) ?(sofa|couch)| (sofa|couch))?\b/g,
+  /\b(end|side|snack|c[- ]shaped) tables?\b/g,
+  /\bsofa (footrests?|stools?)\b/g,
+  /\b(bed|dining|dining table|table|entryway) bench(es)?\b/g,
+  /\bsofa consoles?\b/g,
+  /\bbehind (the )?(sofa|couch)\b/g,
+  /\bsectional (sideboards?|design|cabinets?)\b/g,
+  /\bend[- ]of[- ]bed\b/g,
+  /\bfor (queen|king|full|twin)( size)? beds?\b/g
+];
+var withoutLookalikes = (text) => NOT_THE_TYPE.reduce((t, re) => t.replace(re, " "), text);
 var TYPE_RULES = [
   ["bar-stools", /\b(bar|counter)[- ]?(height )?stools?\b|\bbarstools?\b/],
   ["dining-chairs", /\b(dining|kitchen|side) chairs?\b|\bdining (arm|side)chairs?\b/],
@@ -263,9 +277,9 @@ var TYPE_RULES = [
   ]
 ];
 function classifyType(title, categoryText) {
-  const t = title.toLowerCase();
-  const all = `${t} ${categoryText.toLowerCase()}`;
-  const scopeText = all.replace(/indoor\s*\/?\s*(and |& )?outdoor/g, "indoor");
+  const t = withoutLookalikes(title.toLowerCase());
+  const all = `${t} ${withoutLookalikes(categoryText.toLowerCase())}`;
+  const scopeText = `${title.toLowerCase()} ${categoryText.toLowerCase()}`.replace(/indoor\s*\/?\s*(and |& )?outdoor/g, "indoor").replace(/\bhome (&|and) garden\b/g, "home");
   if (OUT_OF_SCOPE.some((re) => re.test(scopeText))) return { skip: "out-of-scope" };
   for (const source of [t, all]) {
     for (const [type, re] of TYPE_RULES) if (re.test(source)) return { type };
@@ -321,6 +335,10 @@ var STYLES = [
   [/\bsolid\b|minimal|simple|clean lines|understated/, "minimal"],
   [/modern|contemporary|geometric|abstract|sleek/, "modern"]
 ];
+function namesColour(text) {
+  const t = text.toLowerCase();
+  return COLOURS.some(([re]) => re.test(t));
+}
 function readColour(title, colourField, description) {
   const inPart = title.toLowerCase().match(/\bin ([a-z ,/&-]+)$/)?.[1];
   for (const chunk of [colourField, inPart, title, description]) {
@@ -344,6 +362,82 @@ function readStyles(title, description, max = 3) {
   return (out.length ? out : ["modern"]).slice(0, max);
 }
 
+// src/feeds/google.ts
+function isGoogleRow(row) {
+  return "image_link" in row && "title" in row && !("product_name" in row);
+}
+var httpsOnly2 = (u) => {
+  const t = (u ?? "").trim();
+  if (t.startsWith("https://")) return t;
+  if (t.startsWith("http://")) return `https://${t.slice(7)}`;
+  if (t.startsWith("//")) return `https:${t}`;
+  return "";
+};
+function parseGooglePrice(raw) {
+  const t = (raw ?? "").trim();
+  const n = Number.parseFloat(t.replace(/[^0-9.]/g, ""));
+  const currency = t.match(/\b([A-Z]{3})\b/)?.[1] ?? "USD";
+  return { cents: Number.isFinite(n) ? Math.round(n * 100) : 0, currency };
+}
+function stripCss(text) {
+  let t = text;
+  for (let i = 0; i < 4; i++) {
+    const next = t.replace(/@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, " ").replace(/(^|\s)[.#][\w-]+(?:[ >+~,]*[.#:][\w-]+|[ >+~,]+[\w-]+)*\s*\{[^{}]*\}/g, "$1");
+    if (next === t) break;
+    t = next;
+  }
+  const brace = t.search(/[{}]/);
+  if (brace >= 0) t = t.slice(0, brace);
+  return t.replace(/\s+/g, " ").trim();
+}
+function splitShopifyTitle(title) {
+  const clean = cleanText(title);
+  const at = clean.lastIndexOf(" - ");
+  if (at < 0) return { base: clean, colour: "", size: "" };
+  const tail = clean.slice(at + 3).trim();
+  const options = tail.split(" / ").map((o) => o.trim()).filter(Boolean);
+  const isOptions = options.length > 1 || tail.split(/\s+/).length <= 4;
+  if (!isOptions || options.length === 0) return { base: clean, colour: "", size: "" };
+  const named = options.findIndex(namesColour);
+  const finish = options.length - 1;
+  const colourIndex = named >= 0 ? named : options.length > 1 && !looksLikeSizeOption(options[finish]) ? finish : -1;
+  const colour = colourIndex >= 0 ? options[colourIndex] : "";
+  const rest2 = options.filter((_, i) => i !== colourIndex);
+  if (colourIndex < 0 && options.length === 1 && !looksLikeSizeOption(options[0]))
+    return { base: clean.slice(0, at).trim(), colour: options[0], size: "" };
+  return { base: clean.slice(0, at).trim(), colour, size: rest2.join(" / ") };
+}
+function looksLikeSizeOption(option) {
+  return /\d|\b(pieces?|sets?|pack|pairs?|twin|full|queen|king|small|medium|large|standard)\b/i.test(option);
+}
+function googleRowToItem(row) {
+  const name = splitShopifyTitle(row.title ?? "");
+  const merchantUrl = httpsOnly2(row.link);
+  const regular = parseGooglePrice(row.price);
+  const sale = parseGooglePrice(row.sale_price);
+  const priceCents = sale.cents > 0 && sale.cents < regular.cents ? sale.cents : regular.cents;
+  const images = [row.image_link, ...(row.additional_image_link ?? "").split(","), row.lifestyle_image_link].map(httpsOnly2).filter((u, i, all) => u && all.indexOf(u) === i);
+  const availability = (row.availability ?? "").toLowerCase().replace(/\s+/g, "_");
+  const groupBase = (row.item_group_id ?? "").trim() || (merchantUrl ? urlPath(merchantUrl) : name.base.toLowerCase());
+  const advertiser = (row.advertiser_id ?? row["\uFEFFadvertiser_id"] ?? "").trim();
+  return {
+    externalId: (row.id ?? "").trim(),
+    groupKey: `${advertiser}|${groupBase}|${name.colour.toLowerCase()}`,
+    title: name.colour ? `${name.base} in ${name.colour}` : name.base,
+    sizeLabel: name.size,
+    description: stripCss(cleanText(row.description)),
+    priceCents,
+    currency: regular.currency,
+    imageUrls: images,
+    trackingUrl: httpsOnly2(row.aw_deep_link),
+    merchantUrl,
+    inStock: availability === "" || availability === "in_stock" || availability === "preorder" || availability === "backorder",
+    brand: cleanText(row.brand),
+    categoryText: [row.google_product_category, row.product_type].map(cleanText).filter(Boolean).join(" \xB7 "),
+    colourField: cleanText(row.color) || name.colour
+  };
+}
+
 // src/feeds/importFeed.ts
 var PREFERRED_AREA = { rugs: 40 };
 var MIN_PRICE_CENTS = 1500;
@@ -358,7 +452,7 @@ async function importFeed(rows, source, { maxProducts = 2e3, probe: probe2, conc
   const groups = /* @__PURE__ */ new Map();
   const leftOut = /* @__PURE__ */ new Set();
   for (const row of rows) {
-    const item = awinRowToItem(row);
+    const item = isGoogleRow(row) ? googleRowToItem(row) : awinRowToItem(row);
     if (!item.title || !item.externalId) continue;
     const c = classifyType(item.title, item.categoryText);
     if ("skip" in c) {
@@ -392,7 +486,8 @@ async function importFeed(rows, source, { maxProducts = 2e3, probe: probe2, conc
       continue;
     }
     candidates.push({
-      id: `${source.retailerId}-${pick.externalId}`,
+      // From the product group, not the chosen size, so it stays the same when a size sells out.
+      id: `${source.retailerId}-${stableId(pick.groupKey)}`,
       externalId: pick.externalId,
       categoryId: roomOf(type),
       subcategoryId: type,
@@ -483,6 +578,17 @@ async function mapLimit(items, limit, fn) {
   await Promise.all(Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, worker));
   return out;
 }
+function stableId(key) {
+  const fnv = (seed) => {
+    let h = seed;
+    for (let i = 0; i < key.length; i++) {
+      h ^= key.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h.toString(36);
+  };
+  return `${fnv(2166136261)}${fnv(84696351)}`;
+}
 
 // supabase/functions/import-feeds/handler.ts
 function toRow(p, updatedAt) {
@@ -518,7 +624,10 @@ async function importOne(source, deps2) {
   const startedAt = deps2.now().toISOString();
   let result;
   try {
-    const rows = parseCsv(await deps2.download(source));
+    const rows = parseCsv(await deps2.download(source)).filter((r) => {
+      const store = (r.merchant_id || r.advertiser_id || "").trim();
+      return !store || store === source.advertiser_id;
+    });
     if (rows.length === 0) throw new Error("The feed came back empty, so nothing was changed.");
     const { products, report } = await importFeed(
       rows,
@@ -542,6 +651,19 @@ var SUPABASE_URL = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
 var SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 var AWIN_KEY = Deno.env.get("AWIN_API_KEY") ?? "";
 var SECRET = Deno.env.get("IMPORT_FEEDS_SECRET") ?? "";
+var GOOGLE_FEED_URL = Deno.env.get("AWIN_GOOGLE_FEED_URL") ?? "";
+var isGoogleFeed = (source) => /^F\d+$/i.test(source.feed_id.trim());
+var googleFeed = null;
+function downloadGoogleFeed() {
+  if (!GOOGLE_FEED_URL) throw new Error("AWIN_GOOGLE_FEED_URL secret is not set.");
+  googleFeed ??= (async () => {
+    const res = await fetch(GOOGLE_FEED_URL, { signal: AbortSignal.timeout(12e4) });
+    if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check AWIN_GOOGLE_FEED_URL.`);
+    return gunzipText(res);
+  })();
+  googleFeed.catch(() => googleFeed = null);
+  return googleFeed;
+}
 var json = (status, body) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 async function rest(path, init = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -589,6 +711,7 @@ var deps = {
     return (await rest(`feed_sources?select=*${filter}&order=id`)).json();
   },
   async download(source) {
+    if (isGoogleFeed(source)) return downloadGoogleFeed();
     if (!AWIN_KEY) throw new Error("AWIN_API_KEY secret is not set.");
     const res = await fetch(awinFeedUrl(source), { signal: AbortSignal.timeout(12e4) });
     if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check the feed id and AWIN_API_KEY.`);

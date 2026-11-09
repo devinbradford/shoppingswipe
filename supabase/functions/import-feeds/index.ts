@@ -10,7 +10,9 @@
  * supabase/dashboard/import-feeds.ts (npm run bundle-import), not this folder.
  *
  * Secrets (Supabase dashboard > Edge Functions > Secrets; never in the app or the repo):
- *   AWIN_API_KEY          your Awin product-feed key (Create-a-Feed), for downloading feeds
+ *   AWIN_API_KEY          your Awin product-feed key (Create-a-Feed), for classic-format feeds
+ *   AWIN_GOOGLE_FEED_URL  the Create-a-Feed download link for your Google-format feeds (CSV, gzip).
+ *                         One file holds every store you selected; feed ids like "F1067" use it.
  *   IMPORT_FEEDS_SECRET   long random string; the nightly job sends it
  * Provided automatically by Supabase:
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -27,6 +29,24 @@ const SUPABASE_URL = (Deno.env.get('SUPABASE_URL') ?? '').replace(/\/$/, '');
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const AWIN_KEY = Deno.env.get('AWIN_API_KEY') ?? '';
 const SECRET = Deno.env.get('IMPORT_FEEDS_SECRET') ?? '';
+const GOOGLE_FEED_URL = Deno.env.get('AWIN_GOOGLE_FEED_URL') ?? '';
+
+/** Google-format feeds have ids like "F1067"; classic ones are plain numbers. */
+const isGoogleFeed = (source: FeedSource) => /^F\d+$/i.test(source.feed_id.trim());
+
+/** The combined Google-format file, downloaded once per run (Awin limits repeat downloads). */
+let googleFeed: Promise<string> | null = null;
+function downloadGoogleFeed(): Promise<string> {
+  if (!GOOGLE_FEED_URL) throw new Error('AWIN_GOOGLE_FEED_URL secret is not set.');
+  googleFeed ??= (async () => {
+    const res = await fetch(GOOGLE_FEED_URL, { signal: AbortSignal.timeout(120_000) });
+    if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check AWIN_GOOGLE_FEED_URL.`);
+    return gunzipText(res);
+  })();
+  // A failed download is retried by the next store instead of being remembered.
+  googleFeed.catch(() => (googleFeed = null));
+  return googleFeed;
+}
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -87,6 +107,7 @@ const deps: ImportDeps = {
     return (await rest(`feed_sources?select=*${filter}&order=id`)).json();
   },
   async download(source) {
+    if (isGoogleFeed(source)) return downloadGoogleFeed();
     if (!AWIN_KEY) throw new Error('AWIN_API_KEY secret is not set.');
     const res = await fetch(awinFeedUrl(source), { signal: AbortSignal.timeout(120_000) });
     if (!res.ok) throw new Error(`Awin feed download failed (${res.status}). Check the feed id and AWIN_API_KEY.`);

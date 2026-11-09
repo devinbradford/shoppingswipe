@@ -45,34 +45,36 @@ const nodeProbe: Probe = async (url, kind) => {
   };
 };
 
+/** A combined download (several stores in one file) is checked store by store. */
+const storeOf = (r: Record<string, string>) => (r.merchant_id || r.advertiser_id || '').trim();
+
 (async () => {
-  const rows = parseCsv(text);
-  const retailerId = opt('retailer') ?? `awin-${rows[0]?.merchant_id ?? 'unknown'}`;
-  const { products, report } = await importFeed(
-    rows,
-    { retailerId, network: 'awin' },
-    { probe: args.includes('--check') ? nodeProbe : undefined, maxProducts: Number(opt('max') ?? 2000) },
-  );
-  console.log(`\n${rows[0]?.merchant_name ?? 'Feed'} (${retailerId})`);
-  console.log(`  rows in feed:        ${report.rows}`);
-  console.log(`  distinct products:   ${report.products}`);
-  console.log(`  imported:            ${report.imported}`);
-  for (const [reason, n] of Object.entries(report.skipped)) {
-    console.log(
-      `  skipped ${reason.padEnd(20)} ${n}   e.g. ${(report.examples[reason as keyof typeof report.examples] ?? []).slice(0, 2).join(' | ')}`,
+  const all = parseCsv(text);
+  const stores = [...new Set(all.map(storeOf))];
+  const outProducts: unknown[] = [];
+  for (const store of stores) {
+    const rows = all.filter((r) => storeOf(r) === store);
+    const retailerId = (stores.length === 1 && opt('retailer')) || `awin-${store || 'unknown'}`;
+    const { products, report } = await importFeed(
+      rows,
+      { retailerId, network: 'awin' },
+      { probe: args.includes('--check') ? nodeProbe : undefined, maxProducts: Number(opt('max') ?? 2000) },
     );
+    console.log(`\n${rows[0]?.merchant_name || rows[0]?.advertiser_name || 'Feed'} (${retailerId})`);
+    console.log(`  rows in feed:        ${report.rows}`);
+    console.log(`  distinct products:   ${report.products}`);
+    console.log(`  imported:            ${report.imported}`);
+    for (const [reason, n] of Object.entries(report.skipped)) {
+      console.log(
+        `  skipped ${reason.padEnd(20)} ${n}   e.g. ${(report.examples[reason as keyof typeof report.examples] ?? []).slice(0, 2).join(' | ')}`,
+      );
+    }
+    console.log('  by type:', report.byType);
+    outProducts.push(...products.map(({ merchantUrl: _m, ...p }) => p));
   }
-  console.log('  by type:', report.byType);
   const out = opt('out');
   if (out) {
-    writeFileSync(
-      out,
-      JSON.stringify(
-        products.map(({ merchantUrl: _m, ...p }) => p),
-        null,
-        1,
-      ),
-    );
-    console.log(`  wrote ${products.length} products to ${out}`);
+    writeFileSync(out, JSON.stringify(outProducts, null, 1));
+    console.log(`  wrote ${outProducts.length} products to ${out}`);
   }
 })();

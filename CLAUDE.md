@@ -178,6 +178,15 @@ Phase 4 started: product feed import (Devin chose: nightly automatic, keyword ru
 - Setup guide: `docs/PRODUCT-FEEDS.md`. Going live needs the Phase 3 Supabase setup first
 - Checks passing: typecheck, lint, 195 unit tests
 
+Phase 4: Google-format feeds and the first approved brands:
+- Most Awin brands moved to the "Google" feed format (feed ids like F1067). `src/feeds/google.ts` reads it (auto-detected per row): Shopify variant names "Product - Option / Option" → product, colour (colour word, else the last non-size option) and size; prices "169.99 USD" with sale price; page-builder CSS stripped from descriptions (linear regex, tested on hostile input)
+- Products group by product page + colour; product ids now come from the group (`stableId`, 64-bit FNV), so they don't change when a size sells out
+- Sorting fixes from real data: Google's "Home & Garden" no longer counts as garden; sofa/console/end/side tables, bed/dining benches, sofa pads, file cabinets kept out of our types
+- Brands (Devin's Awin account 3147062): Sicotas 110532/F1067, Tribesigns 92307/F230, Welax 108888/F1055 (Awin name "HONSIT FURNITURE CO., LIMITED", store welaxhome.com). Dry run of the combined feed: 8,888 rows → 1,936 products (Tribesigns 1,138, Sicotas 760, Welax 38); sampled health check 158/158 healthy (photos load, pages exist). Super Area Rugs still stale
+- Nightly job: secret `AWIN_GOOGLE_FEED_URL` (the Create-a-Feed link; holds the key, so Supabase secrets only), downloaded once per run and split by advertiser_id; one cron job per brand, 20 min apart, via `public.start_feed_import(source)` (tested on Postgres with net/vault stand-ins; anon denied)
+- Not yet run against live Supabase or a live Awin download from the Edge Function
+- Checks passing: typecheck, lint, 203 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.
