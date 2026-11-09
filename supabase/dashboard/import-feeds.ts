@@ -4,6 +4,9 @@
 // Name the function exactly: import-feeds. Turn OFF "Verify JWT" for it (it checks IMPORT_FEEDS_SECRET).
 // @ts-nocheck
 
+// supabase/functions/import-feeds/index.ts
+import { gunzipSync } from "node:zlib";
+
 // src/feeds/csv.ts
 function parseCsv(text, delimiter = ",") {
   const records = parseRecords(text.replace(/^﻿/, ""), delimiter);
@@ -439,10 +442,23 @@ function googleRowToItem(row) {
 }
 
 // src/feeds/importFeed.ts
+var STALE_SHARE = 0.5;
+var STALE_MIN_CHECKED = 5;
+var RATE_LIMIT_WAIT_MS = 15e3;
+var realSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 var PREFERRED_AREA = { rugs: 40 };
 var MIN_PRICE_CENTS = 1500;
 var MAX_PRICE_CENTS = 5e6;
-async function importFeed(rows, source, { maxProducts = 2e3, probe: probe2, concurrency = 8, timeBudgetMs = 1e5, now = Date.now } = {}) {
+async function importFeed(rows, source, {
+  maxProducts = 2e3,
+  probe: probe2,
+  concurrency = 8,
+  timeBudgetMs = 1e5,
+  pageSample = 40,
+  pageGapMs = 500,
+  now = Date.now,
+  sleep = realSleep
+} = {}) {
   const report = { rows: rows.length, products: 0, imported: 0, skipped: {}, byType: {}, examples: {} };
   const skip = (reason, label, n = 1) => {
     report.skipped[reason] = (report.skipped[reason] ?? 0) + n;
@@ -508,15 +524,47 @@ async function importFeed(rows, source, { maxProducts = 2e3, probe: probe2, conc
   let healthy = candidates;
   if (probe2) {
     const started = now();
-    const results = await mapLimit(candidates, concurrency, async (p) => {
-      if (now() - started > timeBudgetMs) return "not-checked-yet";
-      return checkHealth(p, probe2);
-    });
-    healthy = [];
-    results.forEach((r, i) => {
-      if (r === "ok") healthy.push(candidates[i]);
+    const outOfTime = () => now() - started > timeBudgetMs;
+    const images = await mapLimit(
+      candidates,
+      concurrency,
+      async (p) => outOfTime() ? "not-checked-yet" : checkImage(p, probe2)
+    );
+    const withPhotos = [];
+    images.forEach((r, i) => {
+      if (r === "ok") withPhotos.push(candidates[i]);
       else skip(r, candidates[i].title);
     });
+    const linked = withPhotos.filter((p) => p.merchantUrl);
+    const step = Math.max(1, Math.floor(linked.length / Math.max(1, pageSample)));
+    const offset = Math.floor(now() / 864e5) % step;
+    const sample = linked.filter((_, i) => i % step === offset).slice(0, pageSample);
+    const pages = /* @__PURE__ */ new Map();
+    let limitedInARow = 0;
+    for (const [n, p] of sample.entries()) {
+      if (outOfTime() || limitedInARow >= 3) break;
+      if (n > 0) await sleep(pageGapMs);
+      let r = await checkPage(p, probe2);
+      if (r === "rate-limited") {
+        await sleep(RATE_LIMIT_WAIT_MS);
+        r = await checkPage(p, probe2);
+      }
+      if (r === "rate-limited") {
+        limitedInARow++;
+        continue;
+      }
+      limitedInARow = 0;
+      pages.set(p.id, r);
+    }
+    const broken = [...pages.values()].filter((r) => r !== "ok").length;
+    const stale = pages.size >= STALE_MIN_CHECKED && broken / pages.size >= STALE_SHARE;
+    report.pageCheck = { sampled: sample.length, checked: pages.size, broken, stale };
+    healthy = [];
+    for (const p of withPhotos) {
+      const r = pages.get(p.id) ?? (stale ? "link-broken" : "ok");
+      if (r === "ok") healthy.push(p);
+      else skip(r, p.title);
+    }
   }
   const byType = /* @__PURE__ */ new Map();
   for (const p of [...healthy].sort((a, b) => a.id < b.id ? -1 : 1)) {
@@ -548,17 +596,21 @@ function representative(items, type) {
     (best, i) => i.priceCents > 0 && (best.priceCents <= 0 || i.priceCents < best.priceCents) ? i : best
   );
 }
-async function checkHealth(p, probe2) {
+async function checkImage(p, probe2) {
   try {
     const img = await probe2(p.imageUrls[0], "image");
     if (!img.ok || !img.contentType.startsWith("image/") || img.size !== null && img.size < 2e3)
       return "image-broken";
+    return "ok";
   } catch {
     return "image-broken";
   }
+}
+async function checkPage(p, probe2) {
   if (!p.merchantUrl) return "ok";
   try {
     const page = await probe2(p.merchantUrl, "page");
+    if (page.status === 429 || page.status === 503) return "rate-limited";
     if (!page.ok) return "link-broken";
     if (urlPath(page.finalUrl) !== urlPath(p.merchantUrl)) return "link-redirects-away";
     return "ok";
@@ -686,8 +738,7 @@ async function gunzipText(res) {
   const buf = new Uint8Array(await res.arrayBuffer());
   const gz = buf[0] === 31 && buf[1] === 139;
   if (!gz) return new TextDecoder().decode(buf);
-  const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
-  return await new Response(stream).text();
+  return new TextDecoder().decode(gunzipSync(buf));
 }
 var probe = async (url, kind) => {
   const res = await fetch(url, {

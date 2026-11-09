@@ -184,8 +184,11 @@ Phase 4: Google-format feeds and the first approved brands:
 - Sorting fixes from real data: Google's "Home & Garden" no longer counts as garden; sofa/console/end/side tables, bed/dining benches, sofa pads, file cabinets kept out of our types
 - Brands (Devin's Awin account 3147062): Sicotas 110532/F1067, Tribesigns 92307/F230, Welax 108888/F1055 (Awin name "HONSIT FURNITURE CO., LIMITED", store welaxhome.com). Dry run of the combined feed: 8,888 rows → 1,936 products (Tribesigns 1,138, Sicotas 760, Welax 38); sampled health check 158/158 healthy (photos load, pages exist). Super Area Rugs still stale
 - Nightly job: secret `AWIN_GOOGLE_FEED_URL` (the Create-a-Feed link; holds the key, so Supabase secrets only), downloaded once per run and split by advertiser_id; one cron job per brand, 20 min apart, via `public.start_feed_import(source)` (tested on Postgres with net/vault stand-ins; anon denied)
-- Not yet run against live Supabase or a live Awin download from the Edge Function
-- Checks passing: typecheck, lint, 203 unit tests
+- First live run (Devin's Supabase) failed with "failed to write whole buffer": Awin's gzip is 23 gzip members glued together and Deno's DecompressionStream stops after one. Fixed with `node:zlib` gunzipSync (bundle keeps `node:*` external). Reproduced and verified in Deno 2.9 locally
+- Shopify stores answer "429 too many requests" after ~47 quick page visits, so the health check now checks EVERY photo (image CDN has no limit) but only a spread-out sample of store pages (40 per store, rotating daily, one at a time with a 0.5 s pause; 429/503 = wait 15 s and retry, never "broken"). If most sampled pages are broken the feed is treated as out of date (all hidden). `report.pageCheck` records it
+- Bundled job run in Deno against the real feed with a stand-in database: Welax 38 (33 s), Sicotas 760 (59 s), Tribesigns 1,131 (46 s); all sampled pages healthy
+- Live Supabase so far: secrets set, function deployed with JWT verification off (verified: returns its own "Not allowed."), pg_net/pg_cron enabled, vault secret + `start_feed_import` created, 3 brands in feed_sources. Nightly cron.schedule lines not run yet
+- Checks passing: typecheck, lint, 207 unit tests
 
 ## Phase plan
 

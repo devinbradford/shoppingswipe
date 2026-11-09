@@ -21,6 +21,8 @@ const result = buildSync({
   write: false,
   legalComments: 'none',
   logLevel: 'error',
+  // Built into the Supabase (Deno) runtime.
+  external: ['node:*'],
 });
 const code = result.outputFiles[0].text;
 const out = [

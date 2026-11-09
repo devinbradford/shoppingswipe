@@ -5,8 +5,11 @@
  *   2. Sort into our types; leave out what we don't sell (outdoor, kids, mattresses…).
  *   3. Group sizes of the same product; pick one representative size.
  *   4. Basic checks (price, photo, link, stock).
- *   5. Optional health check through an injected `probe`: the photo really loads and
- *      the link still lands on that product (not a 404 or a generic collection page).
+ *   5. Optional health check through an injected `probe`: every product's photo really
+ *      loads, and a spread-out sample of store pages still lands on that product (not a
+ *      404 or a generic collection page). Stores (Shopify especially) answer "429 too many
+ *      requests" to quick bursts, so pages are visited one at a time with a pause, and a
+ *      feed whose sampled pages are mostly broken is treated as out of date.
  *
  * Broken products are left out and counted in the report (Devin's call).
  */
@@ -32,9 +35,24 @@ export interface ImportOptions {
   concurrency?: number;
   /** Stop starting new health checks after this long (ms); unchecked products are reported. */
   timeBudgetMs?: number;
+  /** Store pages visited per feed per run (spread across the feed, rotating daily). */
+  pageSample?: number;
+  /** Pause between store page visits (ms). */
+  pageGapMs?: number;
   /** For tests. */
   now?: () => number;
+  /** For tests. */
+  sleep?: (ms: number) => Promise<void>;
 }
+
+/** When at least this share of sampled store pages is broken, the whole feed is out of date. */
+const STALE_SHARE = 0.5;
+/** Fewest pages that must answer before calling a feed out of date. */
+const STALE_MIN_CHECKED = 5;
+/** Wait after a "too many requests" before one retry (ms). */
+const RATE_LIMIT_WAIT_MS = 15_000;
+
+const realSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /** Typical size to show per product type (sq ft for rugs); other types use the cheapest size. */
 const PREFERRED_AREA: Partial<Record<SubcategoryId, number>> = { rugs: 40 };
@@ -45,7 +63,16 @@ const MAX_PRICE_CENTS = 5_000_000;
 export async function importFeed(
   rows: readonly Record<string, string>[],
   source: ImportSource,
-  { maxProducts = 2000, probe, concurrency = 8, timeBudgetMs = 100_000, now = Date.now }: ImportOptions = {},
+  {
+    maxProducts = 2000,
+    probe,
+    concurrency = 8,
+    timeBudgetMs = 100_000,
+    pageSample = 40,
+    pageGapMs = 500,
+    now = Date.now,
+    sleep = realSleep,
+  }: ImportOptions = {},
 ): Promise<{ products: ImportedProduct[]; report: ImportReport }> {
   const report: ImportReport = { rows: rows.length, products: 0, imported: 0, skipped: {}, byType: {}, examples: {} };
   const skip = (reason: SkipReason, label: string, n = 1) => {
@@ -119,15 +146,49 @@ export async function importFeed(
   let healthy = candidates;
   if (probe) {
     const started = now();
-    const results = await mapLimit(candidates, concurrency, async (p) => {
-      if (now() - started > timeBudgetMs) return 'not-checked-yet' as const;
-      return checkHealth(p, probe);
-    });
-    healthy = [];
-    results.forEach((r, i) => {
-      if (r === 'ok') healthy.push(candidates[i]);
+    const outOfTime = () => now() - started > timeBudgetMs;
+    // 5a. Every photo (image hosts don't limit us).
+    const images = await mapLimit(candidates, concurrency, async (p) =>
+      outOfTime() ? ('not-checked-yet' as const) : checkImage(p, probe),
+    );
+    const withPhotos: ImportedProduct[] = [];
+    images.forEach((r, i) => {
+      if (r === 'ok') withPhotos.push(candidates[i]);
       else skip(r, candidates[i].title);
     });
+
+    // 5b. A spread-out sample of store pages, one at a time.
+    const linked = withPhotos.filter((p) => p.merchantUrl);
+    const step = Math.max(1, Math.floor(linked.length / Math.max(1, pageSample)));
+    const offset = Math.floor(now() / 86_400_000) % step; // a different slice each day
+    const sample = linked.filter((_, i) => i % step === offset).slice(0, pageSample);
+    const pages = new Map<string, 'ok' | 'link-broken' | 'link-redirects-away'>();
+    let limitedInARow = 0;
+    for (const [n, p] of sample.entries()) {
+      if (outOfTime() || limitedInARow >= 3) break;
+      if (n > 0) await sleep(pageGapMs);
+      let r = await checkPage(p, probe);
+      if (r === 'rate-limited') {
+        await sleep(RATE_LIMIT_WAIT_MS);
+        r = await checkPage(p, probe);
+      }
+      if (r === 'rate-limited') {
+        limitedInARow++;
+        continue;
+      }
+      limitedInARow = 0;
+      pages.set(p.id, r);
+    }
+    const broken = [...pages.values()].filter((r) => r !== 'ok').length;
+    const stale = pages.size >= STALE_MIN_CHECKED && broken / pages.size >= STALE_SHARE;
+    report.pageCheck = { sampled: sample.length, checked: pages.size, broken, stale };
+
+    healthy = [];
+    for (const p of withPhotos) {
+      const r = pages.get(p.id) ?? (stale ? 'link-broken' : 'ok');
+      if (r === 'ok') healthy.push(p);
+      else skip(r, p.title);
+    }
   }
 
   // Cap per feed, keeping variety: round-robin across product types.
@@ -166,17 +227,33 @@ function representative(items: FeedItem[], type: SubcategoryId): FeedItem {
 
 /** The first photo must load as a real image; the store page must still be that product. */
 export async function checkHealth(p: ImportedProduct, probe: Probe): Promise<'ok' | SkipReason> {
+  const img = await checkImage(p, probe);
+  if (img !== 'ok') return img;
+  const page = await checkPage(p, probe);
+  return page === 'rate-limited' ? 'not-checked-yet' : page;
+}
+
+async function checkImage(p: ImportedProduct, probe: Probe): Promise<'ok' | 'image-broken'> {
   try {
     const img = await probe(p.imageUrls[0], 'image');
     // Tiny responses are usually "no image" placeholders.
     if (!img.ok || !img.contentType.startsWith('image/') || (img.size !== null && img.size < 2000))
       return 'image-broken';
+    return 'ok';
   } catch {
     return 'image-broken';
   }
+}
+
+async function checkPage(
+  p: ImportedProduct,
+  probe: Probe,
+): Promise<'ok' | 'link-broken' | 'link-redirects-away' | 'rate-limited'> {
   if (!p.merchantUrl) return 'ok';
   try {
     const page = await probe(p.merchantUrl, 'page');
+    // "Too many requests" / "busy" say nothing about the page itself.
+    if (page.status === 429 || page.status === 503) return 'rate-limited';
     if (!page.ok) return 'link-broken';
     if (urlPath(page.finalUrl) !== urlPath(p.merchantUrl)) return 'link-redirects-away';
     return 'ok';

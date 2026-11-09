@@ -77,6 +77,8 @@ export interface ImportReport {
   byType: Partial<Record<SubcategoryId, number>>;
   /** A few examples per skip reason, so a person can see what went wrong. */
   examples: Partial<Record<SkipReason, string[]>>;
+  /** Store pages visited in the health check; `stale` = most were broken, so the feed is out of date. */
+  pageCheck?: { sampled: number; checked: number; broken: number; stale: boolean };
 }
 
 /** Result of fetching a URL during health checks (injected, so the core stays pure). */

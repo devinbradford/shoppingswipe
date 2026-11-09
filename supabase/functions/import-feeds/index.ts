@@ -17,6 +17,8 @@
  * Provided automatically by Supabase:
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
+import { gunzipSync } from 'node:zlib';
+
 import { AWIN_COLUMNS, type Probe } from '../../../src/feeds/index.ts';
 import { runImports, type FeedSource, type ImportDeps, type ProductRow, type RunResult } from './handler.ts';
 
@@ -75,12 +77,16 @@ function awinFeedUrl(source: FeedSource): string {
   );
 }
 
+/**
+ * Feed text from a download, unzipping gzip when needed. Awin's gzip files are many
+ * gzip members glued together; the web DecompressionStream stops with "failed to write
+ * whole buffer" on those, so this uses node:zlib, which reads every member.
+ */
 async function gunzipText(res: Response): Promise<string> {
   const buf = new Uint8Array(await res.arrayBuffer());
   const gz = buf[0] === 0x1f && buf[1] === 0x8b;
   if (!gz) return new TextDecoder().decode(buf);
-  const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return await new Response(stream).text();
+  return new TextDecoder().decode(gunzipSync(buf));
 }
 
 const probe: Probe = async (url, kind) => {

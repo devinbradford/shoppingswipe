@@ -225,4 +225,68 @@ describe('importFeed', () => {
     expect(report.skipped['not-checked-yet']).toBeGreaterThan(0);
     expect(report.imported + (report.skipped['not-checked-yet'] ?? 0)).toBe(5);
   });
+
+  const okImage = (url: string): ProbeResult => ({
+    ok: true,
+    status: 200,
+    finalUrl: url,
+    contentType: 'image/jpeg',
+    size: 50_000,
+  });
+  const page = (url: string, status: number): ProbeResult => ({
+    ok: status < 400,
+    status,
+    finalUrl: url,
+    contentType: 'text/html',
+    size: null,
+  });
+  const noWait = async () => {};
+
+  it('waits and retries when a store says "too many requests", instead of calling pages broken', async () => {
+    const seen = new Map<string, number>();
+    const waits: number[] = [];
+    const probe = async (url: string, kind: 'image' | 'page'): Promise<ProbeResult> => {
+      if (kind === 'image') return okImage(url);
+      const n = (seen.get(url) ?? 0) + 1;
+      seen.set(url, n);
+      return page(url, n === 1 ? 429 : 200);
+    };
+    const { report } = await importFeed(parseCsv(FEED), source, { probe, sleep: async (ms) => void waits.push(ms) });
+    expect(report.imported).toBe(5);
+    expect(report.skipped['link-broken']).toBeUndefined();
+    expect(waits.filter((ms) => ms >= 10_000).length).toBe(5);
+    expect(report.pageCheck).toMatchObject({ checked: 5, broken: 0, stale: false });
+  });
+
+  it('keeps products when a store blocks every page visit (photos still checked)', async () => {
+    const probe = async (url: string, kind: 'image' | 'page') => (kind === 'image' ? okImage(url) : page(url, 429));
+    const { report } = await importFeed(parseCsv(FEED), source, { probe, sleep: noWait });
+    expect(report.imported).toBe(5);
+    expect(report.pageCheck).toMatchObject({ checked: 0, stale: false });
+  });
+
+  it('treats a feed whose sampled pages are mostly gone as out of date', async () => {
+    const probe = async (url: string, kind: 'image' | 'page') => (kind === 'image' ? okImage(url) : page(url, 404));
+    const { report } = await importFeed(parseCsv(FEED), source, { probe, sleep: noWait });
+    expect(report.imported).toBe(0);
+    expect(report.pageCheck).toMatchObject({ stale: true });
+  });
+
+  it('visits only a sample of store pages, one at a time', async () => {
+    let pages = 0;
+    let open = 0;
+    let most = 0;
+    const probe = async (url: string, kind: 'image' | 'page') => {
+      if (kind === 'image') return okImage(url);
+      pages++;
+      most = Math.max(most, ++open);
+      await Promise.resolve();
+      open--;
+      return page(url, 200);
+    };
+    const { report } = await importFeed(parseCsv(FEED), source, { probe, pageSample: 2, sleep: noWait });
+    expect(pages).toBe(2);
+    expect(most).toBe(1);
+    expect(report.imported).toBe(5);
+  });
 });
