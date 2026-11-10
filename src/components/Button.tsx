@@ -18,10 +18,10 @@ interface ButtonProps {
 }
 
 const FILL: Record<Variant, { bg: string; fg: string; border?: string }> = {
-  primary: { bg: colors.ink, fg: colors.onInk },
+  primary: { bg: colors.action, fg: colors.onAction },
   secondary: { bg: colors.surface, fg: colors.ink, border: colors.border },
   keep: { bg: colors.keep, fg: colors.onInk },
-  skip: { bg: colors.skip, fg: colors.onInk },
+  skip: { bg: colors.skip, fg: colors.onAction },
   ghost: { bg: 'transparent', fg: colors.ink },
 };
 

@@ -31,7 +31,7 @@ export function ActionSheet({
     <Sheet visible={visible} onClose={onClose} title={title}>
       <View style={styles.rows}>
         {actions.map((a) => {
-          const tint = a.destructive ? colors.skip : a.checked ? colors.keep : colors.ink;
+          const tint = a.destructive ? colors.danger : a.checked ? colors.accent : colors.ink;
           return (
             <Pressable
               key={a.label}
@@ -43,11 +43,11 @@ export function ActionSheet({
               accessibilityState={a.checked === undefined ? undefined : { checked: a.checked }}
               accessibilityLabel={a.label}
               style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-              <Icon name={a.icon} size={20} color={a.destructive ? colors.skip : colors.keep} />
+              <Icon name={a.icon} size={20} color={a.destructive ? colors.danger : colors.accent} />
               <AppText variant="label" color={tint} style={styles.label}>
                 {a.label}
               </AppText>
-              {a.checked ? <Icon name="check" size={18} color={colors.keep} /> : null}
+              {a.checked ? <Icon name="check" size={18} color={colors.accent} /> : null}
             </Pressable>
           );
         })}

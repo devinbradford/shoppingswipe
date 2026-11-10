@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     justifyContent: 'flex-end',
   },
-  selected: { borderColor: colors.keep },
+  selected: { borderColor: colors.accent },
   dimmed: { opacity: 0.4 },
   pressed: { transform: [{ scale: 0.97 }] },
   check: {

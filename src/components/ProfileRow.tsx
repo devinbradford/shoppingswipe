@@ -29,7 +29,7 @@ export function ProfileRow({ icon, title, detail, onPress, hint, external, toggl
       accessibilityLabel={detail ? `${title}. ${detail}` : title}
       accessibilityHint={hint}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-      <Icon name={icon} size={20} color={colors.keep} />
+      <Icon name={icon} size={20} color={colors.accent} />
       <View style={styles.text}>
         <AppText variant="label">{title}</AppText>
         {detail ? (
@@ -42,7 +42,7 @@ export function ProfileRow({ icon, title, detail, onPress, hint, external, toggl
         <Switch
           value={toggle}
           onValueChange={onPress}
-          trackColor={{ false: colors.border, true: colors.keep }}
+          trackColor={{ false: colors.border, true: colors.action }}
           thumbColor={colors.ink}
           accessibilityElementsHidden
           importantForAccessibility="no"

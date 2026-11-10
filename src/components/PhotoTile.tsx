@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
     borderRadius: radii.md,
     borderWidth: 2,
-    borderColor: colors.keep,
+    borderColor: colors.accent,
   },
 });

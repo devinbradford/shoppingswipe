@@ -53,7 +53,7 @@ export function ListPickerSheet({ visible, title, checkedIds, onPick, onClose }:
             accessibilityLabel="New list"
             style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
             <View style={[styles.badge, styles.badgeNew]}>
-              <AppText variant="heading" color={colors.onInk}>
+              <AppText variant="heading" color={colors.onAction}>
                 +
               </AppText>
             </View>
@@ -82,7 +82,7 @@ export function ListPickerSheet({ visible, title, checkedIds, onPick, onClose }:
                     {pluralize(l.items.length, 'item')}
                   </AppText>
                 </View>
-                {checked ? <Icon name="check" size={18} color={colors.keep} /> : null}
+                {checked ? <Icon name="check" size={18} color={colors.accent} /> : null}
               </Pressable>
             );
           })}

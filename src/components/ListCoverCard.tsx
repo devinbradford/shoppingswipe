@@ -53,7 +53,7 @@ export function NewListCard({ onPress, hint }: { onPress: () => void; hint?: str
       accessibilityLabel="New list"
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
       <View style={[styles.collage, styles.newCollage]}>
-        <Icon name="plus" size={24} color={colors.keep} />
+        <Icon name="plus" size={24} color={colors.accent} />
       </View>
       <AppText variant="label">New list</AppText>
       <AppText variant="caption" color={colors.inkMuted} numberOfLines={2}>

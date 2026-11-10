@@ -1,4 +1,4 @@
-import { Geist_400Regular, Geist_500Medium, Geist_600SemiBold } from '@expo-google-fonts/geist';
+import { DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold } from '@expo-google-fonts/dm-sans';
 import { InstrumentSerif_400Regular, InstrumentSerif_400Regular_Italic } from '@expo-google-fonts/instrument-serif';
 import { useFonts } from 'expo-font';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
@@ -26,9 +26,9 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     InstrumentSerif_400Regular,
     InstrumentSerif_400Regular_Italic,
-    Geist_400Regular,
-    Geist_500Medium,
-    Geist_600SemiBold,
+    DMSans_400Regular,
+    DMSans_500Medium,
+    DMSans_600SemiBold,
   });
   const online = useOnline();
   const reduceMotion = useReduceMotion();

@@ -52,7 +52,7 @@ export function TabBar({ state, descriptors, navigateToTab, insets }: BottomTabB
               <Icon
                 name={focused ? icon.active : icon.idle}
                 size={21}
-                color={focused ? colors.keep : colors.inkMuted}
+                color={focused ? colors.accent : colors.inkMuted}
               />
               {badge ? (
                 <View style={styles.badge}>

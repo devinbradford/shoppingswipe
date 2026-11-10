@@ -2,67 +2,82 @@
  * Design tokens. Every color, font, size, space and radius used in the UI
  * lives here. Components must not contain raw hex values.
  *
- * Look: "D · Mix". Warm espresso dark, full-bleed photography, champagne
- * accent, Instrument Serif for names and prices, Geist for everything else.
+ * Look: "The Pick", Forest & Butter (Devin's choice, Nov 2026). Cream pages,
+ * forest green for actions and accents, butter only for the moment something
+ * is picked or loved, product photos always the most colourful thing on screen.
+ * Instrument Serif for names, prices and headings; DM Sans for everything else.
  */
 
 export const colors = {
-  /** Espresso: app background. */
-  background: '#12110F',
-  /** Slightly raised surface (sheets, inputs, list rows). */
-  surface: '#1C1B18',
+  /** Cream: app background. */
+  background: '#FBF7EC',
+  /** Paper: raised surfaces (sheets, inputs, list rows, room-photo cards). */
+  surface: '#F1ECDD',
+  /** Clean white behind product cut-out photos, so white photo backgrounds look intentional. */
+  card: '#FFFFFF',
   /** Hairline borders and dividers. */
-  border: '#33312C',
-  /** Primary text and icons (warm off-white). */
-  ink: '#F3F2EF',
-  inkMuted: '#B8B4AC',
+  border: '#E2DCCB',
+  /** Primary text and icons (deep green-black). */
+  ink: '#1C2A22',
+  inkMuted: '#4F5C53',
   /** Placeholders and decoration only (not for readable text). */
-  inkSubtle: '#8C887F',
-  /** Text and icons on a light fill (ink- or keep-filled buttons, selected chips). */
-  onInk: '#12110F',
+  inkSubtle: '#7C877F',
+  /** Text and icons on a butter fill (picked, loved, selected chips). */
+  onInk: '#1C2A22',
+  /** Forest: main buttons and the one accent for text, icons and selected borders. */
+  action: '#23412F',
+  /** Text and icons on a forest or dark fill. */
+  onAction: '#FBF7EC',
+  accent: '#23412F',
+  accentText: '#23412F',
   /** Text and icons placed over a photo. */
-  onPhoto: '#F3F2EF',
-  /** Champagne: keep, selection, the one accent. */
-  keep: '#D8C29D',
-  keepSoft: '#2A261F',
-  /** Rose: skip and errors (readable on the dark background). */
-  skip: '#E0A39A',
-  skipSoft: '#2E1F1C',
+  onPhoto: '#FBF7EC',
+  /** Secondary text over a photo (store name, counts). */
+  onPhotoMuted: 'rgba(251, 247, 236, 0.8)',
+  /** Behind full-screen photos (rooms, photo viewer): a gallery wall. */
+  stage: '#1C2A22',
+  /** Butter: keep / love / picked. Always with dark text on it. */
+  keep: '#EBCB6B',
+  keepSoft: '#F6EBC4',
+  /** Pass / skip: a quiet slate, never red (passing on something isn't an error). */
+  skip: '#5D6A61',
+  skipSoft: '#E4E6DF',
+  /** Errors and destructive actions. */
+  danger: '#A8432F',
   /** Frosted controls floating over photos. */
-  glass: 'rgba(18, 17, 15, 0.34)',
-  glassBorder: 'rgba(243, 242, 239, 0.24)',
-  glassStrongBorder: 'rgba(243, 242, 239, 0.42)',
-  /** The bottom tab bar: espresso, nearly opaque so labels stay readable over photos. */
-  tabBar: 'rgba(18, 17, 15, 0.98)',
-  /** Accent-tinted glass for the "For you" bubble. */
-  accentGlass: 'rgba(216, 194, 157, 0.16)',
-  accentGlassBorder: 'rgba(216, 194, 157, 0.5)',
-  accentText: '#EADCC0',
+  glass: 'rgba(28, 42, 34, 0.38)',
+  glassBorder: 'rgba(251, 247, 236, 0.32)',
+  glassStrongBorder: 'rgba(251, 247, 236, 0.5)',
+  /** The bottom tab bar: cream, nearly opaque. */
+  tabBar: 'rgba(251, 247, 236, 0.98)',
+  /** Soft butter panel for the "For you" bubble and quiet highlights. */
+  accentGlass: '#F6EBC4',
+  accentGlassBorder: '#E3CF8A',
   /** Scrim drawn over photos so text stays legible. */
-  scrim: 'rgba(18, 17, 15, 0.88)',
-  scrimMid: 'rgba(18, 17, 15, 0.55)',
-  scrimLight: 'rgba(18, 17, 15, 0)',
-  /** Drag feedback on the swipe card: edge glow and a faint wash, champagne for Keep, rose for Skip. */
-  keepGlow: 'rgba(216, 194, 157, 0.55)',
-  keepWash: 'rgba(216, 194, 157, 0.05)',
-  skipGlow: 'rgba(224, 163, 154, 0.55)',
-  skipWash: 'rgba(224, 163, 154, 0.05)',
-  /** Photo progress lines. */
-  pip: 'rgba(243, 242, 239, 0.32)',
-  pipActive: '#F3F2EF',
-  shadow: '#000000',
+  scrim: 'rgba(28, 42, 34, 0.86)',
+  scrimMid: 'rgba(28, 42, 34, 0.52)',
+  scrimLight: 'rgba(28, 42, 34, 0)',
+  /** Drag feedback on the swipe card: butter for Keep, slate for Skip. */
+  keepGlow: 'rgba(235, 203, 107, 0.7)',
+  keepWash: 'rgba(235, 203, 107, 0.08)',
+  skipGlow: 'rgba(93, 106, 97, 0.55)',
+  skipWash: 'rgba(93, 106, 97, 0.06)',
+  /** Progress lines. */
+  pip: 'rgba(28, 42, 34, 0.18)',
+  pipActive: '#1C2A22',
+  shadow: '#1C2A22',
   /** Placeholder fill while photos load. */
-  placeholder: '#24221F',
+  placeholder: '#EDE7D8',
 } as const;
 
 export const fonts = {
   /** Instrument Serif: names, prices, headings. Loaded in the root layout. */
   serif: 'InstrumentSerif_400Regular',
   serifItalic: 'InstrumentSerif_400Regular_Italic',
-  /** Geist: everything else. */
-  body: 'Geist_400Regular',
-  bodyMedium: 'Geist_500Medium',
-  bodySemiBold: 'Geist_600SemiBold',
+  /** DM Sans: everything else. */
+  body: 'DMSans_400Regular',
+  bodyMedium: 'DMSans_500Medium',
+  bodySemiBold: 'DMSans_600SemiBold',
 } as const;
 
 export const type = {

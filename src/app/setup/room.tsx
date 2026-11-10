@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.glassBorder,
   },
-  current: { borderColor: colors.keep, borderWidth: 2 },
-  pressed: { transform: [{ scale: 0.98 }], borderColor: colors.keep },
+  current: { borderColor: colors.accent, borderWidth: 2 },
+  pressed: { transform: [{ scale: 0.98 }], borderColor: colors.accent },
   tileText: { padding: space.md, gap: 2 },
   footer: { paddingHorizontal: space.xl, paddingTop: space.sm },
 });

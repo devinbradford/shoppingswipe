@@ -58,7 +58,7 @@ export function NameForm({
         accessibilityHint={error ?? undefined}
       />
       {error ? (
-        <AppText variant="bodySmall" color={colors.skip} accessibilityLiveRegion="polite">
+        <AppText variant="bodySmall" color={colors.danger} accessibilityLiveRegion="polite">
           {error}
         </AppText>
       ) : null}
@@ -79,5 +79,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  inputError: { borderColor: colors.skip },
+  inputError: { borderColor: colors.danger },
 });

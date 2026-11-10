@@ -34,7 +34,7 @@ export function RoomSection({ room, onOpenType, onOpenRoom, gutter }: RoomSectio
           accessibilityLabel={`Swipe all ${room.label.toLowerCase()}`}
           hitSlop={8}
           style={({ pressed }) => [styles.all, pressed && styles.pressed]}>
-          <AppText variant="bodySmall" color={colors.keep}>
+          <AppText variant="bodySmall" color={colors.accent}>
             Swipe all
           </AppText>
         </Pressable>

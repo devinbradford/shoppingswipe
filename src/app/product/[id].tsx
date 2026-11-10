@@ -216,7 +216,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
           <AppText variant="title">{price}</AppText>
           {boughtAt ? (
             <View style={styles.bought}>
-              <Icon name="check" size={14} color={colors.keep} />
+              <Icon name="check" size={14} color={colors.accent} />
               <AppText variant="caption" color={colors.accentText}>
                 You bought this on {new Date(boughtAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </AppText>
@@ -252,7 +252,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
           </View>
 
           <View style={[styles.card, styles.soldBy]}>
-            <Icon name="bag" size={20} color={colors.keep} />
+            <Icon name="bag" size={20} color={colors.accent} />
             <View style={styles.flex}>
               <AppText variant="label">Sold by {retailerName}</AppText>
               <AppText variant="bodySmall" color={colors.inkMuted}>
@@ -321,7 +321,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
             accessibilityState={{ selected: isKept }}
             accessibilityHint={isKept ? 'Removes it from your kept list' : 'Adds it to your kept list'}
             style={({ pressed }) => [styles.keep, isKept && styles.keepOn, pressed && styles.pressed]}>
-            <Icon name={isKept ? 'keep' : 'heart'} size={22} color={isKept ? colors.onInk : colors.keep} />
+            <Icon name={isKept ? 'keep' : 'heart'} size={22} color={isKept ? colors.onInk : colors.accent} />
           </Pressable>
           <Button
             label="Buy now"
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: colors.keep,
+    borderColor: colors.accent,
   },
   keepOn: { backgroundColor: colors.keep },
   pressed: { opacity: 0.8, transform: [{ scale: 0.96 }] },

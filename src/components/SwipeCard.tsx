@@ -356,7 +356,7 @@ export function SwipeCard({
           <AppText variant="title" color={colors.onPhoto} numberOfLines={2}>
             {product.title}
           </AppText>
-          <AppText variant="eyebrow" color={colors.inkMuted} numberOfLines={1} style={styles.meta}>
+          <AppText variant="eyebrow" color={colors.onPhotoMuted} numberOfLines={1} style={styles.meta}>
             {brandLine(product.brand, retailerName).toUpperCase()}
           </AppText>
         </View>
@@ -367,7 +367,7 @@ export function SwipeCard({
           <Icon name="keep" size={30} color={colors.onInk} />
         </Animated.View>
         <Animated.View style={[styles.mark, styles.skipMark, skipMark]} pointerEvents="none">
-          <Icon name="close" size={30} color={colors.onInk} />
+          <Icon name="close" size={30} color={colors.onAction} />
         </Animated.View>
       </Animated.View>
     </GestureDetector>
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   pipActive: { backgroundColor: colors.pipActive },
   glow: { ...StyleSheet.absoluteFill, borderWidth: 2 },
   keepGlow: {
-    borderColor: colors.keep,
+    borderColor: colors.accent,
     backgroundColor: colors.keepWash,
     boxShadow: `inset 0 0 56px 2px ${colors.keepGlow}`,
   },

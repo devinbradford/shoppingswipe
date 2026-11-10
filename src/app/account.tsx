@@ -41,7 +41,7 @@ export default function AccountScreen() {
             </View>
 
             <View style={styles.panel} accessibilityLiveRegion="polite">
-              <Icon name={a.offline ? 'cloudOff' : 'cloud'} size={20} color={a.offline ? colors.skip : colors.keep} />
+              <Icon name={a.offline ? 'cloudOff' : 'cloud'} size={20} color={a.offline ? colors.danger : colors.accent} />
               <View style={styles.panelText}>
                 <AppText variant="label">
                   {a.offline
@@ -143,7 +143,7 @@ export default function AccountScreen() {
 function ErrorNote({ text }: { text: string }) {
   return (
     <View style={styles.error} accessibilityRole="alert" accessibilityLiveRegion="polite">
-      <AppText variant="bodySmall" color={colors.skip}>
+      <AppText variant="bodySmall" color={colors.danger}>
         {text}
       </AppText>
     </View>

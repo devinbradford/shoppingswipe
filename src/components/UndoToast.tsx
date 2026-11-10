@@ -49,7 +49,7 @@ export function UndoToast({
           accessibilityLabel="Undo"
           hitSlop={8}
           style={styles.undo}>
-          <AppText variant="label" color={colors.keep}>
+          <AppText variant="label" color={colors.accent}>
             Undo
           </AppText>
         </Pressable>

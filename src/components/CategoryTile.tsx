@@ -36,7 +36,7 @@ export function CategoryTile({ label, remaining, coverUrl, onPress, width = 150 
         <AppText variant="heading" color={colors.onPhoto} numberOfLines={1}>
           {label}
         </AppText>
-        <AppText variant="eyebrow" color={colors.inkMuted}>
+        <AppText variant="eyebrow" color={colors.onPhotoMuted}>
           {countText.toUpperCase()}
         </AppText>
       </View>

@@ -37,7 +37,7 @@ export function TraitChip({
         <Icon
           name={adjusted === 'more' ? 'plus' : 'close'}
           size={12}
-          color={adjusted === 'more' ? colors.keep : colors.skip}
+          color={adjusted === 'more' ? colors.accent : colors.skip}
         />
       ) : null}
       <AppText variant="bodySmall" color={tone === 'dislike' ? colors.skip : colors.ink}>

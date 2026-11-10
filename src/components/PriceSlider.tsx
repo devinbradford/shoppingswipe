@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: THUMB / 2,
     backgroundColor: colors.ink,
     borderWidth: 3,
-    borderColor: colors.keep,
+    borderColor: colors.accent,
     boxShadow: `0 4px 14px ${colors.shadow}99`,
   },
 });

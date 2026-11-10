@@ -89,7 +89,7 @@ export function SwipeScene({ photos, reduceMotion }: { photos: string[]; reduceM
       <Animated.View style={[styles.card, top]}>
         <ProductImage uri={photos[0]} style={StyleSheet.absoluteFill} />
         <Animated.View style={[styles.stamp, stamp]}>
-          <AppText variant="eyebrow" color={colors.keep}>
+          <AppText variant="eyebrow" color={colors.accent}>
             KEEP
           </AppText>
         </Animated.View>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.sm,
     paddingVertical: space.xs,
     borderWidth: 2,
-    borderColor: colors.keep,
+    borderColor: colors.accent,
     borderRadius: radii.sm,
     transform: [{ rotate: '-12deg' }],
     backgroundColor: colors.scrimMid,

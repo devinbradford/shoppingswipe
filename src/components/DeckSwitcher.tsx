@@ -121,7 +121,7 @@ function Row({ option, onPress, radio }: { option: SwitcherOption; onPress: () =
       aria-checked={radio ? !!option.selected : undefined}
       accessibilityLabel={`${option.label}${option.detail ? `, ${option.detail}` : ''}${option.isNew ? ', new' : ''}`}
       style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
-      {option.icon ? <Icon name={option.icon} size={16} color={colors.keep} /> : null}
+      {option.icon ? <Icon name={option.icon} size={16} color={colors.accent} /> : null}
       <View style={styles.rowText}>
         <AppText variant="label" color={option.selected ? colors.accentText : colors.ink}>
           {option.label}
@@ -133,7 +133,7 @@ function Row({ option, onPress, radio }: { option: SwitcherOption; onPress: () =
         ) : null}
       </View>
       {option.isNew ? <View style={styles.rowDot} /> : null}
-      {option.selected ? <Icon name="check" size={16} color={colors.keep} /> : null}
+      {option.selected ? <Icon name="check" size={16} color={colors.accent} /> : null}
     </Pressable>
   );
 }

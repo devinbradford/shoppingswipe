@@ -52,7 +52,7 @@ export default function WelcomeScreen() {
           <AppText variant="eyebrow" color={colors.inkMuted}>
             {onboarded ? 'CUREAVO' : 'STEP 1 OF 3'}
           </AppText>
-          <AppText variant="hero" color={colors.onPhoto} accessibilityRole="header">
+          <AppText variant="hero" color={colors.ink} accessibilityRole="header">
             {onboarded ? 'Your styles' : 'What feels like '}
             {onboarded ? null : (
               <AppText variant="hero" color={colors.accentText} style={styles.italic}>

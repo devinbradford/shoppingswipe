@@ -144,7 +144,7 @@ export default function BudgetScreen() {
           </Pressable>
         )}
         {typeError ? (
-          <AppText variant="caption" color={colors.skip} style={styles.value} accessibilityLiveRegion="assertive">
+          <AppText variant="caption" color={colors.danger} style={styles.value} accessibilityLiveRegion="assertive">
             {typeError}
           </AppText>
         ) : null}
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.lg,
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: colors.keep,
+    borderColor: colors.accent,
     backgroundColor: colors.surface,
     color: colors.ink,
     ...typeScale.heading,

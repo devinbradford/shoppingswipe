@@ -17,8 +17,8 @@ export function OfflineBanner({ visible }: { visible: boolean }) {
       style={[styles.banner, { paddingTop: insets.top + space.xs }]}
       accessibilityRole="alert"
       accessibilityLiveRegion="polite">
-      <Icon name="offline" size={14} color={colors.onInk} />
-      <AppText variant="caption" color={colors.onInk} style={styles.text}>
+      <Icon name="offline" size={14} color={colors.onAction} />
+      <AppText variant="caption" color={colors.onAction} style={styles.text}>
         You&apos;re offline. Swiping still works; new photos and store links need a connection.
       </AppText>
     </View>

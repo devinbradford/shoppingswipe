@@ -143,7 +143,7 @@ export default function KeptScreen() {
         accessibilityLabel={`Sort: ${sortLabel}. Change`}
         hitSlop={6}
         style={({ pressed }) => [styles.sort, sort !== 'newest' && styles.sortOn, pressed && styles.pressed]}>
-        <Icon name="sort" size={14} color={sort === 'newest' ? colors.inkMuted : colors.keep} />
+        <Icon name="sort" size={14} color={sort === 'newest' ? colors.inkMuted : colors.accent} />
         <AppText variant="bodySmall" color={sort === 'newest' ? colors.ink : colors.accentText}>
           {sortShort}
         </AppText>
@@ -231,7 +231,7 @@ export default function KeptScreen() {
         </View>
         {notice ? (
           <View style={styles.notice} accessibilityLiveRegion="polite">
-            <AppText variant="bodySmall" color={colors.keep}>
+            <AppText variant="bodySmall" color={colors.accent}>
               {notice}
             </AppText>
           </View>
@@ -240,12 +240,12 @@ export default function KeptScreen() {
         {products.length > 0 ? filterRow : null}
         {products.length > 0 && !holdTipSeen && !selecting ? (
           <View style={styles.tip} accessibilityLiveRegion="polite">
-            <Icon name="info" size={14} color={colors.keep} />
+            <Icon name="info" size={14} color={colors.accent} />
             <AppText variant="caption" color={colors.inkMuted} style={styles.flex}>
               Tip: press and hold a piece to add it to a list, buy it or remove it.
             </AppText>
             <Pressable onPress={markHoldTipSeen} accessibilityRole="button" accessibilityLabel="Got it" hitSlop={8}>
-              <AppText variant="caption" color={colors.keep}>
+              <AppText variant="caption" color={colors.accent}>
                 Got it
               </AppText>
             </Pressable>
