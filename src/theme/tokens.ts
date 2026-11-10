@@ -92,6 +92,10 @@ export const type = {
   price: { fontFamily: fonts.serif, fontSize: 52, lineHeight: 54, letterSpacing: -0.4 },
   title: { fontFamily: fonts.serif, fontSize: 30, lineHeight: 34 },
   heading: { fontFamily: fonts.serif, fontSize: 24, lineHeight: 28 },
+  /** Product name under the photo on the swipe card (two lines at most). */
+  cardTitle: { fontFamily: fonts.serif, fontSize: 24, lineHeight: 28 },
+  /** Price beside the store name on the swipe card. */
+  cardPrice: { fontFamily: fonts.serif, fontSize: 22, lineHeight: 26 },
   italic: { fontFamily: fonts.serifItalic, fontSize: 16, lineHeight: 20 },
   label: { fontFamily: fonts.bodyMedium, fontSize: 15, lineHeight: 20 },
   body: { fontFamily: fonts.body, fontSize: 16, lineHeight: 23 },

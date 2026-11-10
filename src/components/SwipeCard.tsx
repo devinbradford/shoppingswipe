@@ -17,9 +17,9 @@ import Animated, {
 import { scheduleOnRN } from 'react-native-worklets';
 
 import type { SwipeDirection } from '@/domain/types';
-import { brandLine, formatPrice } from '@/lib/format';
-import { colors, motion, radii, space } from '@/theme/tokens';
-import { AppText } from './AppText';
+import { formatPrice } from '@/lib/format';
+import { colors, motion, radii, space, type as typeScale } from '@/theme/tokens';
+import { AppText, CARD_TEXT_MAX_SCALE } from './AppText';
 import { Icon } from './Icon';
 import { metaFor } from '@/lib/photoLayout';
 import { ProductImage } from './ProductImage';
@@ -77,7 +77,9 @@ export function SwipeCard({
   hint = null,
   onPhotoBrowse,
 }: SwipeCardProps) {
-  const { width: screenWidth } = useWindowDimensions();
+  const { width: screenWidth, fontScale } = useWindowDimensions();
+  // The name's reserved height follows the phone's text size (up to the same cap as the text).
+  const titleScale = Math.min(Math.max(fontScale || 1, 1), CARD_TEXT_MAX_SCALE);
   const threshold = screenWidth * motion.swipeThreshold;
   const flyDistance = screenWidth * 1.4;
   const flyMs = reduceMotion ? 90 : motion.flyOutMs;
@@ -361,15 +363,27 @@ export function SwipeCard({
               )}
             </View>
           ) : null}
-          <AppText variant="price" color={colors.onPhoto}>
-            {price}
-          </AppText>
-          <AppText variant="title" color={colors.onPhoto} numberOfLines={2}>
-            {product.title}
-          </AppText>
-          <AppText variant="eyebrow" color={colors.onPhotoMuted} numberOfLines={1} style={styles.meta}>
-            {brandLine(product.brand, retailerName).toUpperCase()}
-          </AppText>
+          {/* The name always gets room for two lines, so the price row never moves. */}
+          <View style={[styles.titleBox, { minHeight: typeScale.cardTitle.lineHeight * 2 * titleScale }]}>
+            <AppText variant="cardTitle" color={colors.onPhoto} numberOfLines={2} ellipsizeMode="tail">
+              {product.title}
+            </AppText>
+          </View>
+          <View style={styles.priceRow}>
+            <AppText variant="cardPrice" color={colors.onPhoto}>
+              {price}
+            </AppText>
+            {retailerName ? (
+              <AppText variant="eyebrow" color={colors.onPhotoMuted}>
+                ·
+              </AppText>
+            ) : null}
+            {retailerName ? (
+              <AppText variant="eyebrow" color={colors.onPhotoMuted} numberOfLines={1} style={styles.store}>
+                {retailerName.toUpperCase()}
+              </AppText>
+            ) : null}
+          </View>
         </View>
 
         <Animated.View style={[styles.glow, styles.keepGlow, keepGlow]} pointerEvents="none" />
@@ -443,5 +457,7 @@ const styles = StyleSheet.create({
   },
   forYouText: { flexShrink: 1 },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.keep },
-  meta: { marginTop: space.xs },
+  titleBox: { justifyContent: 'flex-end' },
+  priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: space.md },
+  store: { flexShrink: 1 },
 });
