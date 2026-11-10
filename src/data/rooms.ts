@@ -4,11 +4,9 @@
  * colour families, materials) so they seed ranking directly; `wood` and `shape`
  * only shape the "Your taste" wording for now.
  *
- * Photos: organic modern, mid-century, Scandinavian, bohemian and farmhouse are
- * Devin's chosen onboarding photos (assets/rooms). Coastal, industrial and classic
- * are still STAND-INS (the original AI style photos made for CureAvo) until their
- * photos arrive. To swap one in: replace the image, update its attributes to match
- * the new photo, and raise `version` (old answers about the old photo stop counting).
+ * Photos: Devin's chosen onboarding photos (assets/rooms), one per style. To swap
+ * one: replace the image, update its attributes to match the new photo, and raise
+ * `version` (old answers about the old photo stop counting).
  * Order here is the order shown.
  */
 import type { RoomProfile } from '@/recommendation/rooms';
@@ -64,16 +62,16 @@ export const ROOMS: Room[] = [
   },
   {
     id: 'coastal',
-    version: 1,
+    version: 2,
     style: 'coastal',
-    image: require('../../assets/styles/coastal.jpg'),
-    alt: 'White slipcovered sofa with blue pillows, a rattan chair and a sea painting',
+    image: require('../../assets/rooms/coastal.webp'),
+    alt: 'Sunroom by the water with a white linen sofa, blue striped pillows and rug, rattan chairs and a woven rattan table',
     attributes: {
       style: { coastal: 1 },
-      color: { white: 0.8, navy: 0.6, oatmeal: 0.6 },
-      material: { rattan: 1, linen: 0.6, jute: 0.5, oak: 0.4 },
-      wood: { light: 0.8 },
-      shape: { substantial: 0.4, curved: 0.3 },
+      color: { navy: 1, white: 0.9, oatmeal: 0.5 },
+      material: { rattan: 1, linen: 0.6, jute: 0.5 },
+      wood: { light: 0.6 },
+      shape: { curved: 0.5, substantial: 0.4 },
     },
   },
   {
@@ -92,16 +90,16 @@ export const ROOMS: Room[] = [
   },
   {
     id: 'industrial',
-    version: 1,
+    version: 2,
     style: 'industrial',
-    image: require('../../assets/styles/industrial.jpg'),
-    alt: 'Cognac leather sofa against exposed brick, with a reclaimed wood and black metal coffee table',
+    image: require('../../assets/rooms/industrial.webp'),
+    alt: 'Moody loft with exposed brick, black wall panels, a cognac leather sofa and a black marble and steel coffee table',
     attributes: {
-      style: { industrial: 1, rustic: 0.5 },
-      color: { walnut: 0.9, charcoal: 0.6, black: 0.6 },
-      material: { leather: 1, steel: 0.8, pine: 0.5 },
-      wood: { mid: 0.6, dark: 0.4 },
-      shape: { substantial: 0.8 },
+      style: { industrial: 1, modern: 0.4 },
+      color: { walnut: 0.9, black: 0.9, charcoal: 0.5, rust: 0.4 },
+      material: { leather: 1, steel: 0.8, marble: 0.7 },
+      wood: { dark: 0.6 },
+      shape: { tailored: 0.8, substantial: 0.4 },
     },
   },
   {
@@ -120,16 +118,16 @@ export const ROOMS: Room[] = [
   },
   {
     id: 'classic',
-    version: 1,
+    version: 2,
     style: 'classic',
-    image: require('../../assets/styles/classic.jpg'),
-    alt: 'Deep green velvet tufted sofa, a marble table, a dark wood side table and a brass lamp',
+    image: require('../../assets/rooms/classic.webp'),
+    alt: 'Olive velvet tufted sofa, cream bouclé chairs, a stone coffee table, a gilded mirror over a fireplace and a red Persian-style rug',
     attributes: {
-      style: { classic: 1, vintage: 0.4 },
-      color: { olive: 1, sage: 0.5, cream: 0.4 },
-      material: { velvet: 1, marble: 0.7, walnut: 0.5 },
-      wood: { dark: 0.8 },
-      shape: { tailored: 0.6, substantial: 0.4 },
+      style: { classic: 1, vintage: 0.5 },
+      color: { olive: 1, rust: 0.7, cream: 0.6 },
+      material: { velvet: 1, travertine: 0.7, boucle: 0.5, wool: 0.4 },
+      wood: { mid: 0.3 },
+      shape: { tailored: 0.6, curved: 0.5 },
     },
   },
 ];
