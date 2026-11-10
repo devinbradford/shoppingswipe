@@ -68,6 +68,13 @@ export const colors = {
   shadow: '#1C2A22',
   /** Placeholder fill while photos load. */
   placeholder: '#EDE7D8',
+  /** Paper tints behind the line drawings on "What are you shopping for?" (one per room). */
+  paperOat: '#EDE3D0',
+  paperSage: '#DFE4DC',
+  paperClay: '#ECD9CC',
+  paperStone: '#E5E2DA',
+  /** The soft circle of light behind each drawing. */
+  paperGlow: 'rgba(251, 247, 236, 0.6)',
 } as const;
 
 export const fonts = {

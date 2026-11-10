@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DeckView } from '@/components/DeckView';
 import { DeckSwitcher, type SwitcherOption } from '@/components/DeckSwitcher';
-import { WelcomeBackCard } from '@/components/Banners';
+import { TasteNote, WelcomeBackCard } from '@/components/Banners';
 import type { RoomChoice } from '@/domain/budget';
 import type { CategoryId } from '@/domain/types';
 import { useRetailerNames } from '@/hooks/useCatalog';
@@ -70,6 +70,10 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
   // "Picked for you": cards with a taste reason, or simply what's lined up next.
   const picked = deck.cards.filter((c) => c.forYou).length || deck.cards.length;
   const showWelcome = !!welcome && deck.cards.length > 0;
+  // Straight after the rooms: say the first cards follow from them, until the first swipe.
+  const lovedARoom = usePreferencesStore((s) => s.roomAnswers.some((a) => a.love));
+  const showTasteNote =
+    lovedARoom && swipeCount === 0 && !showWelcome && deck.status === 'ready' && deck.cards.length > 0;
 
   // The welcome-back note fades on its own; nothing waits on it.
   useEffect(() => {
@@ -148,6 +152,11 @@ function ForYou({ initialRoom }: { initialRoom: CategoryId | null }) {
                   onClose={dismissWelcome}
                   reduceMotion={reduceMotion}
                 />
+              </View>
+            ) : null}
+            {showTasteNote ? (
+              <View style={[styles.welcome, { top: top + 56 }]} pointerEvents="none">
+                <TasteNote reduceMotion={reduceMotion} />
               </View>
             ) : null}
           </>
