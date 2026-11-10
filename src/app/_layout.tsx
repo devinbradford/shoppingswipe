@@ -70,7 +70,7 @@ export default function RootLayout() {
           <Stack.Screen name="intro" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="taste-intro" options={{ animation: 'fade', gestureEnabled: false }} />
           <Stack.Screen name="rooms" options={{ animation: 'fade', gestureEnabled: false }} />
-          <Stack.Screen name="taste-reveal" options={{ animation: 'fade', gestureEnabled: false }} />
+          <Stack.Screen name="taste-reveal" options={{ animation: 'none', gestureEnabled: false }} />
           <Stack.Screen name="deck/[category]" />
           <Stack.Screen name="lists/[id]" />
           <Stack.Screen name="taste" />

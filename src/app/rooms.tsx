@@ -38,7 +38,7 @@ export default function RoomsScreen() {
 
   const finish = (all = current) => {
     setStylePicks(lovedStyles(all, ROOMS));
-    router.replace({ pathname: '/taste-reveal', params: redo ? { redo: '1' } : {} });
+    router.replace({ pathname: '/taste-reveal', params: redo ? { redo: '1', settle: '1' } : { settle: '1' } });
   };
 
   const answer = (love: boolean) => {
