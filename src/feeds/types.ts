@@ -79,6 +79,19 @@ export interface ImportReport {
   examples: Partial<Record<SkipReason, string[]>>;
   /** Store pages visited in the health check; `stale` = most were broken, so the feed is out of date. */
   pageCheck?: { sampled: number; checked: number; broken: number; stale: boolean };
+  /**
+   * Photo measuring for the studio card. `skipped` says why nothing was measured
+   * (e.g. the image_meta column isn't in the database yet).
+   */
+  photos?: {
+    measured: number;
+    reused: number;
+    failed: number;
+    cutouts: number;
+    trimmed: number;
+    notes: Record<string, number>;
+    skipped?: string;
+  };
 }
 
 /** Result of fetching a URL during health checks (injected, so the core stays pure). */

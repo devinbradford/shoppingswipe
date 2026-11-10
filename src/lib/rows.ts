@@ -5,6 +5,7 @@
 import type {
   Category,
   CategoryId,
+  PhotoMeta,
   Product,
   Retailer,
   SavedItem,
@@ -32,10 +33,14 @@ export interface ProductRow {
   material: string;
   color: string;
   created_at: string;
+  /** Added Nov 2026 (photo measurements); absent on databases without that migration. */
+  image_meta?: (PhotoMeta | null)[] | null;
 }
 
 export const PRODUCT_COLUMNS =
   'id, category_id, subcategory_id, retailer_id, title, brand, description, price_cents, currency, image_urls, product_url, style_tags, material, color, created_at';
+/** The same plus photo measurements (falls back to PRODUCT_COLUMNS if the column isn't there yet). */
+export const PRODUCT_COLUMNS_WITH_META = `${PRODUCT_COLUMNS}, image_meta`;
 
 export function productFromRow(r: ProductRow): Product {
   return {
@@ -54,6 +59,7 @@ export function productFromRow(r: ProductRow): Product {
     material: r.material ?? '',
     color: r.color ?? '',
     createdAt: r.created_at,
+    ...(Array.isArray(r.image_meta) ? { imageMeta: r.image_meta } : {}),
   };
 }
 

@@ -103,4 +103,55 @@ describe('nightly import', () => {
     const out = await runImports(deps, 'awin-77');
     expect(out.map((o) => o.source)).toEqual(['awin-77']);
   });
+
+  describe('photo measuring', () => {
+    const IMG1 = 'https://img.example.com/1.jpg';
+    const IMG2 = 'https://img.example.com/2.jpg';
+    const saved = { url: IMG2, ratio: 1, bg: '#FFFFFF', kind: 'scene' as const };
+
+    it('measures new photos, reuses saved ones and records what it did', async () => {
+      const measured: string[] = [];
+      const { deps, calls } = fakeDeps(FEED, {
+        knownPhotoMeta: async () => new Map([[IMG2, saved]]),
+        measurePhoto: async (url) => {
+          measured.push(url);
+          return { ratio: 1, bg: '#F8F8F8', kind: 'cutout', box: [0.1, 0.3, 0.8, 0.4] };
+        },
+      });
+      await runImports(deps);
+      expect(measured).toEqual([IMG1]);
+      const byImg = Object.fromEntries(calls.upserted.map((r) => [r.image_urls[0], r.image_meta]));
+      expect(byImg[IMG1]).toEqual([{ url: IMG1, ratio: 1, bg: '#F8F8F8', kind: 'cutout', box: [0.1, 0.3, 0.8, 0.4] }]);
+      expect(byImg[IMG2]).toEqual([saved]);
+      expect(calls.runs[0].report?.photos).toMatchObject({ measured: 1, reused: 1, failed: 0, cutouts: 1, trimmed: 1 });
+    });
+
+    it('leaves a photo it could not measure empty, so the app shows it whole', async () => {
+      const { deps, calls } = fakeDeps(FEED, {
+        knownPhotoMeta: async () => new Map(),
+        measurePhoto: async () => null,
+      });
+      await runImports(deps);
+      expect(calls.upserted.every((r) => r.image_meta?.[0] === null)).toBe(true);
+      expect(calls.runs[0].report?.photos).toMatchObject({ measured: 0, failed: 2 });
+      expect(calls.runs[0].status).toBe('ok');
+    });
+
+    it('changes nothing about photos before the image_meta column exists', async () => {
+      const measurePhoto = jest.fn();
+      const { deps, calls } = fakeDeps(FEED, { knownPhotoMeta: async () => null, measurePhoto });
+      await runImports(deps);
+      expect(measurePhoto).not.toHaveBeenCalled();
+      expect(calls.upserted.every((r) => !('image_meta' in r))).toBe(true);
+      expect(calls.runs[0].report?.photos?.skipped).toMatch(/image_meta/);
+      expect(calls.runs[0].status).toBe('ok');
+    });
+
+    it('is off when no measuring tool is available', async () => {
+      const { deps, calls } = fakeDeps(FEED);
+      await runImports(deps);
+      expect(calls.upserted.every((r) => !('image_meta' in r))).toBe(true);
+      expect(calls.runs[0].report?.photos).toBeUndefined();
+    });
+  });
 });

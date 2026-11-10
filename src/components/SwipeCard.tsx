@@ -21,6 +21,7 @@ import { brandLine, formatPrice } from '@/lib/format';
 import { colors, motion, radii, space } from '@/theme/tokens';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
+import { metaFor } from '@/lib/photoLayout';
 import { ProductImage } from './ProductImage';
 import type { DeckCardData } from './SwipeDeck';
 
@@ -57,6 +58,8 @@ interface SwipeCardProps {
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
 /** Room the "For you" bubble, price, name and store line take up above `infoBottom`. */
 const INFO_BLOCK_HEIGHT = 190;
+/** Space between the photo progress lines and the top of the photo card. */
+const PHOTO_TOP = 64;
 
 export function SwipeCard({
   card,
@@ -306,16 +309,23 @@ export function SwipeCard({
           <ProductImage
             uri={photos[photo]}
             style={StyleSheet.absoluteFill}
-            fit="showcase"
+            fit="studio"
+            meta={metaFor(photos, product.imageMeta, photo)}
             // Keep the whole product between the top controls and the price block.
-            insets={{ top: pipsTop + 64, bottom: infoBottom + INFO_BLOCK_HEIGHT, left: space.lg, right: space.lg }}
+            insets={{
+              top: pipsTop + PHOTO_TOP,
+              bottom: infoBottom + INFO_BLOCK_HEIGHT,
+              left: space.lg,
+              right: space.lg,
+            }}
             priority={isTop ? 'high' : 'normal'}
           />
         </View>
 
+        {/* Ends where the photo card begins, so the card stays clean. */}
         <LinearGradient
           colors={[colors.scrimMid, colors.scrimLight]}
-          style={[styles.topScrim, { height: pipsTop + 120 }]}
+          style={[styles.topScrim, { height: pipsTop + PHOTO_TOP }]}
           pointerEvents="none"
         />
         {photos.length > 1 ? (
@@ -329,7 +339,8 @@ export function SwipeCard({
         <LinearGradient
           colors={[colors.scrimLight, colors.scrimMid, colors.scrim, colors.background]}
           locations={[0, 0.35, 0.72, 1]}
-          style={styles.scrim}
+          // Starts below the photo card: only the text area gets the fade.
+          style={[styles.scrim, { height: infoBottom + INFO_BLOCK_HEIGHT }]}
           pointerEvents="none"
         />
         <View style={[styles.info, { bottom: infoBottom }]} pointerEvents="none">
@@ -414,7 +425,7 @@ const styles = StyleSheet.create({
   // Each mark sits on the side the card is leaving from, so it stays on screen.
   keepMark: { left: space.xxl, backgroundColor: colors.keep, boxShadow: `0 10px 30px ${colors.keepGlow}` },
   skipMark: { right: space.xxl, backgroundColor: colors.skip, boxShadow: `0 10px 30px ${colors.skipGlow}` },
-  scrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '62%' },
+  scrim: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   info: { position: 'absolute', left: space.xl, right: space.xl, gap: space.sm },
   forYou: {
     alignSelf: 'flex-start',

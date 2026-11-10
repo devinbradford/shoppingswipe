@@ -20,6 +20,10 @@ free nightly runs have no such limit. The code is in `scripts/run-imports.ts` an
 Already included in `supabase/setup.sql`. (Older projects: paste
 `supabase/migrations/20261107000000_product_feeds.sql` into Supabase → **SQL Editor** → **Run**.)
 
+Photo measurements (Nov 2026): Supabase → **SQL Editor** → **New query** → paste the contents of
+`supabase/migrations/20261110000000_product_image_meta.sql` → **Run**. It only adds one empty column.
+Until it's run, the import simply skips photo measuring and the app shows photos whole.
+
 ### 2. Your brands
 Supabase → **SQL Editor** → **New query** → run (the brands approved so far):
 
@@ -97,6 +101,10 @@ anything. Keep real feed files out of git (`.feeds/` is ignored).
 - Checks every product's main photo, and a spread-out sample of 40 store pages per brand, visited
   politely one at a time (stores block fast visitors). If most sampled pages are gone, the feed is
   treated as out of date and that brand's products are hidden.
+- Measures each product photo once (GitHub job only, with the `sharp` image tool installed just for
+  that run): cut-out furniture on a plain light background gets its edges recorded so the swipe card
+  can draw it larger with breathing room; room photos are marked to be shown whole. Photos and links
+  are never changed. Anything it can't measure safely is shown whole.
 - Buy now always uses the Awin tracking link, so purchases earn commission.
 - Hides products that disappear from a feed or break. An empty or failed download changes nothing.
 

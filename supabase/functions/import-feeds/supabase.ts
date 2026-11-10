@@ -5,6 +5,7 @@
  */
 import { gunzipSync } from 'node:zlib';
 
+import type { PhotoMeta } from '../../../src/domain/types.ts';
 import { AWIN_COLUMNS, type Probe } from '../../../src/feeds/index.ts';
 import type { FeedSource, ImportDeps, ProductRow, RunResult } from './handler.ts';
 
@@ -148,6 +149,25 @@ export function makeDeps(cfg: ImportConfig): ImportDeps {
           error: r.error ?? null,
         }),
       });
+    },
+    async knownPhotoMeta(retailerId) {
+      const known = new Map<string, PhotoMeta>();
+      const PAGE = 1000;
+      for (let from = 0; ; from += PAGE) {
+        let res: Response;
+        try {
+          res = await rest(
+            `products?select=image_meta&retailer_id=eq.${encodeURIComponent(retailerId)}&image_meta=not.is.null&order=id&limit=${PAGE}&offset=${from}`,
+          );
+        } catch (e) {
+          // 42703 = column doesn't exist: the image_meta migration hasn't been run yet.
+          if (e instanceof Error && /42703|image_meta/.test(e.message)) return null;
+          throw e;
+        }
+        const page = (await res.json()) as { image_meta: (PhotoMeta | null)[] | null }[];
+        for (const r of page) for (const m of r.image_meta ?? []) if (m?.url) known.set(m.url, m);
+        if (page.length < PAGE) return known;
+      }
     },
     probe,
     now: () => new Date(),

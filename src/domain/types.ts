@@ -74,6 +74,30 @@ export interface Product {
   color: string;
   /** ISO 8601 timestamp. */
   createdAt: string;
+  /**
+   * What the nightly import measured about each photo (`products.image_meta`), in the
+   * same order as `imageUrls`. Missing or null = not measured: show the whole photo.
+   */
+  imageMeta?: (PhotoMeta | null)[];
+}
+
+/**
+ * One measured product photo. Only read, never changes the photo: the app uses it to
+ * draw cut-out furniture larger inside its card without cutting any of it off.
+ */
+export interface PhotoMeta {
+  /** The photo link this was measured from (ignored if the product's link has changed). */
+  url: string;
+  /** Photo width ÷ height. */
+  ratio: number;
+  /** Colour of the photo's plain edge, "#RRGGBB" (fills the card so the edges disappear). */
+  bg: string;
+  /** "cutout": furniture on a plain light background. "scene": anything else, e.g. a room photo. */
+  kind: 'cutout' | 'scene';
+  /** Cut-outs only, when it's safe to use: where the furniture sits, as fractions of the photo [x, y, w, h]. */
+  box?: [number, number, number, number];
+  /** Why a cut-out has no box ("touches-edge", "too-small", "no-gain"). */
+  note?: string;
 }
 
 export type SwipeDirection = 'keep' | 'skip';

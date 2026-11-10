@@ -28,11 +28,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # The import code has no dependencies; only the TypeScript runner is needed.
+      # The import code has no dependencies; only the TypeScript runner is needed, plus the
+      # image tool for measuring product photos. It goes in a temporary folder, not the app.
+      - name: Install photo measuring tool
+        run: npm install --prefix "$RUNNER_TEMP/imgtool" --no-audit --no-fund --no-save sharp@0.35.5
       - name: Run import
         run: npx --yes tsx@4.23.15 scripts/run-imports.ts "$SOURCE"
         env:
           SOURCE: ${{ inputs.source }}
+          SHARP_DIR: ${{ runner.temp }}/imgtool
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           AWIN_GOOGLE_FEED_URL: ${{ secrets.AWIN_GOOGLE_FEED_URL }}

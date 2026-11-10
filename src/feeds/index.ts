@@ -5,3 +5,4 @@ export { classifyType, readColour, readMaterial, readStyles, roomOf } from './cl
 export { importFeed, checkHealth, stableId, type ImportOptions, type ImportSource } from './importFeed';
 export { cleanText, splitVariantName, sizeArea } from './text';
 export { googleRowToItem, isGoogleRow, parseGooglePrice, splitShopifyTitle, stripCss } from './google';
+export { measurePhoto, type MeasuredPhoto } from './photoMeta';

@@ -12,6 +12,7 @@ import {
 import {
   categoryFromRow,
   PRODUCT_COLUMNS,
+  PRODUCT_COLUMNS_WITH_META,
   productFromRow,
   retailerFromRow,
   subcategoryFromRow,
@@ -36,7 +37,26 @@ const TTL = 5 * 60_000;
 export class SupabaseProductRepository implements ProductRepository {
   private cache = new Map<string, { at: number; value: Promise<unknown> }>();
 
+  /** False once the database says it has no image_meta column (migration not run yet). */
+  private photoMeta = true;
+
   constructor(private readonly db: SupabaseClient) {}
+
+  /**
+   * Runs a products query with the photo measurements, or without them on a database
+   * that doesn't have that column yet, so the app keeps working either way.
+   */
+  private async products<T>(
+    build: (columns: string) => PromiseLike<{ data: T | null; error: { code?: string; message: string } | null }>,
+  ): Promise<T | null> {
+    const { data, error } = await build(this.photoMeta ? PRODUCT_COLUMNS_WITH_META : PRODUCT_COLUMNS);
+    if (error?.code === '42703' && this.photoMeta) {
+      this.photoMeta = false;
+      return this.products(build);
+    }
+    if (error) throw new Error(error.message);
+    return data;
+  }
 
   private cached<T>(key: string, load: () => Promise<T>): Promise<T> {
     const hit = this.cache.get(key);
@@ -102,48 +122,48 @@ export class SupabaseProductRepository implements ProductRepository {
   > {
     // Discontinued products (a feed stopped listing them) never appear in decks or search.
     // Saved ones still open by id (getProduct/getProducts), so Kept and lists don't lose them.
-    let q = this.db.from('products').select(PRODUCT_COLUMNS).eq('is_active', true);
-    if (categoryId) q = q.eq('category_id', categoryId);
-    if (subcategoryId) q = q.eq('subcategory_id', subcategoryId);
-    if (filters?.categoryIds.length) q = q.in('category_id', filters.categoryIds);
-    if (filters?.subcategoryIds.length) q = q.in('subcategory_id', filters.subcategoryIds);
-    if (filters?.retailerIds.length) q = q.in('retailer_id', filters.retailerIds);
-    if (filters?.minPriceCents != null) q = q.gte('price_cents', filters.minPriceCents);
-    if (filters?.maxPriceCents != null) q = q.lte('price_cents', filters.maxPriceCents);
-    // Every word must match somewhere (title, brand, material or color).
-    for (const raw of (search ?? '').split(/\s+/)) {
-      const t = safeTerm(raw);
-      if (!t) continue;
-      q = q.or(
-        `title.ilike.*${t}*,brand.ilike.*${t}*,material.ilike.*${t}*,color.ilike.*${t}*,style_tags.cs.{${t.toLowerCase()}}`,
-      );
-    }
-    q = q.order('id');
-    // Leave out swiped items here rather than in the URL, so long swipe histories stay fast.
     const want = limit ?? 1000;
-    q = q.limit(excludeIds?.size ? Math.min(1000, want + excludeIds.size) : want);
-    const { data, error } = await q;
-    if (error) throw new Error(error.message);
-    return ((data ?? []) as ProductRow[])
+    const data = await this.products((columns) => {
+      let q = this.db.from('products').select(columns).eq('is_active', true);
+      if (categoryId) q = q.eq('category_id', categoryId);
+      if (subcategoryId) q = q.eq('subcategory_id', subcategoryId);
+      if (filters?.categoryIds.length) q = q.in('category_id', filters.categoryIds);
+      if (filters?.subcategoryIds.length) q = q.in('subcategory_id', filters.subcategoryIds);
+      if (filters?.retailerIds.length) q = q.in('retailer_id', filters.retailerIds);
+      if (filters?.minPriceCents != null) q = q.gte('price_cents', filters.minPriceCents);
+      if (filters?.maxPriceCents != null) q = q.lte('price_cents', filters.maxPriceCents);
+      // Every word must match somewhere (title, brand, material or color).
+      for (const raw of (search ?? '').split(/\s+/)) {
+        const t = safeTerm(raw);
+        if (!t) continue;
+        q = q.or(
+          `title.ilike.*${t}*,brand.ilike.*${t}*,material.ilike.*${t}*,color.ilike.*${t}*,style_tags.cs.{${t.toLowerCase()}}`,
+        );
+      }
+      q = q.order('id');
+      // Leave out swiped items here rather than in the URL, so long swipe histories stay fast.
+      return q.limit(excludeIds?.size ? Math.min(1000, want + excludeIds.size) : want);
+    });
+    return ((data ?? []) as unknown as ProductRow[])
       .map(productFromRow)
       .filter((p) => !excludeIds?.has(p.id) && (!filters || matchesFilters(p, filters)))
       .slice(0, want);
   }
 
   async getProduct(id: string): Promise<Product | null> {
-    const { data, error } = await this.db.from('products').select(PRODUCT_COLUMNS).eq('id', id).maybeSingle();
-    if (error) throw new Error(error.message);
-    return data ? productFromRow(data as ProductRow) : null;
+    const data = await this.products((columns) => this.db.from('products').select(columns).eq('id', id).maybeSingle());
+    return data ? productFromRow(data as unknown as ProductRow) : null;
   }
 
   async getProducts(ids: readonly string[]): Promise<Product[]> {
     if (ids.length === 0) return [];
-    const { data, error } = await this.db
-      .from('products')
-      .select(PRODUCT_COLUMNS)
-      .in('id', [...ids]);
-    if (error) throw new Error(error.message);
-    const byId = new Map(((data ?? []) as ProductRow[]).map((r) => [r.id, productFromRow(r)]));
+    const data = await this.products((columns) =>
+      this.db
+        .from('products')
+        .select(columns)
+        .in('id', [...ids]),
+    );
+    const byId = new Map(((data ?? []) as unknown as ProductRow[]).map((r) => [r.id, productFromRow(r)]));
     return ids.map((id) => byId.get(id)).filter((p): p is Product => p !== undefined);
   }
 
