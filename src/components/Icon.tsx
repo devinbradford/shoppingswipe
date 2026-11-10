@@ -34,6 +34,8 @@ const ICONS = {
   sort: { ios: 'arrow.up.arrow.down', android: 'swap_vert' },
   trash: { ios: 'trash', android: 'delete' },
   list: { ios: 'rectangle.stack', android: 'collections_bookmark' },
+  photos: { ios: 'photo.on.rectangle', android: 'photo_library' },
+  swipe: { ios: 'hand.draw', android: 'swipe' },
 } satisfies Record<string, { ios: SFSymbol; android: AndroidSymbol }>;
 
 export type IconName = keyof typeof ICONS;

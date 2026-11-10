@@ -111,7 +111,7 @@ export default function TasteRevealScreen() {
       </ScrollView>
 
       <View style={styles.actions}>
-        <Button label="Keep going" size="lg" onPress={next} style={styles.primary} />
+        <Button label={redo ? 'Done' : 'Find my furniture'} size="lg" onPress={next} style={styles.primary} />
         <Pressable
           onPress={again}
           accessibilityRole="button"

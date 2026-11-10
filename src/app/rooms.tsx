@@ -14,7 +14,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { colors, hitTarget, radii, space } from '@/theme/tokens';
 
 /**
- * First launch, screen 2: "Could you see yourself here?" Eight rooms, Love it or
+ * First launch, screen 3: "Is this your kind of space?" Eight rooms, Love it or
  * Not for me. Answers are saved as they happen, so leaving and coming back resumes.
  * With `?redo=1` (Profile) it starts fresh and returns to Profile at the end.
  */
@@ -95,7 +95,7 @@ export default function RoomsScreen() {
       </View>
 
       <AppText variant="title" color={colors.onPhoto} accessibilityRole="header" style={styles.question}>
-        Could you see yourself here?
+        Is this your kind of space?
       </AppText>
 
       <View style={styles.stage}>
@@ -122,6 +122,10 @@ export default function RoomsScreen() {
               That was {lastStyle.label.toLowerCase()}
             </AppText>
           </Animated.View>
+        ) : done === 0 ? (
+          <AppText variant="bodySmall" color={colors.onPhotoMuted}>
+            Swipe right if you love it, left if it&apos;s not you
+          </AppText>
         ) : null}
       </View>
 

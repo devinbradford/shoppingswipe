@@ -26,7 +26,7 @@ export default function WelcomeScreen() {
 
   const discover = () => {
     markIntroSeen();
-    router.replace('/rooms');
+    router.replace('/taste-intro');
   };
   const skip = () => {
     markIntroSeen();
