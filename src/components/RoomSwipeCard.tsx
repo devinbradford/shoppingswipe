@@ -103,7 +103,10 @@ export function RoomSwipeCard({ image, alt, onAnswer, registerApi, reduceMotion,
   return (
     <GestureDetector gesture={pan}>
       <Animated.View style={[styles.card, cardStyle]} accessible accessibilityRole="image" accessibilityLabel={alt}>
-        <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
+        {/* The photo never takes the touch itself (on the web a browser would start dragging the image). */}
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
+        </View>
         <Animated.View style={[styles.edge, loveStyle]} pointerEvents="none" />
         <Animated.View style={[styles.tag, styles.loveTag, loveStyle]} pointerEvents="none">
           <AppText variant="label" color={colors.onInk}>
