@@ -48,7 +48,7 @@ export function useWeekly(): Weekly {
   const weekly = useRetentionStore((s) => s.weekly);
   const setWeekly = useRetentionStore((s) => s.setWeekly);
   const swipes = useSwipeStore((s) => s.swipes);
-  const seeded = usePreferencesStore((s) => s.stylePicks.length >= 3);
+  const seeded = usePreferencesStore((s) => s.stylePicks.length >= 3 || s.roomAnswers.length >= 4);
   const ready = swipes.length >= WEEKLY_AFTER_SWIPES || seeded;
   const [now] = useState(() => Date.now());
   const key = weekKey(now);

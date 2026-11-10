@@ -16,17 +16,9 @@ import {
   nearestIndex,
   NO_LIMIT,
   parseDollars,
-  type RoomChoice,
 } from '@/domain/budget';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { colors, fonts, radii, space, type as typeScale } from '@/theme/tokens';
-
-const ROOM_LABEL: Record<RoomChoice, string> = {
-  'living-room': 'Living room',
-  bedroom: 'Bedroom',
-  'kitchen-dining': 'Kitchen & dining',
-  browsing: 'Just browsing',
-};
 
 /**
  * Onboarding: "What do you usually spend on a sofa?" A soft limit, never a filter.
@@ -84,9 +76,8 @@ export default function BudgetScreen() {
       router.back();
       return;
     }
-    const tags = [room ? ROOM_LABEL[room] : null, answer ? shown : null].filter(Boolean).join('|');
     // For you opens on the room they picked.
-    router.replace({ pathname: '/building', params: { next: '/', tags } });
+    router.replace('/');
   };
 
   return (

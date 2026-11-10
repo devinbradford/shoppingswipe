@@ -41,7 +41,11 @@ export default function AccountScreen() {
             </View>
 
             <View style={styles.panel} accessibilityLiveRegion="polite">
-              <Icon name={a.offline ? 'cloudOff' : 'cloud'} size={20} color={a.offline ? colors.danger : colors.accent} />
+              <Icon
+                name={a.offline ? 'cloudOff' : 'cloud'}
+                size={20}
+                color={a.offline ? colors.danger : colors.accent}
+              />
               <View style={styles.panelText}>
                 <AppText variant="label">
                   {a.offline

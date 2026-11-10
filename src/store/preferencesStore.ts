@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { BudgetAnswer, RoomChoice } from '@/domain/budget';
+import type { RoomAnswer } from '@/recommendation/rooms';
 import { recordOps } from '@/sync/record';
 
 interface PreferencesState {
@@ -28,6 +29,13 @@ interface PreferencesState {
   /** The one-time "press and hold a piece" tip on Kept was used or dismissed. */
   holdTipSeen: boolean;
   markHoldTipSeen: () => void;
+  /** Love / Not for me answers to the onboarding rooms, in order. On this phone only for now. */
+  roomAnswers: RoomAnswer[];
+  answerRoom: (answer: RoomAnswer) => void;
+  /** Takes back the last room answer. */
+  undoRoomAnswer: () => void;
+  /** Clears the room answers (Profile → Redo the rooms). */
+  clearRoomAnswers: () => void;
   setStylePicks: (styles: string[]) => void;
   skipOnboarding: () => void;
   resetAll: () => void;
@@ -50,6 +58,11 @@ export const usePreferencesStore = create<PreferencesState>()(
       markTasteRevealSeen: () => set({ tasteRevealSeen: true }),
       holdTipSeen: false,
       markHoldTipSeen: () => set({ holdTipSeen: true }),
+      roomAnswers: [],
+      answerRoom: (answer) =>
+        set({ roomAnswers: [...get().roomAnswers.filter((a) => a.roomId !== answer.roomId), answer] }),
+      undoRoomAnswer: () => set({ roomAnswers: get().roomAnswers.slice(0, -1) }),
+      clearRoomAnswers: () => set({ roomAnswers: [] }),
       setStylePicks: (stylePicks) => {
         set({ stylePicks, onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks, onboarded: true } }]);
@@ -58,13 +71,15 @@ export const usePreferencesStore = create<PreferencesState>()(
         set({ onboarded: true });
         recordOps([{ type: 'profile.set', profile: { stylePicks: get().stylePicks, onboarded: true } }]);
       },
-      resetAll: () => set({ stylePicks: [], onboarded: false, room: null, budget: null, tasteRevealSeen: false }),
+      resetAll: () =>
+        set({ stylePicks: [], roomAnswers: [], onboarded: false, room: null, budget: null, tasteRevealSeen: false }),
     }),
     {
       name: 'swipeshop.preferences.v1',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s) => ({
         stylePicks: s.stylePicks,
+        roomAnswers: s.roomAnswers,
         onboarded: s.onboarded,
         introSeen: s.introSeen,
         room: s.room,

@@ -19,6 +19,7 @@
  *    feature; "no, just these" stops skips counting against it; "what put you
  *    off?" pins a skip on one aspect instead of blaming everything.
  */
+import type { SeedFeature } from './rooms';
 import type { Product, SwipeEvent } from '../domain/types';
 import { productFeatures, type FeatureKind, type PriceBands } from './engine';
 import {
@@ -128,6 +129,8 @@ export interface TasteInput {
   signals?: readonly EngagementSignal[];
   feedback?: readonly Feedback[];
   seedStyles?: readonly string[];
+  /** Starting guesses from the onboarding rooms (`roomSeeds`): capped, and they fade like style picks. */
+  seedFeatures?: readonly SeedFeature[];
   /** Budget from onboarding: a price cap for one product type, scaled to the others. */
   statedBudget?: { subcategoryId: Product['subcategoryId']; maxCents: number } | null;
   options?: ModelOptions;
@@ -339,7 +342,15 @@ export function buildTasteModel(input: TasteInput): TasteModel {
     add(long, key, options.seedWeight * seedDecay);
   }
 
+  // Onboarding rooms: weighted starting guesses about styles, colours and materials.
+  const seedFeatures = resets.length > 0 ? [] : (input.seedFeatures ?? []).filter((f) => !forgotAt.has(f.key));
+  for (const f of seedFeatures) {
+    labels[f.key] ??= f.key.slice(f.key.indexOf(':') + 1);
+    add(long, f.key, f.evidence * seedDecay);
+  }
+
   const priorMean: Record<string, number> = {};
+  for (const f of seedFeatures) priorMean[f.key] = f.mean * seedDecay;
   for (const style of seeds) priorMean[`style:${style}`] = options.seedPrior * seedDecay;
   for (const key of muted) priorMean[key] = options.mutedPrior;
   for (const key of boosted) priorMean[key] = options.boostPrior;
@@ -370,7 +381,9 @@ export function buildTasteModel(input: TasteInput): TasteModel {
     keepCount,
     swipeCount: swipeTimes.length,
     positiveCount,
-    seeded: seeds.length >= options.coldStartKeeps,
+    seeded:
+      seeds.length >= options.coldStartKeeps ||
+      seedFeatures.filter((f) => f.evidence > 0).length >= options.coldStartKeeps,
     labels,
     options,
   };

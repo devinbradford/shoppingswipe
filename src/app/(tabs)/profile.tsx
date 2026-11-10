@@ -36,6 +36,7 @@ const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const picks = usePreferencesStore((s) => s.stylePicks);
+  const clearRoomAnswers = usePreferencesStore((s) => s.clearRoomAnswers);
   const room = usePreferencesStore((s) => s.room);
   const budget = usePreferencesStore((s) => s.budget);
   const auth = useAuthStore();
@@ -66,10 +67,13 @@ export default function ProfileScreen() {
           />
           <ProfileRow
             icon="heart"
-            title="Starting styles"
-            detail={picks.length > 0 ? picks.map(titleCase).join(' · ') : 'None picked yet'}
-            onPress={() => router.push('/welcome')}
-            hint="Change the styles your feed starts from"
+            title="Your rooms"
+            detail={picks.length > 0 ? picks.map(titleCase).join(' · ') : 'Not swiped yet'}
+            onPress={() => {
+              clearRoomAnswers();
+              router.push({ pathname: '/rooms', params: { redo: '1' } });
+            }}
+            hint="Swipe the eight rooms again to reset where your feed starts"
           />
           <ProfileRow
             icon="grid"

@@ -51,9 +51,9 @@ supabase/migrations/  SQL schema + row-level security.
 4. **Secrets:** only `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` may be in the app. Service-role keys and retailer/affiliate credentials go in Edge Function secrets only. Never commit `.env`.
 5. **Sample data stays obviously fake:** fictional retailers, `*.example.com` URLs. Never imitate a real store.
 
-## Design direction ("D · Mix", chosen by Devin)
+## Design direction ("The Pick", Forest & Butter; chosen by Devin, Nov 2026, replaces "D · Mix")
 
-Warm espresso dark (`#12110F`) with off-white text (`#F3F2EF`) and one champagne accent (`#D8C29D`) for Keep and selection; rose (`#E0A39A`) for Skip and errors. Instrument Serif for names, prices and headings; Geist for everything else, with small spaced capitals for labels (FURNITURE · 18 LEFT). The swipe card is a full-screen photo with frosted-glass controls floating over it and a "For you" bubble explaining the pick. Kept and lists are mood boards (two columns, varying heights). Sentence-case copy; buttons say exactly what they do ("Keep", "Buy now"). All values live in `src/theme/tokens.ts`.
+Cream pages (`#FBF7EC`), deep green-black text (`#1C2A22`), forest green (`#23412F`) for main buttons and the accent on text, icons and selected borders; butter (`#EBCB6B`) ONLY for picked / loved moments, always with dark text on it; slate (`#5D6A61`) for skip/pass (never red); a separate danger red (`#A8432F`) for errors and destructive actions. Full-screen photos sit on a dark "stage" (`#1C2A22`). Product cut-outs sit on clean white cards with a hairline border. Instrument Serif for names, prices and headings; DM Sans for everything else, with small spaced capitals for labels. No gradients, glows or sparkle icons; product photos are always the most colourful thing on screen. Symbol "the pick": two outlined cards + a tilted butter card (`BrandMark`). Sentence-case copy; buttons say exactly what they do. All values live in `src/theme/tokens.ts` (roles: action/onAction, accent, keep/onInk, skip, danger, card, stage, onPhoto/onPhotoMuted). Design board (claude.ai): https://claude.ai/artifact/FWVTNZhTpMd5SXQ7Wntk2m; proposal doc: https://claude.ai/artifact/PY7VUwXkmXmiSZhmvazjzh
 
 ## Current state: Phase 3 code is done; waiting on Devin's Supabase/Google/Apple setup and a two-phone test
 
@@ -99,12 +99,16 @@ Recommender v2 (personalization upgrade):
 - Simulated-shopper benchmark: `npm run engine-report` (v1 vs v2). v1 (`engine.ts`) is kept as the baseline and for the sync tests
 - Checks passing: typecheck, lint, 125 unit tests
 
-Onboarding (premium first launch):
-- `/intro`: 3 animated slides, auto-advance, Skip; shown once per phone (`introSeen`)
-- `/welcome`: 3x3 photo style picker (`assets/styles`, `src/data/stylePhotos.ts`), extra styles as chips
-- `/setup/room` then `/setup/budget`: room choice and a stepped price slider for that room's key piece (`src/domain/budget.ts`); budget seeds the engine's price ceiling (`statedBudget`), then real behavior takes over. Room and budget are on-device only for now
-- `/building`: 1.7 s "Building your feed" moment, then straight into the chosen room's deck
-- No permission prompts during onboarding
+Onboarding (rebuilt Nov 2026, Devin's choices: welcome "2a", Forest & Butter, budget out of onboarding):
+- `/intro` = Welcome: still, editorial ("Find your kind of beautiful."), style-name cards with a butter "Yours · Still to be found", trust line, Discover my style / Skip (skip → straight to For you, unpersonalized)
+- `/rooms`: "Could you see yourself here?" 8 rooms on a dark stage, swipe or Not for me / Undo / Love it (`RoomSwipeCard`, same physics as product cards), progress ticks, style name shown after each answer, Skip after 4 (fewer than 4 answers → no reveal). Answers saved as they happen (`roomAnswers` in preferencesStore, on-device for now) so it resumes
+- Rooms are STAND-INS: the 8 original AI style photos (`assets/styles`, "minimal" dropped) with hand-written attributes in `src/data/rooms.ts`. Devin is sourcing 8 licensed photos: swap image + attributes + raise `version`
+- Scoring `src/recommendation/rooms.ts` (pure, tested): Love +weight, Pass −0.5×weight; seeds the model (`seedFeatures` in `buildTasteModel`) as capped (±0.8 lean, ≤1.5 keeps of evidence), fading starting guesses for style/colour/material; wood tone and shape are reveal-only (products don't carry them yet). Loved rooms' styles also saved as `stylePicks` (so they sync)
+- Simulated shoppers: first-20-card keep rate 55% with rooms vs 41% without (test guards rooms > none)
+- `/taste-reveal`: "Your taste is taking shape." loved rooms + up to 3 traits (one per kind, each needs 2 loved rooms agreeing) + at most one "Less your thing"; honest copy; Keep going / Redo
+- `/setup/room` = "What are you shopping for right now?" (last question) → For you. Budget no longer asked in onboarding (Profile → Budget; the engine learns price anyway). `/building` and the old 3×3 style picker are gone
+- Profile → "Your rooms" re-runs the rooms (`/rooms?redo=1`)
+- Checks passing: typecheck, lint, 216 unit tests
 
 Navigation (custom CureAvo tab bar, `src/components/TabBar.tsx`):
 - Tabs in `src/app/(tabs)/`: For you (`index`) · Discover · Kept · Profile. Each tab keeps its place; haptic on switch

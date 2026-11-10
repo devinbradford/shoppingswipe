@@ -40,7 +40,7 @@ export function WelcomeBackCard({
           <AppText variant="heading" color={colors.onPhoto} numberOfLines={1}>
             Welcome back
           </AppText>
-          <AppText variant="caption" color={colors.accentText} numberOfLines={2}>
+          <AppText variant="caption" color={colors.keep} numberOfLines={2}>
             {subtitle}
           </AppText>
         </View>

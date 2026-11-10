@@ -1,5 +1,6 @@
 import type { Product } from '@/domain/types';
-import { buildTasteModel, type PriceBands, type TasteModel } from '@/recommendation';
+import { ROOMS } from '@/data/rooms';
+import { buildTasteModel, roomSeeds, type PriceBands, type TasteModel } from '@/recommendation';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSignalStore } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
@@ -14,7 +15,9 @@ export function currentTasteModel(known: ReadonlyMap<string, Product>, bands: Pr
     bands,
     signals,
     feedback,
-    seedStyles: prefs.stylePicks,
+    // Room answers replace the older style picks as the starting point when there are any.
+    seedStyles: prefs.roomAnswers.length ? [] : prefs.stylePicks,
+    seedFeatures: roomSeeds(prefs.roomAnswers, ROOMS),
     statedBudget: prefs.budget,
   });
 }

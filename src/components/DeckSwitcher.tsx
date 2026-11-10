@@ -74,7 +74,7 @@ export function DeckSwitcher({
           <AppText variant="eyebrow" color={colors.onPhoto}>
             {title}
           </AppText>
-          <AppText variant="eyebrow" color={colors.accentText}>
+          <AppText variant="eyebrow" color={colors.keep}>
             {`· ${current.toUpperCase()}`}
           </AppText>
           <Icon name="chevronDown" size={12} color={colors.onPhoto} />

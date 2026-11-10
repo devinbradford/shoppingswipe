@@ -44,7 +44,7 @@ export default function ForYouScreen() {
 
   // First launch: send new shoppers through onboarding.
   if (!hydrated) return <View style={styles.screen} />;
-  if (!onboarded && !hasSwipes) return <Redirect href={introSeen ? '/welcome' : '/intro'} />;
+  if (!onboarded && !hasSwipes) return <Redirect href={introSeen ? '/rooms' : '/intro'} />;
 
   // Starts on the room they're shopping for; changing it in Profile starts afresh.
   return <ForYou key={savedRoom ?? 'all'} initialRoom={toRoom(savedRoom)} />;

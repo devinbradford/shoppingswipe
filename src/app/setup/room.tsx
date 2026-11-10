@@ -48,7 +48,8 @@ export default function RoomScreen() {
     if (room) Haptics.selectionAsync().catch(() => {});
     setRoom(room);
     if (editing) router.back();
-    else router.push('/setup/budget');
+    // Budget is asked later, once they've seen real prices (Profile → Budget).
+    else router.replace('/');
   };
 
   return (
@@ -60,10 +61,12 @@ export default function RoomScreen() {
         ]}
         bounces={false}
         onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
-        <GlassIconButton icon="back" label="Back" onPress={() => router.back()} />
+        {editing || router.canGoBack() ? (
+          <GlassIconButton icon="back" label="Back" onPress={() => router.back()} />
+        ) : null}
         <View style={styles.header}>
           <AppText variant="eyebrow" color={colors.inkMuted}>
-            {editing ? 'SHOPPING FOR' : 'STEP 2 OF 3'}
+            {editing ? 'SHOPPING FOR' : 'LAST QUESTION'}
           </AppText>
           <AppText variant="hero" accessibilityRole="header">
             What are you shopping for{' '}
@@ -106,7 +109,7 @@ export default function RoomScreen() {
                 <AppText variant="heading" color={colors.onPhoto}>
                   {r.label}
                 </AppText>
-                <AppText variant="caption" color={colors.inkMuted}>
+                <AppText variant="caption" color={colors.onPhotoMuted}>
                   {r.detail}
                 </AppText>
               </View>
