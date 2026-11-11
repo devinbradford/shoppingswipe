@@ -12,6 +12,7 @@ import { space } from '@/theme/tokens';
 import { GlassIconButton } from './Glass';
 import { KeepFlight } from './KeepFlight';
 import { LoadingView, StateView, type StateAction } from './StateView';
+import { deckLayout } from '@/lib/deckLayout';
 import { SwipeDeck, type SwipeDeckHandle } from './SwipeDeck';
 
 type Deck = ReturnType<typeof useDeck>;
@@ -47,7 +48,7 @@ export function DeckView({
 }: DeckViewProps) {
   const deckRef = useRef<SwipeDeckHandle>(null);
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { width, height, fontScale } = useWindowDimensions();
   const drag = useSharedValue(0);
   // What was swiped, newest last, so Undo can fly the right card back from the right side.
   const history = useRef<{ productId: string; direction: SwipeDirection }[]>([]);
@@ -79,9 +80,9 @@ export function DeckView({
 
   const isEmpty = deck.status === 'ready' && deck.cards.length === 0;
   const showDeck = deck.status === 'ready' && !isEmpty;
-  const actionsBottom = bottomInset + space.lg;
-  // Room the price block needs above the buttons (button + caption + spacing).
-  const infoBottom = actionsBottom + 66 + 22 + space.xxl;
+  // Photo, details and buttons: worked out from this screen, its safe areas and text size.
+  const layout = deckLayout({ height, pipsTop: insets.top + space.xs, bottomInset, fontScale });
+  const { actionsBottom } = layout;
 
   // The button you're dragging toward grows; the other one steps back.
   const keepButton = useAnimatedStyle(() => {
@@ -111,7 +112,7 @@ export function DeckView({
           reduceMotion={reduceMotion}
           drag={drag}
           pipsTop={insets.top + space.xs}
-          infoBottom={infoBottom}
+          layout={layout}
           hint={deck.coldStart ? 'Keep a few you like and the deck will learn' : null}
           onOpen={(p) => router.push({ pathname: '/product/[id]', params: { id: p.id } })}
           onPhotoBrowse={(p) => recordSignal(p.id, 'photo_browse')}

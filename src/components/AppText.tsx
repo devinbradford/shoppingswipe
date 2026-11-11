@@ -1,11 +1,12 @@
 import { Text, type TextProps } from 'react-native';
 
+import { CARD_TEXT_MAX_SCALE } from '@/lib/deckLayout';
 import { colors, type as typeScale } from '@/theme/tokens';
 
 type Variant = keyof typeof typeScale;
 
 /** The swipe card's name and price grow at most this much with the phone's text size. */
-export const CARD_TEXT_MAX_SCALE = 1.3;
+export { CARD_TEXT_MAX_SCALE };
 
 interface AppTextProps extends TextProps {
   variant?: Variant;

@@ -19,7 +19,8 @@ import { scheduleOnRN } from 'react-native-worklets';
 import type { SwipeDirection } from '@/domain/types';
 import { formatPrice } from '@/lib/format';
 import { colors, motion, radii, space, type as typeScale } from '@/theme/tokens';
-import { AppText, CARD_TEXT_MAX_SCALE } from './AppText';
+import type { DeckLayout } from '@/lib/deckLayout';
+import { AppText } from './AppText';
 import { Icon } from './Icon';
 import { metaFor } from '@/lib/photoLayout';
 import { ProductImage } from './ProductImage';
@@ -47,8 +48,8 @@ interface SwipeCardProps {
   reduceMotion?: boolean;
   /** Distance from the card's top to the photo progress lines (clears the status bar). */
   pipsTop?: number;
-  /** Distance from the card's bottom to the price block (clears the buttons). */
-  infoBottom?: number;
+  /** Where the photo, details and buttons sit (from `deckLayout`, same for every card). */
+  layout: DeckLayout;
   /** Shown in the "For you" bubble's place when there is no reason yet. */
   hint?: string | null;
   /** Called when the shopper flips to another photo. */
@@ -56,10 +57,6 @@ interface SwipeCardProps {
 }
 
 const SPRING = { damping: 18, stiffness: 220, mass: 0.9 };
-/** Room the "For you" bubble, price, name and store line take up above `infoBottom`. */
-const INFO_BLOCK_HEIGHT = 190;
-/** Space between the photo progress lines and the top of the photo card. */
-const PHOTO_TOP = 64;
 
 export function SwipeCard({
   card,
@@ -73,13 +70,11 @@ export function SwipeCard({
   registerApi,
   reduceMotion = false,
   pipsTop = space.md,
-  infoBottom = space.xl,
+  layout,
   hint = null,
   onPhotoBrowse,
 }: SwipeCardProps) {
-  const { width: screenWidth, fontScale } = useWindowDimensions();
-  // The name's reserved height follows the phone's text size (up to the same cap as the text).
-  const titleScale = Math.min(Math.max(fontScale || 1, 1), CARD_TEXT_MAX_SCALE);
+  const { width: screenWidth } = useWindowDimensions();
   const threshold = screenWidth * motion.swipeThreshold;
   const flyDistance = screenWidth * 1.4;
   const flyMs = reduceMotion ? 90 : motion.flyOutMs;
@@ -315,8 +310,8 @@ export function SwipeCard({
             meta={metaFor(photos, product.imageMeta, photo)}
             // Keep the whole product between the top controls and the price block.
             insets={{
-              top: pipsTop + PHOTO_TOP,
-              bottom: infoBottom + INFO_BLOCK_HEIGHT,
+              top: layout.photoTop,
+              bottom: layout.photoBottom,
               left: space.lg,
               right: space.lg,
             }}
@@ -327,7 +322,7 @@ export function SwipeCard({
         {/* Ends where the photo card begins, so the card stays clean. */}
         <LinearGradient
           colors={[colors.scrimMid, colors.scrimLight]}
-          style={[styles.topScrim, { height: pipsTop + PHOTO_TOP }]}
+          style={[styles.topScrim, { height: layout.photoTop }]}
           pointerEvents="none"
         />
         {photos.length > 1 ? (
@@ -342,10 +337,10 @@ export function SwipeCard({
           colors={[colors.scrimLight, colors.scrimMid, colors.scrim, colors.background]}
           locations={[0, 0.35, 0.72, 1]}
           // Starts below the photo card: only the text area gets the fade.
-          style={[styles.scrim, { height: infoBottom + INFO_BLOCK_HEIGHT }]}
+          style={[styles.scrim, { height: layout.photoBottom }]}
           pointerEvents="none"
         />
-        <View style={[styles.info, { bottom: infoBottom }]} pointerEvents="none">
+        <View style={[styles.info, { bottom: layout.infoBottom }]} pointerEvents="none">
           {forYou || hint ? (
             <View style={styles.forYou}>
               <View style={styles.dot} />
@@ -364,7 +359,7 @@ export function SwipeCard({
             </View>
           ) : null}
           {/* The name always gets room for two lines, so the price row never moves. */}
-          <View style={[styles.titleBox, { minHeight: typeScale.cardTitle.lineHeight * 2 * titleScale }]}>
+          <View style={[styles.titleBox, { minHeight: typeScale.cardTitle.lineHeight * 2 * layout.titleScale }]}>
             <AppText variant="cardTitle" color={colors.onPhoto} numberOfLines={2} ellipsizeMode="tail">
               {product.title}
             </AppText>

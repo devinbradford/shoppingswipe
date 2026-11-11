@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 import type { Product, SwipeDirection } from '@/domain/types';
+import type { DeckLayout } from '@/lib/deckLayout';
 import { SwipeCard, type SwipeCardApi } from './SwipeCard';
 
 /** What the deck needs per card. Matches `DeckCard` from `useDeck`. */
@@ -29,7 +30,8 @@ interface SwipeDeckProps {
   reduceMotion?: boolean;
   /** Layout around the full-screen card: where the photo lines and price sit. */
   pipsTop?: number;
-  infoBottom?: number;
+  /** Where the photo, details and buttons sit (from `deckLayout`). */
+  layout: DeckLayout;
   /** Shown in the "For you" spot while the deck is still learning. */
   hint?: string | null;
   /** Written while dragging: -1 (Skip) → 1 (Keep). */
@@ -46,7 +48,7 @@ export function SwipeDeck({
   onPhotoBrowse,
   reduceMotion,
   pipsTop,
-  infoBottom,
+  layout,
   hint,
   drag,
   ref,
@@ -97,7 +99,7 @@ export function SwipeDeck({
             onSwiped={onSwipe}
             reduceMotion={reduceMotion}
             pipsTop={pipsTop}
-            infoBottom={infoBottom}
+            layout={layout}
             hint={hint}
             onOpen={() => onOpen(card.product)}
             onPhotoBrowse={onPhotoBrowse ? () => onPhotoBrowse(card.product) : undefined}
