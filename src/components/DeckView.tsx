@@ -9,10 +9,10 @@ import type { useDeck } from '@/hooks/useDeck';
 import { formatPrice } from '@/lib/format';
 import { recordSignal } from '@/store/signalStore';
 import { space } from '@/theme/tokens';
-import { GlassIconButton } from './Glass';
 import { KeepFlight } from './KeepFlight';
 import { LoadingView, StateView, type StateAction } from './StateView';
-import { deckLayout } from '@/lib/deckLayout';
+import { ACTION_BUTTON, deckLayout } from '@/lib/deckLayout';
+import { DeckActionButton } from './DeckActionButton';
 import { SwipeDeck, type SwipeDeckHandle } from './SwipeDeck';
 
 type Deck = ReturnType<typeof useDeck>;
@@ -137,32 +137,36 @@ export function DeckView({
       {showDeck ? (
         <View style={[styles.actions, { bottom: actionsBottom }]} pointerEvents="box-none">
           <Animated.View style={skipButton}>
-            <GlassIconButton
+            <DeckActionButton
+              kind="skip"
               icon="close"
               label="Skip"
               caption="SKIP"
-              size={66}
-              tone="strong"
+              size={ACTION_BUTTON}
+              reduceMotion={reduceMotion}
               onPress={() => deckRef.current?.swipe('skip')}
             />
           </Animated.View>
           <Animated.View style={[styles.undo, undoButton]}>
-            <GlassIconButton
+            <DeckActionButton
+              kind="undo"
               icon="undo"
               label="Undo last swipe"
               caption="UNDO"
+              size={UNDO_BUTTON}
+              reduceMotion={reduceMotion}
               onPress={onUndo}
               disabled={!deck.canUndo}
-              size={46}
             />
           </Animated.View>
           <Animated.View style={keepButton}>
-            <GlassIconButton
+            <DeckActionButton
+              kind="keep"
               icon="keep"
               label="Keep"
               caption="KEEP"
-              size={66}
-              tone="accent"
+              size={ACTION_BUTTON}
+              reduceMotion={reduceMotion}
               onPress={() => deckRef.current?.swipe('keep')}
             />
           </Animated.View>
@@ -177,6 +181,9 @@ export function DeckView({
     </View>
   );
 }
+
+/** Undo stays the smaller, secondary button (size unchanged). */
+const UNDO_BUTTON = 46;
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },

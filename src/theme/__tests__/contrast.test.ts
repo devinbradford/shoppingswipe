@@ -42,3 +42,42 @@ describe('color contrast (WCAG AA)', () => {
     expect(contrast(colors.inkSubtle, colors.surface)).toBeGreaterThanOrEqual(3);
   });
 });
+
+/** A translucent colour ("rgba(r, g, b, a)") drawn over a solid hex background, as a hex colour. */
+function over(rgba: string, bg: string): string {
+  const [r, g, b, a] = rgba.match(/[\d.]+/g)!.map(Number);
+  const n = parseInt(bg.slice(1), 16);
+  const base = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  const mixed = [r, g, b].map((c, i) => Math.round(c * a + base[i] * (1 - a)));
+  return '#' + mixed.map((c) => c.toString(16).padStart(2, '0')).join('');
+}
+
+describe('swipe controls on the dark stage (Step 4)', () => {
+  const fill = over(colors.controlFill, colors.stage);
+
+  it('captions (SKIP / UNDO / KEEP) are readable text: at least 4.5:1', () => {
+    expect(contrast(over(colors.onPhotoMuted, colors.stage), colors.stage)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('Skip and Undo icons stand out on their fill: at least 4.5:1', () => {
+    expect(contrast(colors.onPhoto, fill)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('the Keep icon stands out on butter', () => {
+    expect(contrast(colors.onInk, colors.keep)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('button rings are visible against the stage: at least 3:1 (non-text UI)', () => {
+    expect(contrast(over(colors.controlRing, colors.stage), colors.stage)).toBeGreaterThanOrEqual(3);
+    expect(contrast(over(colors.controlRingSoft, colors.stage), colors.stage)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('unavailable Undo is still clearly visible (3:1), just quieter than available Undo', () => {
+    const off = over(colors.controlOff, colors.stage);
+    expect(contrast(off, colors.stage)).toBeGreaterThanOrEqual(3);
+    expect(contrast(off, colors.stage)).toBeLessThan(contrast(colors.onPhoto, fill));
+    expect(contrast(over(colors.controlRingOff, colors.stage), colors.stage)).toBeLessThan(
+      contrast(over(colors.controlRingSoft, colors.stage), colors.stage),
+    );
+  });
+});

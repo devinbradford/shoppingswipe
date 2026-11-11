@@ -5,6 +5,7 @@ import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 import type { Product, SwipeDirection } from '@/domain/types';
 import type { DeckLayout } from '@/lib/deckLayout';
+import { colors } from '@/theme/tokens';
 import { SwipeCard, type SwipeCardApi } from './SwipeCard';
 
 /** What the deck needs per card. Matches `DeckCard` from `useDeck`. */
@@ -118,5 +119,7 @@ export function SwipeDeck({
 }
 
 const styles = StyleSheet.create({
-  deck: { flex: 1 },
+  // Dark stage behind the cards, so the card underneath (drawn slightly smaller) never
+  // shows the page's cream colour at the edges while the top card is dragged.
+  deck: { flex: 1, backgroundColor: colors.stage },
 });

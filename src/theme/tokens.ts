@@ -68,6 +68,16 @@ export const colors = {
   shadow: '#1C2A22',
   /** Placeholder fill while photos load. */
   placeholder: '#EDE7D8',
+  /**
+   * Skip / Undo / Keep under the swipe card (Step 4, Option A). Over the dark stage:
+   * a faint cream fill and ring so Skip and Undo read as buttons; Keep stays solid butter.
+   * Captions use `onPhotoMuted`. "Off" = Undo when there's nothing to undo: outline only, softer icon.
+   */
+  controlFill: 'rgba(251, 247, 236, 0.1)',
+  controlRing: 'rgba(251, 247, 236, 0.6)',
+  controlRingSoft: 'rgba(251, 247, 236, 0.4)',
+  controlRingOff: 'rgba(251, 247, 236, 0.24)',
+  controlOff: 'rgba(251, 247, 236, 0.45)',
   /** Paper tints behind the line drawings on "What are you shopping for?" (one per room). */
   paperOat: '#EDE3D0',
   paperSage: '#DFE4DC',
