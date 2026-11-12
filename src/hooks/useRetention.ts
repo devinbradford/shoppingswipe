@@ -61,7 +61,8 @@ export function useWeekly(): Weekly {
     (async () => {
       const swipedIds = selectSwipedIds(useSwipeStore.getState());
       const [candidates, engaged, bands] = await Promise.all([
-        repo.listProducts({ excludeIds: swipedIds }),
+        // Drawn from the whole catalog, not just the first 1,000 by id.
+        repo.listCandidates({ excludeIds: swipedIds, seed: hashSeed(`weekly:${key}:candidates`) }).then((b) => b.products),
         repo.getProducts(engagedProductIds()),
         repo.getPriceBands(),
       ]);

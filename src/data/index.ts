@@ -4,7 +4,7 @@ import { LocalProductRepository } from './LocalProductRepository';
 import { SupabaseProductRepository } from './SupabaseProductRepository';
 import type { ProductRepository } from './ProductRepository';
 
-export type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
+export type { CandidateBatch, CandidateQuery, ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
 
 let instance: ProductRepository | null = null;
 

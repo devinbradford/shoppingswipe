@@ -16,6 +16,7 @@ import {
   type SessionSwipe,
   type TasteModel,
 } from '@/recommendation';
+import { deckStatusFor, shouldRefill, type RefillState } from '@/lib/candidatePool';
 import { shouldShowFirstActionHint } from '@/lib/firstActionHint';
 import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
@@ -91,6 +92,14 @@ export function useDeck(
   const [coldStart, setColdStart] = useState(true);
   const [history, setHistory] = useState<DeckCard[]>([]);
   const [attempt, setAttempt] = useState(0);
+  /** More eligible products exist than have been loaded into this deck so far. */
+  const [more, setMore] = useState(false);
+  /** The last request for more candidates failed (cleared by a full reload). */
+  const [refillFailed, setRefillFailed] = useState(false);
+  /** A request for more candidates is on its way. */
+  const refilling = useRef(false);
+  /** Bumped on every full load, so a refill that comes back after a room switch is ignored. */
+  const load = useRef(0);
 
   /** Every product we know about (candidates + previously swiped), for profile rebuilds. */
   const known = useRef(new Map<string, Product>());
@@ -116,15 +125,27 @@ export function useDeck(
       ...feedback.flatMap((f) => (f.kind === 'skip_reason' ? [f.productId] : [])),
     ]);
 
+    const thisLoad = ++load.current;
+    refilling.current = false;
+
     (async () => {
-      const [candidates, seenProducts, priceBands] = await Promise.all([
+      const [batch, seenProducts, priceBands] = await Promise.all([
         onlyKey !== null
-          ? repo.getProducts(onlyKey ? onlyKey.split(',') : []).then((ps) => ps.filter((p) => !swipedIds.has(p.id)))
-          : repo.listProducts({ categoryId, subcategoryId, excludeIds: swipedIds }),
+          ? repo
+              .getProducts(onlyKey ? onlyKey.split(',') : [])
+              .then((ps) => ({ products: ps.filter((p) => !swipedIds.has(p.id)), complete: true }))
+          : // A bounded batch drawn from every eligible product; more are fetched as the deck runs low.
+            repo.listCandidates({
+              categoryId,
+              subcategoryId,
+              excludeIds: swipedIds,
+              seed: hashSeed(`${deckKey}:${swipes.length}:candidates`),
+            }),
         repo.getProducts([...new Set([...swipedIds, ...engagedIds])]),
         repo.getPriceBands(),
       ]);
-      if (cancelled) return;
+      if (cancelled || thisLoad !== load.current) return;
+      const candidates = batch.products;
       for (const p of [...candidates, ...seenProducts]) known.current.set(p.id, p);
       bands.current = priceBands;
       const model = modelFor(known.current, priceBands);
@@ -136,6 +157,8 @@ export function useDeck(
       setCards(ranked.map(toCard(model, priceBands)));
       setColdStart(isColdStartModel(model));
       setHistory([]);
+      setMore(!batch.complete);
+      setRefillFailed(false);
       setStatus('ready');
     })().catch((e: unknown) => {
       if (cancelled) return;
@@ -182,6 +205,46 @@ export function useDeck(
     [cards, deckKey, recordSwipe],
   );
 
+  // Running low and more eligible products exist: fetch the next batch and add it behind the
+  // current cards (the next swipe re-ranks everything behind the two visible cards, as always).
+  useEffect(() => {
+    const refill: RefillState = refilling.current ? 'loading' : refillFailed ? 'failed' : 'idle';
+    if (!shouldRefill({ ready: status === 'ready', more, refill, cardsLeft: cards.length })) return;
+    const thisLoad = load.current;
+    refilling.current = true;
+    const { swipes } = useSwipeStore.getState();
+    const exclude = new Set([...selectSwipedIds({ swipes }), ...cards.map((c) => c.product.id)]);
+    getProductRepository()
+      .listCandidates({
+        categoryId,
+        subcategoryId,
+        excludeIds: exclude,
+        seed: hashSeed(`${deckKey}:${swipes.length}:refill`),
+      })
+      .then((batch) => {
+        if (thisLoad !== load.current) return;
+        for (const p of batch.products) known.current.set(p.id, p);
+        const model = modelFor(known.current, bands.current);
+        const ranked = rankDeck(batch.products, model, {
+          bands: bands.current,
+          seed: hashSeed(`${deckKey}:${swipes.length}:refill`),
+        }).map(toCard(model, bands.current));
+        setCards((current) => {
+          const have = new Set(current.map((c) => c.product.id));
+          return [...current, ...ranked.filter((c) => !have.has(c.product.id))];
+        });
+        // Nothing new came back (only possible if products were switched off since the catalog
+        // index was read): stop asking rather than retry the same batch forever.
+        setMore(!batch.complete && batch.products.length > 0);
+        refilling.current = false;
+      })
+      .catch(() => {
+        if (thisLoad !== load.current) return;
+        refilling.current = false;
+        setRefillFailed(true);
+      });
+  }, [status, more, refillFailed, cards, categoryId, subcategoryId, deckKey]);
+
   const lastInSession = history.at(-1);
   const canUndo = lastInSession !== undefined;
 
@@ -211,5 +274,8 @@ export function useDeck(
   const swipeCount = useSwipeStore((s) => s.swipes.length);
   const firstActionHint = hydrated && shouldShowFirstActionHint({ firstActionDone, roomAnswerCount, swipeCount });
 
-  return { status, error, cards, coldStart, firstActionHint, swipe, undo, canUndo, retry };
+  // An empty deck with more on the way reads as loading (deckStatusFor), never "seen everything".
+  const shownStatus = deckStatusFor({ status, cardsLeft: cards.length, more, refill: refillFailed ? 'failed' : 'idle' });
+  const shownError = shownStatus === 'error' && status !== 'error' ? new Error('Could not load more products') : error;
+  return { status: shownStatus, error: shownError, cards, coldStart, firstActionHint, swipe, undo, canUndo, retry };
 }

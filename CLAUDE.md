@@ -199,6 +199,10 @@ Phase 4: Google-format feeds and the first approved brands:
 - Verified: clean checkout with no node_modules, real feed, stand-in DB: all 3 stores, 1,929 products, 157 s, exit 0. New-style key header logic checked against the live project (publishable key accepted; feed_sources correctly denied)
 - Checks passing: typecheck, lint, 207 unit tests
 
+Step 7 audit fixes (Devin approves each separately; audit doc https://claude.ai/artifact/WaYvFN47eMR3taP4StECgD):
+- P1-1 full catalog coverage (Nov 2026): decks no longer see only the first 1,000 products by id. `listCandidates` (ProductRepository) reads the cached light index of every active product, keeps the eligible ones (room, type, store, price, not swiped: `isEligible`), and loads a seeded, even sample of at most `CANDIDATE_POOL_SIZE` (1,000, what the engine ranked before) by id in batches of 150 (`src/lib/candidatePool.ts`). `complete: false` means more remain: useDeck fetches the next batch when 30 cards are left and shows loading (or an error with Try again), never "seen everything", until nothing eligible is left (`shouldRefill`, `deckStatusFor`). The weekly 10 draws from it too. `listProducts` pages by id so swiped products don't use up its limit; `getProducts` and the index read in batches/pages by id (no 1,000-row cut-off); any failed request fails the whole call. Ranking, learning, badges untouched. Tests: `src/data/__tests__/catalogCoverage.test.ts` (fake PostgREST with the 1,000-row cap, `src/data/__fixtures__`), `src/lib/__tests__/candidatePool.test.ts`
+- Checks passing: typecheck, lint, 308 unit tests
+
 ## Phase plan
 
 Build **one phase at a time**. Within a phase, work in small steps and commit after each working step.

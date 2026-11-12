@@ -18,8 +18,20 @@ import {
   subcategoryFromRow,
   type ProductRow,
 } from '@/lib/rows';
+import { CANDIDATE_POOL_SIZE, chunk, ID_CHUNK, isEligible, PAGE_SIZE, sampleIds } from '@/lib/candidatePool';
 import { computePriceBands, type PriceBands } from '@/recommendation';
-import type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
+import type {
+  CandidateBatch,
+  CandidateQuery,
+  ProductQuery,
+  ProductRepository,
+  StyleOption,
+} from './ProductRepository';
+
+type IndexRow = Pick<
+  ProductRow,
+  'id' | 'category_id' | 'subcategory_id' | 'retailer_id' | 'price_cents' | 'style_tags' | 'image_urls'
+>;
 
 /** Strip characters that have meaning in PostgREST filter strings. */
 function safeTerm(t: string): string {
@@ -69,23 +81,44 @@ export class SupabaseProductRepository implements ProductRepository {
     return value;
   }
 
-  /** Every active product's id, type, price, styles and first photo. */
+  /**
+   * Every active product's id, room, type, store, price, styles and first photo: small rows,
+   * read once and cached. Paged by id ("after the last id I got"), so a product that changes
+   * mid-read can't shift a page and be skipped or read twice. Any failed page fails the whole
+   * read (and it isn't cached), never a silently shorter catalog.
+   */
   private index() {
     return this.cached('index', async () => {
-      const rows: Pick<ProductRow, 'id' | 'subcategory_id' | 'price_cents' | 'style_tags' | 'image_urls'>[] = [];
-      for (let from = 0; ; from += 1000) {
-        const { data, error } = await this.db
+      const rows: IndexRow[] = [];
+      for (let after: string | null = null; ; ) {
+        let q = this.db
           .from('products')
-          .select('id, subcategory_id, price_cents, style_tags, image_urls')
-          .eq('is_active', true)
-          .order('id')
-          .range(from, from + 999);
+          .select('id, category_id, subcategory_id, retailer_id, price_cents, style_tags, image_urls')
+          .eq('is_active', true);
+        if (after !== null) q = q.gt('id', after);
+        const { data, error } = await q.order('id').limit(PAGE_SIZE);
         if (error) throw new Error(error.message);
-        rows.push(...(data ?? []));
-        if (!data || data.length < 1000) break;
+        const page = (data ?? []) as IndexRow[];
+        rows.push(...page);
+        if (page.length < PAGE_SIZE) break;
+        after = page[page.length - 1]!.id;
       }
       return rows;
     });
+  }
+
+  /** Full rows for these ids, in small batches (short URLs, under the per-request row cap). */
+  private async rowsByIds(ids: readonly string[], activeOnly: boolean): Promise<ProductRow[]> {
+    const batches = await Promise.all(
+      chunk([...new Set(ids)], ID_CHUNK).map((part) =>
+        this.products((columns) => {
+          let q = this.db.from('products').select(columns).in('id', part);
+          if (activeOnly) q = q.eq('is_active', true);
+          return q;
+        }),
+      ),
+    );
+    return batches.flatMap((rows) => (rows ?? []) as unknown as ProductRow[]);
   }
 
   listCategories(): Promise<Category[]> {
@@ -121,33 +154,69 @@ export class SupabaseProductRepository implements ProductRepository {
     Product[]
   > {
     // Discontinued products (a feed stopped listing them) never appear in decks or search.
-    // Saved ones still open by id (getProduct/getProducts), so Kept and lists don't lose them.
-    const want = limit ?? 1000;
-    const data = await this.products((columns) => {
-      let q = this.db.from('products').select(columns).eq('is_active', true);
-      if (categoryId) q = q.eq('category_id', categoryId);
-      if (subcategoryId) q = q.eq('subcategory_id', subcategoryId);
-      if (filters?.categoryIds.length) q = q.in('category_id', filters.categoryIds);
-      if (filters?.subcategoryIds.length) q = q.in('subcategory_id', filters.subcategoryIds);
-      if (filters?.retailerIds.length) q = q.in('retailer_id', filters.retailerIds);
-      if (filters?.minPriceCents != null) q = q.gte('price_cents', filters.minPriceCents);
-      if (filters?.maxPriceCents != null) q = q.lte('price_cents', filters.maxPriceCents);
-      // Every word must match somewhere (title, brand, material or color).
-      for (const raw of (search ?? '').split(/\s+/)) {
-        const t = safeTerm(raw);
-        if (!t) continue;
-        q = q.or(
-          `title.ilike.*${t}*,brand.ilike.*${t}*,material.ilike.*${t}*,color.ilike.*${t}*,style_tags.cs.{${t.toLowerCase()}}`,
-        );
+    // Pages through matches by id until `want` unswiped ones are found or the matches run out,
+    // so swiped products never use up the limit. A failed page fails the call (no partial list).
+    const want = limit ?? PAGE_SIZE;
+    const out: Product[] = [];
+    for (let after: string | null = null; out.length < want; ) {
+      const pageSize = Math.min(PAGE_SIZE, want - out.length + (excludeIds?.size ?? 0));
+      const data = await this.products((columns) => {
+        let q = this.db.from('products').select(columns).eq('is_active', true);
+        if (categoryId) q = q.eq('category_id', categoryId);
+        if (subcategoryId) q = q.eq('subcategory_id', subcategoryId);
+        if (filters?.categoryIds.length) q = q.in('category_id', filters.categoryIds);
+        if (filters?.subcategoryIds.length) q = q.in('subcategory_id', filters.subcategoryIds);
+        if (filters?.retailerIds.length) q = q.in('retailer_id', filters.retailerIds);
+        if (filters?.minPriceCents != null) q = q.gte('price_cents', filters.minPriceCents);
+        if (filters?.maxPriceCents != null) q = q.lte('price_cents', filters.maxPriceCents);
+        // Every word must match somewhere (title, brand, material or color).
+        for (const raw of (search ?? '').split(/\s+/)) {
+          const t = safeTerm(raw);
+          if (!t) continue;
+          q = q.or(
+            `title.ilike.*${t}*,brand.ilike.*${t}*,material.ilike.*${t}*,color.ilike.*${t}*,style_tags.cs.{${t.toLowerCase()}}`,
+          );
+        }
+        if (after !== null) q = q.gt('id', after);
+        // Leave out swiped items here rather than in the URL, so long swipe histories stay fast.
+        return q.order('id').limit(pageSize);
+      });
+      const rows = (data ?? []) as unknown as ProductRow[];
+      for (const r of rows) {
+        const p = productFromRow(r);
+        if (excludeIds?.has(p.id) || (filters && !matchesFilters(p, filters))) continue;
+        out.push(p);
+        if (out.length >= want) break;
       }
-      q = q.order('id');
-      // Leave out swiped items here rather than in the URL, so long swipe histories stay fast.
-      return q.limit(excludeIds?.size ? Math.min(1000, want + excludeIds.size) : want);
-    });
-    return ((data ?? []) as unknown as ProductRow[])
-      .map(productFromRow)
-      .filter((p) => !excludeIds?.has(p.id) && (!filters || matchesFilters(p, filters)))
-      .slice(0, want);
+      if (rows.length < pageSize) break;
+      after = rows[rows.length - 1]!.id;
+    }
+    return out;
+  }
+
+  async listCandidates({ size = CANDIDATE_POOL_SIZE, seed = 0, ...q }: CandidateQuery = {}): Promise<CandidateBatch> {
+    const eligible = (await this.index())
+      .filter((r) =>
+        isEligible(
+          {
+            id: r.id,
+            categoryId: r.category_id,
+            subcategoryId: r.subcategory_id,
+            retailerId: r.retailer_id,
+            priceCents: r.price_cents,
+          },
+          q,
+        ),
+      )
+      .map((r) => r.id);
+    const picked = sampleIds(eligible, size, seed);
+    // Re-checked by the database: anything switched off since the index was read is left out.
+    const rows = await this.rowsByIds(picked, true);
+    const byId = new Map(rows.map((r) => [r.id, productFromRow(r)]));
+    const products = picked
+      .map((id) => byId.get(id))
+      .filter((p): p is Product => p !== undefined && (!q.filters || matchesFilters(p, q.filters)));
+    return { products, eligible: eligible.length, complete: picked.length === eligible.length };
   }
 
   async getProduct(id: string): Promise<Product | null> {
@@ -157,13 +226,8 @@ export class SupabaseProductRepository implements ProductRepository {
 
   async getProducts(ids: readonly string[]): Promise<Product[]> {
     if (ids.length === 0) return [];
-    const data = await this.products((columns) =>
-      this.db
-        .from('products')
-        .select(columns)
-        .in('id', [...ids]),
-    );
-    const byId = new Map(((data ?? []) as unknown as ProductRow[]).map((r) => [r.id, productFromRow(r)]));
+    // In batches: one request for a long swipe history would be cut off at 1,000 rows.
+    const byId = new Map((await this.rowsByIds(ids, false)).map((r) => [r.id, productFromRow(r)]));
     return ids.map((id) => byId.get(id)).filter((p): p is Product => p !== undefined);
   }
 

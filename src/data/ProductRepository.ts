@@ -18,7 +18,31 @@ export interface ProductQuery {
   excludeIds?: ReadonlySet<string>;
   /** Category, retailer and price filters from search. */
   filters?: SearchFilters;
+  /** At most this many results (default 1,000). Swiped `excludeIds` never use up the limit. */
   limit?: number;
+}
+
+/** Which products the recommender may rank for a deck (see `src/lib/candidatePool.ts`). */
+export interface CandidateQuery {
+  categoryId?: CategoryId;
+  subcategoryId?: SubcategoryId;
+  /** Category, retailer and price filters. */
+  filters?: SearchFilters;
+  /** Already swiped (or already in the deck): never returned. */
+  excludeIds?: ReadonlySet<string>;
+  /** Most products to return (default `CANDIDATE_POOL_SIZE`). */
+  size?: number;
+  /** Picks which eligible products come back when there are more than `size`; same seed, same pick. */
+  seed?: number;
+}
+
+export interface CandidateBatch {
+  /** Up to `size` eligible products, drawn from the whole catalog, in no meaningful order. */
+  products: Product[];
+  /** How many eligible products there are in total (including these). */
+  eligible: number;
+  /** True when these are all of them; false means more remain for a later batch. */
+  complete: boolean;
 }
 
 /**
@@ -33,6 +57,11 @@ export interface ProductRepository {
   /** Number of products of each type, leaving out `excludeIds` (e.g. already swiped). */
   countBySubcategory(excludeIds?: ReadonlySet<string>): Promise<Record<SubcategoryId, number>>;
   listProducts(query?: ProductQuery): Promise<Product[]>;
+  /**
+   * A bounded batch of deck candidates drawn evenly from every eligible product (not the
+   * first ones by id). Throws rather than returning a partial batch if a request fails.
+   */
+  listCandidates(query?: CandidateQuery): Promise<CandidateBatch>;
   getProduct(id: string): Promise<Product | null>;
   /** Products for the given ids, in the same order; unknown ids are dropped. */
   getProducts(ids: readonly string[]): Promise<Product[]>;

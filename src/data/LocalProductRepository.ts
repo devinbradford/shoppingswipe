@@ -8,7 +8,14 @@ import {
   type Subcategory,
   type SubcategoryId,
 } from '@/domain/types';
-import type { ProductQuery, ProductRepository, StyleOption } from './ProductRepository';
+import { CANDIDATE_POOL_SIZE, isEligible, sampleIds } from '@/lib/candidatePool';
+import type {
+  CandidateBatch,
+  CandidateQuery,
+  ProductQuery,
+  ProductRepository,
+  StyleOption,
+} from './ProductRepository';
 
 /** In-memory repository over a fixed catalog (the bundled sample data). */
 export class LocalProductRepository implements ProductRepository {
@@ -81,6 +88,17 @@ export class LocalProductRepository implements ProductRepository {
       if (limit !== undefined && out.length >= limit) break;
     }
     return out;
+  }
+
+  async listCandidates({ size = CANDIDATE_POOL_SIZE, seed = 0, ...q }: CandidateQuery = {}): Promise<CandidateBatch> {
+    const eligible = this.products.filter((p) => isEligible(p, q)).map((p) => p.id);
+    const picked = new Set(sampleIds(eligible, size, seed));
+    return {
+      // Catalog order, as listProducts gives, so small catalogs rank exactly as before.
+      products: this.products.filter((p) => picked.has(p.id)),
+      eligible: eligible.length,
+      complete: picked.size === eligible.length,
+    };
   }
 
   async getProduct(id: string): Promise<Product | null> {
