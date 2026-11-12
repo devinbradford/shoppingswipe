@@ -20,6 +20,7 @@ import type { SwipeDirection } from '@/domain/types';
 import { formatPrice } from '@/lib/format';
 import { colors, motion, radii, space, type as typeScale } from '@/theme/tokens';
 import type { DeckLayout } from '@/lib/deckLayout';
+import { badgeLabel, badgeSpoken } from '@/recommendation';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 import { metaFor } from '@/lib/photoLayout';
@@ -50,8 +51,6 @@ interface SwipeCardProps {
   pipsTop?: number;
   /** Where the photo, details and buttons sit (from `deckLayout`, same for every card). */
   layout: DeckLayout;
-  /** Shown in the "For you" bubble's place when there is no reason yet. */
-  hint?: string | null;
   /** Called when the shopper flips to another photo. */
   onPhotoBrowse?: () => void;
 }
@@ -71,7 +70,6 @@ export function SwipeCard({
   reduceMotion = false,
   pipsTop = space.md,
   layout,
-  hint = null,
   onPhotoBrowse,
 }: SwipeCardProps) {
   const { width: screenWidth } = useWindowDimensions();
@@ -90,7 +88,8 @@ export function SwipeCard({
   const cardHeight = useSharedValue(0);
   const [photo, setPhoto] = useState(0);
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
-  const { product, forYou } = card;
+  const { product, badge } = card;
+  const spokenBadge = badgeSpoken(badge);
   const photos = product.imageUrls;
   const nextPhoto = () => {
     if (photo < photos.length - 1) onPhotoBrowse?.();
@@ -281,7 +280,7 @@ export function SwipeCard({
         onLayout={onLayout}
         pointerEvents={isTop ? 'auto' : 'none'}
         accessible={isTop}
-        accessibilityLabel={`${product.title}, ${price}, ${product.material}, ${product.color}, ${product.brand ? `${product.brand} ` : ''}at ${retailerName}${forYou ? `. Picked for you: ${forYou}` : ''}`}
+        accessibilityLabel={`${product.title}, ${price}, ${product.material}, ${product.color}, ${product.brand ? `${product.brand} ` : ''}at ${retailerName}${spokenBadge ? `. ${spokenBadge}` : ''}`}
         accessibilityHint="Swipe up or down for Keep, Skip and more actions. Double tap for details."
         accessibilityActions={[
           { name: 'keep', label: 'Keep' },
@@ -341,21 +340,26 @@ export function SwipeCard({
           pointerEvents="none"
         />
         <View style={[styles.info, { bottom: layout.infoBottom }]} pointerEvents="none">
-          {forYou || hint ? (
+          {/* The pill's space is always reserved (deckLayout), so cards without one don't shift. */}
+          {badge?.kind === 'match' ? (
             <View style={styles.forYou}>
               <View style={styles.dot} />
-              {forYou ? (
-                <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>
-                  For you ·{' '}
-                  <AppText variant="italic" color={colors.accentText}>
-                    {forYou}
-                  </AppText>
+              <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>
+                For you ·{' '}
+                <AppText variant="italic" color={colors.accentText}>
+                  {badgeLabel(badge)}
                 </AppText>
-              ) : (
-                <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>
-                  {hint}
-                </AppText>
-              )}
+              </AppText>
+            </View>
+          ) : badge?.kind === 'learning' ? (
+            <View style={[styles.forYou, styles.learning]}>
+              <AppText
+                variant="caption"
+                color={colors.onPhotoMuted}
+                numberOfLines={1}
+                style={[styles.forYouText, styles.learningText]}>
+                {badgeLabel(badge)}
+              </AppText>
             </View>
           ) : null}
           {/* The name always gets room for two lines, so the price row never moves. */}
@@ -451,6 +455,10 @@ const styles = StyleSheet.create({
     marginBottom: space.xs,
   },
   forYouText: { flexShrink: 1 },
+  // "Still learning your style": a quieter outline pill (no butter dot: it makes no claim),
+  // same height as the "For you" pill so nothing below it moves.
+  learning: { backgroundColor: 'transparent', borderColor: colors.glassBorder },
+  learningText: { lineHeight: typeScale.italic.lineHeight },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.keep },
   titleBox: { justifyContent: 'flex-end' },
   priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: space.md },

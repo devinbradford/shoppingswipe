@@ -5,6 +5,7 @@ import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 import type { Product, SwipeDirection } from '@/domain/types';
 import type { DeckLayout } from '@/lib/deckLayout';
+import type { CardBadge } from '@/recommendation';
 import { colors } from '@/theme/tokens';
 import { SwipeCard, type SwipeCardApi } from './SwipeCard';
 
@@ -13,6 +14,7 @@ export interface DeckCardData {
   product: Product;
   reasonText: string | null;
   forYou: string | null;
+  badge: CardBadge;
 }
 
 export interface SwipeDeckHandle {
@@ -33,8 +35,6 @@ interface SwipeDeckProps {
   pipsTop?: number;
   /** Where the photo, details and buttons sit (from `deckLayout`). */
   layout: DeckLayout;
-  /** Shown in the "For you" spot while the deck is still learning. */
-  hint?: string | null;
   /** Written while dragging: -1 (Skip) → 1 (Keep). */
   drag?: SharedValue<number>;
   ref?: Ref<SwipeDeckHandle>;
@@ -50,7 +50,6 @@ export function SwipeDeck({
   reduceMotion,
   pipsTop,
   layout,
-  hint,
   drag,
   ref,
 }: SwipeDeckProps) {
@@ -101,7 +100,6 @@ export function SwipeDeck({
             reduceMotion={reduceMotion}
             pipsTop={pipsTop}
             layout={layout}
-            hint={hint}
             onOpen={() => onOpen(card.product)}
             onPhotoBrowse={onPhotoBrowse ? () => onPhotoBrowse(card.product) : undefined}
             registerApi={

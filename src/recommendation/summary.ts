@@ -47,6 +47,9 @@ const AGREE = 2;
 /** Weighted actions that must involve a feature before we name it. */
 const MIN_EVIDENCE = 1;
 
+/** The bar for calling something a clear like, shared with the swipe card's "For you" pill. */
+export const CLEAR_LIKE = { lean: LIKE, agree: AGREE, minEvidence: MIN_EVIDENCE } as const;
+
 const LIMITS: Record<TraitKind, number> = { style: 4, material: 5, color: 5 };
 
 export function tasteStage(model: TasteModel): TasteStage {

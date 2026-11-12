@@ -8,3 +8,4 @@ export * from './detail';
 export * from './summary';
 export * from './weekly';
 export * from './rooms';
+export * from './badge';

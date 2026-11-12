@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getProductRepository } from '@/data';
 import type { CategoryId, Product, SubcategoryId, SwipeDirection } from '@/domain/types';
 import {
+  cardBadge,
   formatReasons,
   hashSeed,
   isColdStartModel,
@@ -11,7 +12,9 @@ import {
   rerankDeck,
   type PriceBands,
   type RankedProduct,
+  type CardBadge,
   type SessionSwipe,
+  type TasteModel,
 } from '@/recommendation';
 import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
@@ -26,6 +29,11 @@ export interface DeckCard extends RankedProduct {
   reasonText: string | null;
   /** Short reasons for the "For you" bubble, e.g. "mid-century, walnut", or null. */
   forYou: string | null;
+  /**
+   * The pill shown above the name: only what the data can honestly back up (see badge.ts).
+   * Separate from `forYou`, which the engine's learning still uses as it always did.
+   */
+  badge: CardBadge;
 }
 
 export interface Deck {
@@ -43,10 +51,17 @@ export interface Deck {
 
 const modelFor = currentTasteModel;
 
-function toCard(r: RankedProduct): DeckCard {
-  const labels = reasonLabels(r.reasons);
-  return { ...r, reasonText: formatReasons(r.reasons), forYou: labels.length ? labels.join(', ') : null };
-}
+const toCard =
+  (model: TasteModel, bands: PriceBands) =>
+  (r: RankedProduct): DeckCard => {
+    const labels = reasonLabels(r.reasons);
+    return {
+      ...r,
+      reasonText: formatReasons(r.reasons),
+      forYou: labels.length ? labels.join(', ') : null,
+      badge: cardBadge(r, model, bands),
+    };
+  };
 
 /**
  * The swipe deck for one room (or every room when none is given). Loads unswiped products, ranks them with
@@ -114,7 +129,7 @@ export function useDeck(
         seed: hashSeed(`${deckKey}:${swipes.length}`),
       });
       session.current = [];
-      setCards(ranked.map(toCard));
+      setCards(ranked.map(toCard(model, priceBands)));
       setColdStart(isColdStartModel(model));
       setHistory([]);
       setStatus('ready');
@@ -153,7 +168,7 @@ export function useDeck(
         seed: hashSeed(`${deckKey}:${swipes.length}`),
         position: session.current.length,
       });
-      setCards(next.map(toCard));
+      setCards(next.map(toCard(model, bands.current)));
       setColdStart(isColdStartModel(model));
       setHistory((h) => [...h, top]);
     },

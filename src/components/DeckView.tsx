@@ -113,7 +113,6 @@ export function DeckView({
           drag={drag}
           pipsTop={insets.top + space.xs}
           layout={layout}
-          hint={deck.coldStart ? 'Keep a few you like and the deck will learn' : null}
           onOpen={(p) => router.push({ pathname: '/product/[id]', params: { id: p.id } })}
           onPhotoBrowse={(p) => recordSignal(p.id, 'photo_browse')}
         />
