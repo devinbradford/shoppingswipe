@@ -12,6 +12,7 @@ import { space } from '@/theme/tokens';
 import { KeepFlight } from './KeepFlight';
 import { LoadingView, StateView, type StateAction } from './StateView';
 import { ACTION_BUTTON, deckLayout } from '@/lib/deckLayout';
+import { firstActionHintText } from '@/lib/firstActionHint';
 import { DeckActionButton } from './DeckActionButton';
 import { SwipeDeck, type SwipeDeckHandle } from './SwipeDeck';
 
@@ -113,6 +114,7 @@ export function DeckView({
           drag={drag}
           pipsTop={insets.top + space.xs}
           layout={layout}
+          firstActionHint={deck.firstActionHint ? firstActionHintText(width, fontScale) : null}
           onOpen={(p) => router.push({ pathname: '/product/[id]', params: { id: p.id } })}
           onPhotoBrowse={(p) => recordSignal(p.id, 'photo_browse')}
         />

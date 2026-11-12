@@ -51,6 +51,12 @@ interface SwipeCardProps {
   pipsTop?: number;
   /** Where the photo, details and buttons sit (from `deckLayout`, same for every card). */
   layout: DeckLayout;
+  /**
+   * How to use the deck, shown in the pill's place on a first-time shopper's first card
+   * (Step 6). It's instruction, not personalization, so it replaces the badge visually and
+   * screen readers keep the card's own Keep / Skip actions and hint instead.
+   */
+  firstActionHint?: string | null;
   /** Called when the shopper flips to another photo. */
   onPhotoBrowse?: () => void;
 }
@@ -70,6 +76,7 @@ export function SwipeCard({
   reduceMotion = false,
   pipsTop = space.md,
   layout,
+  firstActionHint = null,
   onPhotoBrowse,
 }: SwipeCardProps) {
   const { width: screenWidth } = useWindowDimensions();
@@ -89,7 +96,8 @@ export function SwipeCard({
   const [photo, setPhoto] = useState(0);
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });
   const { product, badge } = card;
-  const spokenBadge = badgeSpoken(badge);
+  // While the hint is showing, the badge isn't visible, so it isn't spoken either.
+  const spokenBadge = firstActionHint ? null : badgeSpoken(badge);
   const photos = product.imageUrls;
   const nextPhoto = () => {
     if (photo < photos.length - 1) onPhotoBrowse?.();
@@ -341,7 +349,20 @@ export function SwipeCard({
         />
         <View style={[styles.info, { bottom: layout.infoBottom }]} pointerEvents="none">
           {/* The pill's space is always reserved (deckLayout), so cards without one don't shift. */}
-          {badge?.kind === 'match' ? (
+          {firstActionHint ? (
+            <View style={[styles.forYou, styles.learning]}>
+              <AppText
+                variant="caption"
+                color={colors.onPhotoMuted}
+                numberOfLines={1}
+                style={[styles.forYouText, styles.learningText]}
+                importantForAccessibility="no"
+                accessibilityElementsHidden
+                aria-hidden>
+                {firstActionHint}
+              </AppText>
+            </View>
+          ) : badge?.kind === 'match' ? (
             <View style={styles.forYou}>
               <View style={styles.dot} />
               <AppText variant="caption" color={colors.accentText} numberOfLines={1} style={styles.forYouText}>

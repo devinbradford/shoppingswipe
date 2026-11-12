@@ -29,6 +29,9 @@ interface PreferencesState {
   /** The one-time "press and hold a piece" tip on Kept was used or dismissed. */
   holdTipSeen: boolean;
   markHoldTipSeen: () => void;
+  /** The first Keep or Skip on a product went through (ends the first-action hint for good). */
+  firstActionDone: boolean;
+  markFirstActionDone: () => void;
   /** Love / Not for me answers to the onboarding rooms, in order. On this phone only for now. */
   roomAnswers: RoomAnswer[];
   answerRoom: (answer: RoomAnswer) => void;
@@ -58,6 +61,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       markTasteRevealSeen: () => set({ tasteRevealSeen: true }),
       holdTipSeen: false,
       markHoldTipSeen: () => set({ holdTipSeen: true }),
+      firstActionDone: false,
+      markFirstActionDone: () => set({ firstActionDone: true }),
       roomAnswers: [],
       answerRoom: (answer) =>
         set({ roomAnswers: [...get().roomAnswers.filter((a) => a.roomId !== answer.roomId), answer] }),
@@ -72,7 +77,15 @@ export const usePreferencesStore = create<PreferencesState>()(
         recordOps([{ type: 'profile.set', profile: { stylePicks: get().stylePicks, onboarded: true } }]);
       },
       resetAll: () =>
-        set({ stylePicks: [], roomAnswers: [], onboarded: false, room: null, budget: null, tasteRevealSeen: false }),
+        set({
+          stylePicks: [],
+          roomAnswers: [],
+          onboarded: false,
+          room: null,
+          budget: null,
+          tasteRevealSeen: false,
+          firstActionDone: false,
+        }),
     }),
     {
       name: 'swipeshop.preferences.v1',
@@ -87,6 +100,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         keptSeenAt: s.keptSeenAt,
         tasteRevealSeen: s.tasteRevealSeen,
         holdTipSeen: s.holdTipSeen,
+        firstActionDone: s.firstActionDone,
       }),
     },
   ),

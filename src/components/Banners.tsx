@@ -50,30 +50,6 @@ export function WelcomeBackCard({
   );
 }
 
-/**
- * First visit to For you after the rooms: "Picked for your taste", so the first cards
- * read as following on from the rooms. Purely informational; the screen hides it after
- * the first swipe.
- */
-export function TasteNote({ reduceMotion }: { reduceMotion?: boolean }) {
-  return (
-    <Animated.View
-      entering={reduceMotion ? undefined : FadeInDown.duration(300)}
-      exiting={reduceMotion ? undefined : FadeOut.duration(400)}
-      style={[styles.pill, styles.note]}
-      pointerEvents="none"
-      accessible
-      accessibilityLabel="Picked for your taste. Starting with the shapes, textures and colours you loved.">
-      <AppText variant="heading" color={colors.onInk}>
-        Picked for your taste
-      </AppText>
-      <AppText variant="caption" color={colors.inkMuted} style={styles.noteText}>
-        Starting with the shapes, textures and colours you loved.
-      </AppText>
-    </Animated.View>
-  );
-}
-
 function CloseButton({ onPress }: { onPress: () => void }) {
   return (
     <Pressable
@@ -103,17 +79,6 @@ const styles = StyleSheet.create({
     borderColor: colors.accentGlassBorder,
     boxShadow: `0 8px 24px ${colors.shadow}66`,
   },
-  note: {
-    flexDirection: 'column',
-    gap: 1,
-    borderRadius: radii.lg,
-    paddingHorizontal: space.lg,
-    paddingRight: space.lg,
-    paddingVertical: space.sm + 2,
-    marginHorizontal: space.xl,
-    backgroundColor: colors.accentGlass,
-  },
-  noteText: { textAlign: 'center' },
   card: { borderRadius: radii.lg, paddingLeft: space.md, marginHorizontal: space.lg, alignSelf: 'stretch' },
   main: {
     flexDirection: 'row',

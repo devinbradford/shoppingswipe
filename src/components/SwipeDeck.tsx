@@ -35,6 +35,8 @@ interface SwipeDeckProps {
   pipsTop?: number;
   /** Where the photo, details and buttons sit (from `deckLayout`). */
   layout: DeckLayout;
+  /** First-action hint for the top card (shoppers who skipped the rooms), or null. */
+  firstActionHint?: string | null;
   /** Written while dragging: -1 (Skip) → 1 (Keep). */
   drag?: SharedValue<number>;
   ref?: Ref<SwipeDeckHandle>;
@@ -50,6 +52,7 @@ export function SwipeDeck({
   reduceMotion,
   pipsTop,
   layout,
+  firstActionHint = null,
   drag,
   ref,
 }: SwipeDeckProps) {
@@ -100,6 +103,7 @@ export function SwipeDeck({
             reduceMotion={reduceMotion}
             pipsTop={pipsTop}
             layout={layout}
+            firstActionHint={isTop ? firstActionHint : null}
             onOpen={() => onOpen(card.product)}
             onPhotoBrowse={onPhotoBrowse ? () => onPhotoBrowse(card.product) : undefined}
             registerApi={

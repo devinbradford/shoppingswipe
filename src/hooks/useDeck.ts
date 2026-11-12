@@ -16,9 +16,11 @@ import {
   type SessionSwipe,
   type TasteModel,
 } from '@/recommendation';
+import { shouldShowFirstActionHint } from '@/lib/firstActionHint';
 import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
 import { recordSignal, useSignalStore } from '@/store/signalStore';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 
@@ -43,6 +45,8 @@ export interface Deck {
   cards: DeckCard[];
   /** True until the user has kept enough items for personal ranking. */
   coldStart: boolean;
+  /** Show the first-action hint on the top card (skipped the rooms, never swiped a product). */
+  firstActionHint: boolean;
   swipe: (direction: SwipeDirection) => void;
   undo: () => void;
   canUndo: boolean;
@@ -157,6 +161,9 @@ export function useDeck(
         direction,
         swipedAt: Date.now(),
       });
+      // The first Keep / Skip went through: the first-action hint is done for good (Undo can't bring it back).
+      const prefs = usePreferencesStore.getState();
+      if (!prefs.firstActionDone) prefs.markFirstActionDone();
       const { swipes } = useSwipeStore.getState();
       const model = modelFor(known.current, bands.current);
       session.current = [
@@ -199,5 +206,10 @@ export function useDeck(
     setAttempt((n) => n + 1);
   }, []);
 
-  return { status, error, cards, coldStart, swipe, undo, canUndo, retry };
+  const firstActionDone = usePreferencesStore((s) => s.firstActionDone);
+  const roomAnswerCount = usePreferencesStore((s) => s.roomAnswers.length);
+  const swipeCount = useSwipeStore((s) => s.swipes.length);
+  const firstActionHint = hydrated && shouldShowFirstActionHint({ firstActionDone, roomAnswerCount, swipeCount });
+
+  return { status, error, cards, coldStart, firstActionHint, swipe, undo, canUndo, retry };
 }
