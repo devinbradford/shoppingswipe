@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 import { useOutboxStore } from './outboxStore';
 import { usePreferencesStore } from './preferencesStore';
+import { useProductFactsStore } from './productFactsStore';
 import { useSnapshotStore } from './productSnapshotStore';
 import { usePurchaseStore } from './purchaseStore';
 import { useRetentionStore } from './retentionStore';
@@ -16,6 +17,7 @@ const stores = [
   usePurchaseStore,
   useRetentionStore,
   useSnapshotStore,
+  useProductFactsStore,
 ];
 
 const subscribe = (onChange: () => void) => {

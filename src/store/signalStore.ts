@@ -4,7 +4,6 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { newId } from '@/lib/ids';
 import type { EngagementSignal, Feedback, FeatureFeedback, SignalType, SkipReason } from '@/recommendation';
-import { useSwipeStore } from './swipeStore';
 
 /**
  * On-device record of how the shopper engages beyond swiping (opening a
@@ -22,6 +21,7 @@ interface SignalState {
   answerSkipReason: (productId: string, reason: SkipReason) => void;
   /** "Your taste" → Start fresh: forget everything learned so far (Kept and lists stay). */
   startFresh: () => void;
+  /** Clears everything. Called only from `clearLocalLearningData` / `claimLocalLearningData`. */
   resetAll: () => void;
 }
 
@@ -61,7 +61,6 @@ export const useSignalStore = create<SignalState>()(
 export const recordSignal = (productId: string, type: SignalType, value?: number) =>
   useSignalStore.getState().record(productId, type, value);
 
-// Whenever the swipe history is cleared (sign out, start over), clear these too.
-useSwipeStore.subscribe((state, prev) => {
-  if (state.swipes.length === 0 && prev.swipes.length > 0) useSignalStore.getState().resetAll();
-});
+// Signals are cleared only by explicit operations (sign-out, account deletion, Profile → Reset;
+// see `localLearningData.ts`), never because the swipe list became empty: undoing the only
+// swipe, or a sync bringing an empty list, must not erase independent learning.

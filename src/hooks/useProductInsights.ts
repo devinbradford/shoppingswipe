@@ -5,7 +5,7 @@ import type { Product } from '@/domain/types';
 import { formatWhy, similarProducts, whyForYou } from '@/recommendation';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
-import { currentTasteModel, engagedProductIds } from './tasteModel';
+import { currentTasteModel, engagedProductIds, factsEpoch, rememberFacts } from './tasteModel';
 
 export interface ProductInsights {
   /** "Mid-century and walnut, within your budget", or null. */
@@ -23,6 +23,7 @@ export function useProductInsights(product: Product): ProductInsights {
     if (!hydrated) return;
     let cancelled = false;
     const repo = getProductRepository();
+    const epoch = factsEpoch();
     (async () => {
       const [room, engaged, bands] = await Promise.all([
         repo.listProducts({ categoryId: product.categoryId }),
@@ -30,6 +31,7 @@ export function useProductInsights(product: Product): ProductInsights {
         repo.getPriceBands(),
       ]);
       if (cancelled) return;
+      rememberFacts(engaged, epoch);
       const known = new Map<string, Product>();
       for (const p of [...room, ...engaged, product]) known.set(p.id, p);
       const model = currentTasteModel(known, bands);

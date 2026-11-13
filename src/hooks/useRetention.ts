@@ -10,7 +10,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useRetentionStore } from '@/store/retentionStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
-import { currentTasteModel, engagedProductIds } from './tasteModel';
+import { currentTasteModel, engagedProductIds, factsEpoch, rememberFacts } from './tasteModel';
 
 /** Records visits: opening the app (or coming back to it) and leaving it. Mount once, in the root layout. */
 export function useVisitTracking() {
@@ -58,6 +58,7 @@ export function useWeekly(): Weekly {
     if (!hydrated || !ready || current) return;
     let cancelled = false;
     const repo = getProductRepository();
+    const epoch = factsEpoch();
     (async () => {
       const swipedIds = selectSwipedIds(useSwipeStore.getState());
       const [candidates, engaged, bands] = await Promise.all([
@@ -67,6 +68,7 @@ export function useWeekly(): Weekly {
         repo.getPriceBands(),
       ]);
       if (cancelled) return;
+      rememberFacts(engaged, epoch);
       const known = new Map<string, Product>([...candidates, ...engaged].map((p) => [p.id, p]));
       const picks = pickWeekly(candidates, currentTasteModel(known, bands), bands, hashSeed(`weekly:${key}`));
       if (picks.length > 0) setWeekly({ key, ids: picks.map((p) => p.id) });

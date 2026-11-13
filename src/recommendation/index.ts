@@ -9,3 +9,4 @@ export * from './summary';
 export * from './weekly';
 export * from './rooms';
 export * from './badge';
+export * from './historicalFacts';

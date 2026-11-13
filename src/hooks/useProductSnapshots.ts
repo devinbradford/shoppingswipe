@@ -3,12 +3,14 @@ import { useEffect, useMemo } from 'react';
 import { getProductRepository } from '@/data';
 import { splitAvailability, type UnavailableItem } from '@/domain/availability';
 import type { Product } from '@/domain/types';
+import { useProductFactsStore } from '@/store/productFactsStore';
 import { useSnapshotStore } from '@/store/productSnapshotStore';
 import { usePurchaseStore } from '@/store/purchaseStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useAsync } from './useAsync';
+import { engagedProductIds } from './tasteModel';
 
 /** Every product something on this phone still points at: Kept, any list, a purchase. */
 export function referencedProductIds(): Set<string> {
@@ -26,7 +28,10 @@ export function referencedProductIds(): Set<string> {
 export function useSnapshotSweep(): void {
   const hydrated = useHydrated();
   useEffect(() => {
-    if (hydrated) useSnapshotStore.getState().sweep(referencedProductIds());
+    if (!hydrated) return;
+    useSnapshotStore.getState().sweep(referencedProductIds());
+    // Product facts: kept while the swipe log or signals still point at the product.
+    useProductFactsStore.getState().sweep(new Set(engagedProductIds()));
   }, [hydrated]);
 }
 

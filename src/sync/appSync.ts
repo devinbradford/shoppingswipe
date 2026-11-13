@@ -10,7 +10,7 @@ import { getSupabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { useOutboxStore } from '@/store/outboxStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
-import { useSnapshotStore } from '@/store/productSnapshotStore';
+import { claimLocalLearningData, clearLocalLearningData } from '@/store/localLearningData';
 import { useSwipeStore } from '@/store/swipeStore';
 import { whenHydrated } from '@/store/useHydrated';
 import { useWishlistStore } from '@/store/wishlistStore';
@@ -56,8 +56,8 @@ export function syncNow(): Promise<void> {
       const db = getSupabase();
       const { status, userId } = useAuthStore.getState();
       if (!db || status !== 'signedIn' || !userId) return;
-      // Another account's product snapshots never carry over to this one.
-      useSnapshotStore.getState().claimFor(userId);
+      // Another account's on-phone learning data (signals, facts, snapshots) never carries over.
+      claimLocalLearningData(userId);
       const result = await runSync(userId, appLocal, new SupabaseSyncRemote(db));
       if (result.status === 'synced') useOutboxStore.getState().markSynced();
       else useOutboxStore.getState().markOffline();
@@ -102,6 +102,6 @@ export function clearLocalAccountData(): void {
   useWishlistStore.setState({ lists: [] });
   usePreferencesStore.setState({ stylePicks: [], onboarded: false });
   useOutboxStore.getState().reset();
-  // Product snapshots belong to the signed-out account's kept items and lists.
-  useSnapshotStore.getState().resetAll();
+  // Signals, Your taste answers, product facts and Kept snapshots belong to the signed-out account.
+  clearLocalLearningData();
 }

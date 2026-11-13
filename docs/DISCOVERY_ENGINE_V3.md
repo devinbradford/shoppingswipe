@@ -205,3 +205,21 @@ Log impressions only when actually shown; correlate subsequent actions with impr
 ---
 
 **Verification limits:** This audit is grounded in publicly readable GitHub source and documentation at the time listed above. I could not clone the repository or run the actual Jest suite in this environment, and I did not access the live Supabase data. Issues are code-derived and should be reproduced in test before fixes are merged; documented feed/test counts are not independent live validation.
+
+## 9. Status log
+
+### Phase 1 — Learning-data integrity (November 2026, implemented)
+
+Two defects confirmed with deterministic tests before fixing:
+
+1. **History for inactive products was dropped.** The taste model reads product attributes from the catalog, and the catalog only returns active products, so every swipe and signal on a switched-off product silently stopped counting (a shopper with 6 walnut keeps went back to cold start once those products were switched off). Fixed with on-device historical product facts (`productFactsStore`, `historicalFacts.ts`): saved when a swipe is recorded and backfilled from every live taste lookup; merged in `currentTasteModel` with live records always taking priority. Facts carry `featureVersion` so V3 visual attributes can coexist with v1 text attributes.
+2. **Undoing the only swipe wiped all signals and Your taste answers** (a store subscription fired whenever the swipe list became empty, which also caught a sync with no swipes). Removed; signals are cleared only by explicit operations through `localLearningData.ts` (sign-out, account deletion, Profile → Reset, another account syncing onto the phone). Onboarding answers were never affected.
+
+Decisions V3 inherits:
+- Learning never depends on what the catalog has *today*: candidates come from the live catalog; evidence uses live records plus saved facts.
+- Lifecycle operations (Reset, Start fresh, sign-out, account switch, Undo) are explicit, with defined effects per store; no implicit cross-store side effects driven by counts.
+- Onboarding priors, behavioural events and explicit feedback stay separate, each with its own reversal rules.
+- Products are deactivated, never deleted (deletes cascade to the account's swipes).
+
+Limits that need the server-side event pipeline (Milestone 3): products that went inactive before Phase 1 shipped and were never seen live on that phone; learning on a second phone (signals and facts are on-device only); hard-deleted products.
+

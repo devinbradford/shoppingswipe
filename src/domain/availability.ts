@@ -169,25 +169,25 @@ export function collectionSummary(
 }
 
 /**
- * One clean-up pass. Snapshots something still points at (Kept, a list, a purchase) stay and
+ * One clean-up pass (used for P1-2 snapshots and for historical product facts). Records something still points at (Kept, a list, a purchase) stay and
  * lose any orphan mark. Others are marked the first time and deleted only once they've been
  * unreferenced for `grace`, so Undo, a slow sync or a restart can never lose one early.
  * Returns null when nothing changed.
  */
-export function sweepSnapshots(
-  snapshots: SnapshotMap,
+export function sweepSnapshots<T extends { orphanedAt?: number }>(
+  snapshots: Readonly<Record<string, T>>,
   referenced: ReadonlySet<string>,
   now: number,
   grace = ORPHAN_GRACE_MS,
-): Record<string, ProductSnapshot> | null {
+): Record<string, T> | null {
   let changed = false;
-  const next: Record<string, ProductSnapshot> = {};
+  const next: Record<string, T> = {};
   for (const [id, s] of Object.entries(snapshots)) {
     if (referenced.has(id)) {
       if (s.orphanedAt !== undefined) {
         const { orphanedAt: _o, ...kept } = s;
         void _o;
-        next[id] = kept;
+        next[id] = kept as T;
         changed = true;
       } else next[id] = s;
     } else if (s.orphanedAt === undefined) {

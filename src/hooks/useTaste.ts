@@ -9,7 +9,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSignalStore } from '@/store/signalStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
-import { currentTasteModel, engagedProductIds } from './tasteModel';
+import { currentTasteModel, engagedProductIds, factsEpoch, rememberFacts } from './tasteModel';
 
 /** A bundled room photo, or a product photo URL. */
 export type StylePhotoSource = { bundled: number } | { uri: string };
@@ -45,9 +45,11 @@ export function useTaste(): TasteView {
     if (!hydrated) return;
     let cancelled = false;
     const repo = getProductRepository();
+    const epoch = factsEpoch();
     (async () => {
       const [engaged, bands] = await Promise.all([repo.getProducts(engagedProductIds()), repo.getPriceBands()]);
       if (cancelled) return;
+      rememberFacts(engaged, epoch);
       const known = new Map<string, Product>(engaged.map((p) => [p.id, p]));
       const model = currentTasteModel(known, bands);
       const summary = tasteSummary(model);

@@ -20,7 +20,7 @@ import { deckStatusFor, shouldRefill, type RefillState } from '@/lib/candidatePo
 import { restoreCard, takeCard, undoTarget, type HistoryEntry } from '@/lib/deckState';
 import { shouldShowFirstActionHint } from '@/lib/firstActionHint';
 import { newId } from '@/lib/ids';
-import { currentTasteModel } from './tasteModel';
+import { currentTasteModel, factsEpoch, rememberFacts } from './tasteModel';
 import { recordSignal, useSignalStore } from '@/store/signalStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { rememberSavedProduct } from '@/store/productSnapshotStore';
@@ -146,6 +146,7 @@ export function useDeck(
 
     const thisLoad = ++load.current;
     refilling.current = false;
+    const epoch = factsEpoch();
 
     (async () => {
       const [batch, seenProducts, priceBands] = await Promise.all([
@@ -164,6 +165,8 @@ export function useDeck(
         repo.getPriceBands(),
       ]);
       if (cancelled || thisLoad !== load.current) return;
+      // Backfill: save what the engine reads about everything they've reacted to that's still live.
+      rememberFacts(seenProducts, epoch);
       const candidates = batch.products;
       for (const p of [...candidates, ...seenProducts]) known.current.set(p.id, p);
       bands.current = priceBands;
@@ -205,6 +208,8 @@ export function useDeck(
         direction,
         swipedAt,
       });
+      // Save what the engine reads about this product, so this swipe keeps counting if it goes inactive.
+      rememberFacts([top.product], factsEpoch());
       // Keep a copy of what was kept (and its price right now), in case the store stops selling it.
       if (direction === 'keep') {
         const item = useSwipeStore.getState().saved.find((i) => i.productId === top.product.id);

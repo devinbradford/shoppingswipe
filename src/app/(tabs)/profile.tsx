@@ -12,7 +12,7 @@ import { ProfileRow, ProfileSection } from '@/components/ProfileRow';
 import { budgetAnchor, formatBudget, type RoomChoice } from '@/domain/budget';
 import { useReminder } from '@/hooks/useRetention';
 import { useTaste } from '@/hooks/useTaste';
-import { useSnapshotStore } from '@/store/productSnapshotStore';
+import { clearLocalLearningData } from '@/store/localLearningData';
 import { useRetentionStore } from '@/store/retentionStore';
 import { useAuthStore } from '@/store/authStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
@@ -168,7 +168,6 @@ function ResetLink() {
   const resetPrefs = usePreferencesStore((s) => s.resetAll);
   const resetPurchases = usePurchaseStore((s) => s.resetAll);
   const resetRetention = useRetentionStore((s) => s.resetAll);
-  const resetSnapshots = useSnapshotStore((s) => s.resetAll);
   const [confirm, setConfirm] = useState(false);
   return (
     <>
@@ -193,7 +192,8 @@ function ResetLink() {
           resetPrefs();
           resetPurchases();
           resetRetention();
-          resetSnapshots();
+          // Signals, Your taste answers, product facts and Kept snapshots (explicitly, not as a side effect).
+          clearLocalLearningData();
         }}
       />
     </>
