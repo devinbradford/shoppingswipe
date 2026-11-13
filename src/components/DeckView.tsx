@@ -51,17 +51,16 @@ export function DeckView({
   const insets = useSafeAreaInsets();
   const { width, height, fontScale } = useWindowDimensions();
   const drag = useSharedValue(0);
-  // What was swiped, newest last, so Undo can fly the right card back from the right side.
-  const history = useRef<{ productId: string; direction: SwipeDirection }[]>([]);
+  /** A card is on its way out: Undo can call it back even before the first swipe is recorded. */
+  const [leaving, setLeaving] = useState(false);
   const [flights, setFlights] = useState<number[]>([]);
   const land = useCallback((id: number) => setFlights((f) => f.filter((x) => x !== id)), []);
 
   // Tell screen reader users what happened and what's next.
-  const onSwipe = (direction: SwipeDirection) => {
-    const [current, next] = deck.cards;
-    deck.swipe(direction);
-    if (!current) return;
-    history.current = [...history.current.slice(-19), { productId: current.product.id, direction }];
+  const onSwipe = (direction: SwipeDirection, productId: string) => {
+    const done = deck.swipe(direction, productId);
+    if (!done) return;
+    const { card: current, next } = done;
     if (direction === 'keep' && keptTarget && !reduceMotion) setFlights((f) => [...f, Date.now()]);
     const what = `${direction === 'keep' ? 'Kept' : 'Skipped'} ${current.product.title}.`;
     const then = next
@@ -70,12 +69,15 @@ export function DeckView({
     AccessibilityInfo.announceForAccessibility(what + then);
   };
   const onUndo = () => {
-    const last = history.current.at(-1);
-    if (last && deck.canUndo) {
-      history.current = history.current.slice(0, -1);
-      deckRef.current?.prepareReturn(last.productId, last.direction);
+    // A card still flying out is the newest action: call it back (nothing was recorded yet).
+    if (deckRef.current?.cancelPending()) {
+      AccessibilityInfo.announceForAccessibility('Undid last swipe.');
+      return;
     }
-    deck.undo();
+    // Otherwise reverse the newest committed swipe; its card flies back from the side it left.
+    const undone = deck.undo();
+    if (!undone) return;
+    deckRef.current?.prepareReturn(undone.productId, undone.direction);
     AccessibilityInfo.announceForAccessibility('Undid last swipe.');
   };
 
@@ -110,6 +112,7 @@ export function DeckView({
           cards={deck.cards}
           retailerNames={retailers}
           onSwipe={onSwipe}
+          onPendingChange={setLeaving}
           reduceMotion={reduceMotion}
           drag={drag}
           pipsTop={insets.top + space.xs}
@@ -157,7 +160,7 @@ export function DeckView({
               size={UNDO_BUTTON}
               reduceMotion={reduceMotion}
               onPress={onUndo}
-              disabled={!deck.canUndo}
+              disabled={!deck.canUndo && !leaving}
             />
           </Animated.View>
           <Animated.View style={keepButton}>

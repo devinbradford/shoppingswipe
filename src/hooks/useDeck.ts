@@ -17,6 +17,7 @@ import {
   type TasteModel,
 } from '@/recommendation';
 import { deckStatusFor, shouldRefill, type RefillState } from '@/lib/candidatePool';
+import { restoreCard, takeCard, undoTarget, type HistoryEntry } from '@/lib/deckState';
 import { shouldShowFirstActionHint } from '@/lib/firstActionHint';
 import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
@@ -49,8 +50,13 @@ export interface Deck {
   coldStart: boolean;
   /** Show the first-action hint on the top card (skipped the rooms, never swiped a product). */
   firstActionHint: boolean;
-  swipe: (direction: SwipeDirection) => void;
-  undo: () => void;
+  /**
+   * Commit a swipe for this product (the card that flew out; defaults to the top card).
+   * Returns the swiped card and the one now on top, or null if that product isn't in the deck.
+   */
+  swipe: (direction: SwipeDirection, productId?: string) => { card: DeckCard; next: DeckCard | undefined } | null;
+  /** Reverse the newest committed swipe of this deck. Returns what came back, or null. */
+  undo: () => { productId: string; direction: SwipeDirection } | null;
   canUndo: boolean;
   retry: () => void;
 }
@@ -89,9 +95,21 @@ export function useDeck(
 
   const [status, setStatus] = useState<DeckStatus>('loading');
   const [error, setError] = useState<Error>();
-  const [cards, setCards] = useState<DeckCard[]>([]);
+  const [cards, setCardsState] = useState<DeckCard[]>([]);
   const [coldStart, setColdStart] = useState(true);
-  const [history, setHistory] = useState<DeckCard[]>([]);
+  const [history, setHistoryState] = useState<HistoryEntry<DeckCard>[]>([]);
+  // The deck and its history as of right now. Swipe and Undo read these, not the last render,
+  // so two actions inside one frame (Undo twice, Undo as a swipe lands) see each other.
+  const cardsNow = useRef<DeckCard[]>([]);
+  const historyNow = useRef<HistoryEntry<DeckCard>[]>([]);
+  const setCards = useCallback((next: DeckCard[] | ((c: DeckCard[]) => DeckCard[])) => {
+    cardsNow.current = typeof next === 'function' ? next(cardsNow.current) : next;
+    setCardsState(cardsNow.current);
+  }, []);
+  const setHistory = useCallback((next: HistoryEntry<DeckCard>[]) => {
+    historyNow.current = next;
+    setHistoryState(next);
+  }, []);
   const [attempt, setAttempt] = useState(0);
   /** More eligible products exist than have been loaded into this deck so far. */
   const [more, setMore] = useState(false);
@@ -170,12 +188,13 @@ export function useDeck(
     return () => {
       cancelled = true;
     };
-  }, [hydrated, categoryId, subcategoryId, onlyKey, deckKey, attempt]);
+  }, [hydrated, categoryId, subcategoryId, onlyKey, deckKey, attempt, setCards, setHistory]);
 
   const swipe = useCallback(
-    (direction: SwipeDirection) => {
-      const [top, ...rest] = cards;
-      if (!top) return;
+    (direction: SwipeDirection, productId?: string) => {
+      const taken = takeCard(cardsNow.current, productId ?? cardsNow.current[0]?.product.id ?? '');
+      if (!taken) return null;
+      const { card: top, rest } = taken;
       const dwellMs = shownAt.current ? Date.now() - shownAt.current : undefined;
       if (dwellMs !== undefined) recordSignal(top.product.id, 'swipe_dwell', dwellMs);
       const swipedAt = Date.now();
@@ -207,9 +226,10 @@ export function useDeck(
       });
       setCards(next.map(toCard(model, bands.current)));
       setColdStart(isColdStartModel(model));
-      setHistory((h) => [...h, top]);
+      setHistory([...historyNow.current, { card: top, direction }]);
+      return { card: top, next: cardsNow.current[0] };
     },
-    [cards, deckKey, recordSwipe],
+    [deckKey, recordSwipe, setCards, setHistory],
   );
 
   // Running low and more eligible products exist: fetch the next batch and add it behind the
@@ -250,26 +270,26 @@ export function useDeck(
         refilling.current = false;
         setRefillFailed(true);
       });
-  }, [status, more, refillFailed, cards, categoryId, subcategoryId, deckKey]);
+  }, [status, more, refillFailed, cards, categoryId, subcategoryId, deckKey, setCards]);
 
-  const lastInSession = history.at(-1);
-  const canUndo = lastInSession !== undefined;
+  const canUndo = history.length > 0;
 
   const undo = useCallback(() => {
-    if (!lastInSession) return;
-    const last = useSwipeStore.getState().swipes.at(-1);
-    // Only undo if the newest swipe is still the one this deck made.
-    if (last?.productId !== lastInSession.product.id) {
+    if (historyNow.current.length === 0) return null;
+    // Only undo if the newest swipe in the log is still the one this deck made.
+    const target = undoTarget(historyNow.current, useSwipeStore.getState().swipes.at(-1));
+    if (!target) {
       setHistory([]);
-      return;
+      return null;
     }
     undoLastSwipe();
     session.current = session.current.slice(0, -1);
     const model = modelFor(known.current, bands.current);
-    setCards((c) => [lastInSession, ...c]);
+    setCards(restoreCard(cardsNow.current, target.card));
     setColdStart(isColdStartModel(model));
-    setHistory((h) => h.slice(0, -1));
-  }, [lastInSession, undoLastSwipe]);
+    setHistory(historyNow.current.slice(0, -1));
+    return { productId: target.card.product.id, direction: target.direction };
+  }, [undoLastSwipe, setCards, setHistory]);
 
   const retry = useCallback(() => {
     setStatus('loading');

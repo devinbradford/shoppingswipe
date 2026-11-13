@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
-import { scheduleOnRN } from 'react-native-worklets';
+import { isRNRuntime, scheduleOnRN } from 'react-native-worklets';
 
 import type { SwipeDirection } from '@/domain/types';
 import { formatPrice } from '@/lib/format';
@@ -28,8 +28,11 @@ import { ProductImage } from './ProductImage';
 import type { DeckCardData } from './SwipeDeck';
 
 export interface SwipeCardApi {
+  productId: string;
   /** Animate the card off screen, then report the swipe (used by the buttons). */
   flyOut: (direction: SwipeDirection) => void;
+  /** Undo while it's still leaving: stop, and settle back in place. Nothing gets reported. */
+  cancel: () => void;
 }
 
 interface SwipeCardProps {
@@ -42,7 +45,13 @@ interface SwipeCardProps {
   /** Fly in from this side (the card just came back with Undo). */
   enterFrom?: SwipeDirection;
   retailerName: string;
-  onSwiped: (direction: SwipeDirection) => void;
+  /** The card started leaving (button or gesture). `flight` identifies this exit. */
+  onLeave?: (productId: string, direction: SwipeDirection, flight: number) => void;
+  /**
+   * The exit animation finished. Returns whether the deck accepted it: an exit cancelled by
+   * Undo is turned down, and then nothing happens (no haptic).
+   */
+  onSwiped: (direction: SwipeDirection, productId: string, flight: number) => boolean;
   onOpen: () => void;
   registerApi?: (api: SwipeCardApi | null) => void;
   /** "Reduce motion" is on: no tilt, no springy settle, quicker exit. */
@@ -70,6 +79,7 @@ export function SwipeCard({
   drag,
   enterFrom,
   retailerName,
+  onLeave,
   onSwiped,
   onOpen,
   registerApi,
@@ -90,6 +100,10 @@ export function SwipeCard({
   const tx = useSharedValue(enterX);
   const ty = useSharedValue(0);
   const pastThreshold = useSharedValue(false);
+  /** True from the moment the card starts leaving until it lands or is called back by Undo. */
+  const leaving = useSharedValue(false);
+  /** Counts exits, so a late "landed" from an exit Undo cancelled is never mistaken for a new one. */
+  const flights = useSharedValue(0);
   /** +1 when grabbed in the top half, -1 in the bottom half: the card tilts around your finger. */
   const grab = useSharedValue(1);
   const cardHeight = useSharedValue(0);
@@ -125,12 +139,13 @@ export function SwipeCard({
     },
   );
 
-  const finish = (direction: SwipeDirection) => {
+  const finish = (direction: SwipeDirection, flight: number) => {
+    if (!onSwiped(direction, product.id, flight)) return;
     Haptics.impactAsync(
       direction === 'keep' ? Haptics.ImpactFeedbackStyle.Medium : Haptics.ImpactFeedbackStyle.Light,
     ).catch(() => {});
-    onSwiped(direction);
   };
+  const left = (direction: SwipeDirection, flight: number) => onLeave?.(product.id, direction, flight);
   const open = () => {
     Haptics.selectionAsync().catch(() => {});
     onOpen();
@@ -142,6 +157,14 @@ export function SwipeCard({
   /** Throw the card off screen. With a fling speed it leaves at that speed and keeps its angle. */
   const flyOut = (direction: SwipeDirection, velocityX = 0, velocityY = 0) => {
     'worklet';
+    if (leaving.get()) return;
+    leaving.set(true);
+    const flight = flights.get() + 1;
+    flights.set(flight);
+    // Tell the deck right away: straight from a button press, or as the next JS task after a
+    // gesture (always before any later tap, such as Undo, is handled).
+    if (isRNRuntime()) left(direction, flight);
+    else scheduleOnRN(left, direction, flight);
     const sign = direction === 'keep' ? 1 : -1;
     const remaining = Math.abs(sign * flyDistance - tx.get());
     const speed = Math.abs(velocityX);
@@ -152,7 +175,9 @@ export function SwipeCard({
     }
     tx.set(
       withTiming(sign * flyDistance, { duration: ms, easing: Easing.out(Easing.quad) }, (done) => {
-        if (done) scheduleOnRN(finish, direction);
+        if (!done) return; // interrupted: Undo called it back
+        leaving.set(false);
+        scheduleOnRN(finish, direction, flight);
       }),
     );
   };
@@ -160,9 +185,18 @@ export function SwipeCard({
   useEffect(() => {
     if (!isTop || !registerApi) return;
     registerApi({
+      productId: product.id,
       flyOut: (d) => {
         grab.set(1);
         flyOut(d);
+      },
+      cancel: () => {
+        // Replacing the exit animation interrupts it, so its "landed" callback never reports.
+        leaving.set(false);
+        const settle = (v: number) => (reduceMotion ? withTiming(v, { duration: 120 }) : withSpring(v, SPRING));
+        tx.set(settle(0));
+        ty.set(settle(0));
+        progress.set(settle(0));
       },
     });
     return () => registerApi(null);
@@ -175,10 +209,12 @@ export function SwipeCard({
     activeOffsetY: [-14, 10000],
     onBegin: (e) => {
       'worklet';
+      if (leaving.get()) return; // a card on its way out can't be grabbed
       grab.set(cardHeight.get() > 0 && e.y > cardHeight.get() / 2 ? -1 : 1);
     },
     onUpdate: (e) => {
       'worklet';
+      if (leaving.get()) return;
       tx.set(e.translationX);
       ty.set(reduceMotion ? 0 : e.translationY * (e.translationY < 0 ? 0.6 : 0.35));
       progress.set(Math.min(1, Math.abs(e.translationX) / threshold));
@@ -190,6 +226,7 @@ export function SwipeCard({
     },
     onDeactivate: (e) => {
       'worklet';
+      if (leaving.get()) return;
       const fling =
         Math.abs(e.velocityX) > motion.swipeVelocity && Math.sign(e.velocityX) === Math.sign(e.translationX);
       const upward =

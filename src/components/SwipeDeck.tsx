@@ -19,6 +19,12 @@ export interface DeckCardData {
 
 export interface SwipeDeckHandle {
   swipe: (direction: SwipeDirection) => void;
+  /**
+   * Undo pressed: if a card is still on its way out, call it back (nothing was recorded yet)
+   * and return true. Returns false when nothing is leaving, so the newest committed swipe
+   * should be undone instead.
+   */
+  cancelPending: () => boolean;
   /** Call just before undoing: that product's card flies back in from the side it left. */
   prepareReturn: (productId: string, direction: SwipeDirection) => void;
 }
@@ -26,7 +32,10 @@ export interface SwipeDeckHandle {
 interface SwipeDeckProps {
   cards: readonly DeckCardData[];
   retailerNames: ReadonlyMap<string, string>;
-  onSwipe: (direction: SwipeDirection) => void;
+  /** A card finished leaving: commit this swipe for this product. */
+  onSwipe: (direction: SwipeDirection, productId: string) => void;
+  /** A card is on its way out (Undo can call it back), or not. */
+  onPendingChange?: (pending: boolean) => void;
   onOpen: (product: Product) => void;
   /** The shopper flipped to another photo of the top card. */
   onPhotoBrowse?: (product: Product) => void;
@@ -47,6 +56,7 @@ export function SwipeDeck({
   cards,
   retailerNames,
   onSwipe,
+  onPendingChange,
   onOpen,
   onPhotoBrowse,
   reduceMotion,
@@ -60,17 +70,63 @@ export function SwipeDeck({
   const progress = useSharedValue(0);
   const topApi = useRef<SwipeCardApi | null>(null);
   const busy = useRef(false);
+  /** The card on its way out, until it lands (swipe committed) or Undo calls it back. */
+  const pending = useRef<{ productId: string; flight: number } | null>(null);
   const topId = cards[0]?.product.id;
+
+  const setPending = (next: { productId: string; flight: number } | null) => {
+    const changed = (pending.current === null) !== (next === null);
+    pending.current = next;
+    if (changed) onPendingChange?.(next !== null);
+  };
 
   useEffect(() => {
     busy.current = false;
   }, [topId]);
 
+  // The deck was replaced (room switch, reload) while a card was leaving: that exit is void.
+  useEffect(() => {
+    const p = pending.current;
+    if (p && !cards.some((c) => c.product.id === p.productId)) setPending(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cards]);
+
+  // Leaving the screen with a card mid-exit: nothing is pending any more.
+  useEffect(
+    () => () => {
+      if (pending.current) onPendingChange?.(false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const handleLeave = (productId: string, _direction: SwipeDirection, flight: number) => {
+    busy.current = true;
+    setPending({ productId, flight });
+  };
+
+  /** Only the exit still pending is committed; one that Undo called back is turned down. */
+  const handleSwiped = (direction: SwipeDirection, productId: string, flight: number) => {
+    const p = pending.current;
+    if (!p || p.productId !== productId || p.flight !== flight) return false;
+    setPending(null);
+    onSwipe(direction, productId);
+    return true;
+  };
+
   useImperativeHandle(ref, () => ({
     swipe: (direction) => {
-      if (busy.current || !topApi.current) return;
+      if (busy.current || pending.current || !topApi.current) return;
       busy.current = true;
       topApi.current.flyOut(direction);
+    },
+    cancelPending: () => {
+      const p = pending.current;
+      if (!p) return false;
+      setPending(null);
+      busy.current = false;
+      if (topApi.current?.productId === p.productId) topApi.current.cancel();
+      return true;
     },
     prepareReturn: (productId, direction) => setReturning({ productId, direction }),
   }));
@@ -99,7 +155,8 @@ export function SwipeDeck({
             drag={drag}
             enterFrom={returning?.productId === card.product.id ? returning.direction : undefined}
             retailerName={retailerNames.get(card.product.retailerId) ?? ''}
-            onSwiped={onSwipe}
+            onLeave={handleLeave}
+            onSwiped={handleSwiped}
             reduceMotion={reduceMotion}
             pipsTop={pipsTop}
             layout={layout}
