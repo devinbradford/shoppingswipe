@@ -37,6 +37,7 @@ import { brandLine, formatPrice } from '@/lib/format';
 import { COMMISSION_NOTE } from '@/lib/disclosure';
 import { usePurchaseStore } from '@/store/purchaseStore';
 import { recordSignal } from '@/store/signalStore';
+import { rememberSavedProduct, useSnapshotStore } from '@/store/productSnapshotStore';
 import { useSwipeStore } from '@/store/swipeStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { colors, radii, space } from '@/theme/tokens';
@@ -155,6 +156,8 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
       });
     } else {
       addSaved(product.id);
+      const item = useSwipeStore.getState().saved.find((i) => i.productId === product.id);
+      rememberSavedProduct(product, item?.savedAt, retailer?.name);
       toast.show({ message: 'Kept' });
     }
   };
@@ -291,6 +294,7 @@ function ProductDetail({ product, retailer }: { product: Product; retailer: Reta
         onClose={() => setPicking(false)}
         onPick={(listId) => {
           addToList(listId, [product.id]);
+          useSnapshotStore.getState().remember(product, retailer?.name);
           recordSignal(product.id, 'list_add');
         }}
       />

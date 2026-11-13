@@ -5,6 +5,7 @@ import { AppState, Platform } from 'react-native';
 
 import type { Product } from '@/domain/types';
 import { outboundUrl } from '@/lib/outboundLink';
+import { useSnapshotStore } from '@/store/productSnapshotStore';
 import { usePurchaseStore } from '@/store/purchaseStore';
 import { recordSignal } from '@/store/signalStore';
 
@@ -44,6 +45,8 @@ function backInApp(): Promise<void> {
  */
 export async function visitStore(product: Product, storeName: string): Promise<void> {
   recordSignal(product.id, 'buy_click');
+  // If they come back and say they bought it, Kept shows it from this copy should the store stop selling it.
+  useSnapshotStore.getState().remember(product, storeName);
   const result = await WebBrowser.openBrowserAsync(outboundUrl(product), {
     presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
     dismissButtonStyle: 'close',

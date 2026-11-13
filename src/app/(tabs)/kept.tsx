@@ -17,7 +17,9 @@ import { NameSheet } from '@/components/NameSheet';
 import { PhotoTile } from '@/components/PhotoTile';
 import { LoadingView, StateView } from '@/components/StateView';
 import { UndoToast } from '@/components/UndoToast';
-import { arrangeBoard, BOARD_SORTS, boardTotal, formatBoardTotal, roomCounts, type BoardSort } from '@/domain/board';
+import { UnavailableSection } from '@/components/UnavailableSection';
+import { collectionSummary, type UnavailableItem } from '@/domain/availability';
+import { arrangeBoard, BOARD_SORTS, boardTotal, roomCounts, type BoardSort } from '@/domain/board';
 import { CATEGORY_IDS, type CategoryId, type Product } from '@/domain/types';
 import { useBuyNow } from '@/hooks/useBuyNow';
 import { useBoughtIds } from '@/hooks/usePurchasePrompt';
@@ -35,8 +37,8 @@ import { colors, space } from '@/theme/tokens';
 const AFTER_SHEET_MS = Platform.OS === 'ios' ? 420 : 0;
 
 export default function KeptScreen() {
-  const saved = useSavedProducts();
   const retailers = useRetailerNames();
+  const saved = useSavedProducts(retailers);
   const { summaries } = useCategorySummaries();
   const removeSaved = useSwipeStore((s) => s.removeSaved);
   const restoreSaved = useSwipeStore((s) => s.restoreSaved);
@@ -59,7 +61,10 @@ export default function KeptScreen() {
       return markKeptSeen;
     }, [markKeptSeen]),
   );
-  const products = useMemo(() => (saved.status === 'ready' ? (saved.data ?? []) : []), [saved.status, saved.data]);
+  const products = useMemo(() => (saved.status === 'ready' ? saved.data : []), [saved.status, saved.data]);
+  // Kept pieces the catalog no longer returns (only ever from a lookup that succeeded).
+  const unavailable = saved.status === 'ready' ? saved.unavailable : [];
+  const hasAny = products.length + unavailable.length > 0;
 
   const [room, setRoom] = useState<CategoryId | null>(null);
   const [onlyBought, setOnlyBought] = useState(false);
@@ -79,7 +84,15 @@ export default function KeptScreen() {
   const boughtCount = products.filter((p) => boughtIds.has(p.id)).length;
   const showBought = onlyBought && boughtCount > 0;
   const shown = arrangeBoard(products, { room: activeRoom, sort, only: showBought ? boughtIds : undefined });
-  const total = formatBoardTotal(boardTotal(shown), formatPrice);
+  const shownTotal = boardTotal(shown);
+  // The money total covers only pieces that can be bought; unavailable ones are counted on their own.
+  const total = collectionSummary(
+    {
+      count: shownTotal.count,
+      total: shownTotal.totalCents === null ? null : formatPrice(shownTotal.totalCents, shownTotal.currency),
+    },
+    unavailable.length,
+  );
   const roomLabel = (id: CategoryId) => summaries.find((s) => s.id === id)?.label ?? id;
   const sortLabel = BOARD_SORTS.find((s) => s.id === sort)?.label ?? 'Newest';
 
@@ -104,6 +117,17 @@ export default function KeptScreen() {
       undo: () => restoreSaved(item),
       // Only an un-keep that sticks says something about taste.
       commit: () => recordSignal(p.id, 'unsave'),
+    });
+  };
+
+  /** Removing an unavailable piece: same Undo as any other, but not a taste signal (it wasn't about taste). */
+  const removeUnavailable = (u: UnavailableItem) => {
+    const item = useSwipeStore.getState().saved.find((i) => i.productId === u.productId);
+    if (!item) return;
+    removeSaved(u.productId);
+    toast.show({
+      message: `Removed ${u.snapshot?.title ?? 'a piece you kept'}`,
+      undo: () => restoreSaved(item),
     });
   };
 
@@ -216,7 +240,7 @@ export default function KeptScreen() {
             <AppText variant="hero" accessibilityRole="header">
               Kept
             </AppText>
-            {products.length > 0 ? (
+            {hasAny ? (
               <AppText variant="bodySmall" color={colors.inkMuted} accessibilityLiveRegion="polite">
                 {selecting ? 'Tap pieces to select them' : total}
               </AppText>
@@ -236,7 +260,7 @@ export default function KeptScreen() {
             </AppText>
           </View>
         ) : null}
-        {saved.status === 'ready' && (products.length > 0 || lists.length > 0) ? listsRow : null}
+        {saved.status === 'ready' && (hasAny || lists.length > 0) ? listsRow : null}
         {products.length > 0 ? filterRow : null}
         {products.length > 0 && !holdTipSeen && !selecting ? (
           <View style={styles.tip} accessibilityLiveRegion="polite">
@@ -274,9 +298,19 @@ export default function KeptScreen() {
               />
             )}
           />
-        ) : (
+        ) : unavailable.length > 0 ? null : (
           <View style={styles.empty}>{empty}</View>
         )}
+        {!selecting ? (
+          <UnavailableSection
+            items={unavailable}
+            retailerNames={retailers}
+            boughtIds={boughtIds}
+            fallbackTitle="A piece you kept"
+            removeFrom="Kept"
+            onRemove={removeUnavailable}
+          />
+        ) : null}
       </ScrollView>
 
       {selecting ? (

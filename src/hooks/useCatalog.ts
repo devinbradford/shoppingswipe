@@ -6,6 +6,7 @@ import type { CategorySummary, Product, SubcategorySummary } from '@/domain/type
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 import { useAsync } from './useAsync';
+import { useAvailability } from './useProductSnapshots';
 
 /**
  * Rooms and their product types for Discover, with "N left" counts that update
@@ -61,14 +62,20 @@ export function useCategorySummaries() {
   };
 }
 
-/** Kept products, newest first. */
-export function useSavedProducts() {
-  const hydrated = useHydrated();
+/**
+ * Kept products, newest first: the ones the catalog still returns (`data`) and the ones it
+ * no longer does (`unavailable`, shown from their snapshots; see `useAvailability`).
+ */
+export function useSavedProducts(retailerNames?: ReadonlyMap<string, string>) {
   const saved = useSwipeStore((s) => s.saved);
-  const ids = useMemo(() => saved.map((s) => s.productId), [saved]);
-  const key = ids.join(',');
-  const result = useAsync(() => getProductRepository().getProducts(ids), [key]);
-  return { ...result, status: hydrated ? result.status : ('loading' as const), count: ids.length };
+  const result = useAvailability(saved, retailerNames);
+  return {
+    status: result.status,
+    data: result.available,
+    unavailable: result.unavailable,
+    reload: result.reload,
+    count: saved.length,
+  };
 }
 
 export function useProduct(id: string | undefined) {

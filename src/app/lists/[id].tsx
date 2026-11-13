@@ -15,7 +15,9 @@ import { NameSheet } from '@/components/NameSheet';
 import { PhotoTile } from '@/components/PhotoTile';
 import { LoadingView, StateView } from '@/components/StateView';
 import { UndoToast } from '@/components/UndoToast';
-import { boardTotal, formatBoardTotal, shareListText } from '@/domain/board';
+import { UnavailableSection } from '@/components/UnavailableSection';
+import { collectionSummary, type UnavailableItem } from '@/domain/availability';
+import { boardTotal, shareListText } from '@/domain/board';
 import type { Product } from '@/domain/types';
 import { useBuyNow } from '@/hooks/useBuyNow';
 import { useBoughtIds } from '@/hooks/usePurchasePrompt';
@@ -33,8 +35,8 @@ const AFTER_SHEET_MS = Platform.OS === 'ios' ? 420 : 0;
 
 export default function ListScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { list, products, status, reload } = useWishlistProducts(id);
   const retailers = useRetailerNames();
+  const { list, products, unavailable, status, reload } = useWishlistProducts(id, retailers);
   const insets = useSafeAreaInsets();
   const rename = useWishlistStore((s) => s.rename);
   const remove = useWishlistStore((s) => s.remove);
@@ -63,7 +65,15 @@ export default function ListScreen() {
     );
   }
 
-  const total = formatBoardTotal(boardTotal(products), formatPrice);
+  const listTotal = boardTotal(products);
+  // The money total covers only pieces that can be bought; unavailable ones are counted on their own.
+  const total = collectionSummary(
+    {
+      count: listTotal.count,
+      total: listTotal.totalCents === null ? null : formatPrice(listTotal.totalCents, listTotal.currency),
+    },
+    unavailable.length,
+  );
 
   const share = async () => {
     if (!list || products.length === 0) return;
@@ -85,6 +95,16 @@ export default function ListScreen() {
     const listId = list.id;
     removeItems(listId, [p.id]);
     toast.show({ message: `Removed ${p.title}`, undo: () => addToList(listId, [p.id]) });
+  };
+
+  const removeUnavailable = (u: UnavailableItem) => {
+    if (!list) return;
+    const listId = list.id;
+    removeItems(listId, [u.productId]);
+    toast.show({
+      message: `Removed ${u.snapshot?.title ?? 'a piece'}`,
+      undo: () => addToList(listId, [u.productId]),
+    });
   };
 
   const error = shareError;
@@ -135,7 +155,7 @@ export default function ListScreen() {
               />
             )}
           />
-        ) : (
+        ) : status === 'ready' && unavailable.length > 0 ? null : (
           <View style={styles.empty}>
             {status === 'loading' ? (
               <LoadingView label="Loading list" />
@@ -156,6 +176,16 @@ export default function ListScreen() {
             )}
           </View>
         )}
+        {status === 'ready' ? (
+          <UnavailableSection
+            items={unavailable}
+            retailerNames={retailers}
+            boughtIds={boughtIds}
+            fallbackTitle="A piece in this list"
+            removeFrom="this list"
+            onRemove={removeUnavailable}
+          />
+        ) : null}
       </ScrollView>
 
       {toast.toast ? (

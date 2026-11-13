@@ -13,6 +13,7 @@ import { PurchasePrompt } from '@/components/PurchasePrompt';
 import { StateView } from '@/components/StateView';
 import { useOnline } from '@/hooks/useOnline';
 import { usePurchasePrompt } from '@/hooks/usePurchasePrompt';
+import { useSnapshotSweep } from '@/hooks/useProductSnapshots';
 import { useVisitTracking } from '@/hooks/useRetention';
 import { startNotifications } from '@/lib/notifications';
 import { startAuth } from '@/lib/auth';
@@ -34,6 +35,7 @@ export default function RootLayout() {
   const reduceMotion = useReduceMotion();
   const purchase = usePurchasePrompt();
   useVisitTracking();
+  useSnapshotSweep();
   // If fonts fail we still start, falling back to the system font.
   const ready = loaded || !!error;
 

@@ -22,6 +22,7 @@ import { newId } from '@/lib/ids';
 import { currentTasteModel } from './tasteModel';
 import { recordSignal, useSignalStore } from '@/store/signalStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { rememberSavedProduct } from '@/store/productSnapshotStore';
 import { selectSwipedIds, useSwipeStore } from '@/store/swipeStore';
 import { useHydrated } from '@/store/useHydrated';
 
@@ -177,13 +178,19 @@ export function useDeck(
       if (!top) return;
       const dwellMs = shownAt.current ? Date.now() - shownAt.current : undefined;
       if (dwellMs !== undefined) recordSignal(top.product.id, 'swipe_dwell', dwellMs);
+      const swipedAt = Date.now();
       recordSwipe({
         id: newId(),
         productId: top.product.id,
         categoryId: top.product.categoryId,
         direction,
-        swipedAt: Date.now(),
+        swipedAt,
       });
+      // Keep a copy of what was kept (and its price right now), in case the store stops selling it.
+      if (direction === 'keep') {
+        const item = useSwipeStore.getState().saved.find((i) => i.productId === top.product.id);
+        if (item?.savedAt === swipedAt) rememberSavedProduct(top.product, swipedAt);
+      }
       // The first Keep / Skip went through: the first-action hint is done for good (Undo can't bring it back).
       const prefs = usePreferencesStore.getState();
       if (!prefs.firstActionDone) prefs.markFirstActionDone();
