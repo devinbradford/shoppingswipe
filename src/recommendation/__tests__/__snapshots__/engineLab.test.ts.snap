@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`the lab as a whole GOLDEN: the V2 baseline is pinned (a change to V2 ranking or learning changes these on purpose) 1`] = `
+[
+  {
+    "firstLove": 27.666667,
+    "id": "S01-cold",
+    "loves@20": 1,
+    "relevance@1-10": 0.584407,
+    "relevance@41-60": 0.611356,
+  },
+  {
+    "firstLove": 42.666667,
+    "id": "S07-hidden-gem",
+    "loves@20": 0,
+    "relevance@1-10": 0.485537,
+    "relevance@41-60": 0.440226,
+  },
+]
+`;

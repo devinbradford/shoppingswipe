@@ -64,7 +64,8 @@
     "bundle-waitlist": "tsx scripts/bundle-waitlist-function.ts",
     "engine-report": "tsx scripts/engine-report.ts",
     "import-feed": "tsx scripts/import-feed.ts",
-    "bundle-import": "tsx scripts/bundle-import-function.ts"
+    "bundle-import": "tsx scripts/bundle-import-function.ts",
+    "engine-lab": "tsx scripts/engine-lab.ts"
   },
   "private": true,
   "jest": {
