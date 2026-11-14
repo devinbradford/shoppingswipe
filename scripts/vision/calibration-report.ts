@@ -102,7 +102,7 @@ console.log(`  photography ignored  structure ${pc(s.photoIgnored.structure)} ·
 console.log(`  contrast pairs rated the expected way          ${pc(s.pairOrdering)}   (gate ≥ 70%)`);
 console.log(`  same answer for both on contrast questions     ${pc(s.copyRateDivergent)}   (warn > 90%)`);
 console.log(`\nAttention checks  ${Object.entries(r.goldAccuracyByRater).map(([k, v]) => `${k} ${pc(v)}`).join(' · ')}`);
-console.log(`Ambiguous         ${r.ambiguous.length ? r.ambiguous.map((a) => `${a.questionId}/${a.dimension} (${a.reason})`).join(', ') : 'none'}`);
+console.log(`Ambiguous         ${exports.length < 2 ? 'needs 2+ raters' : r.ambiguous.length ? r.ambiguous.map((a) => `${a.questionId}/${a.dimension} (${a.reason})`).join(', ') : 'none'}`);
 const w = workload(r, FULL_ROUND_SCREENS);
 console.log(`\nFull round per rater (${Object.entries(FULL_ROUND_SCREENS).map(([k, n]) => `${n} ${k}`).join(', ')}):`);
 console.log(`  ≈ ${w.minutesPerRater} min in ${w.sittings} sittings of ≤45 min  ${JSON.stringify(w.byKind)}${w.unmeasured.length ? `  (not measured: ${w.unmeasured.join(', ')})` : ''}`);

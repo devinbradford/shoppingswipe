@@ -186,8 +186,10 @@ export function analyseCalibration(pack: QuestionPack, exports: readonly LabelEx
   if (s.pairOrdering < 0.7) warnings.push(`1–5 ratings moved the expected way on only ${pct(s.pairOrdering)} of the contrast pairs (needs ≥ 70%)`);
   if (s.copyRateDivergent > 0.9) warnings.push(`on questions built to separate the two, both answers matched ${pct(s.copyRateDivergent)} of the time: raters may not be separating structure from overall look`);
   for (const [r, acc] of Object.entries(report.goldAccuracyByRater)) if (acc < 0.9) warnings.push(`rater ${r} missed ${pct(1 - acc)} of attention checks`);
+  // A majority needs 2+ votes, so with a single rater every judgment would look "ambiguous": don't report that.
+  if (exports.length < 2) report.ambiguous = [];
   const judgments = pack.questions.reduce((n, q) => n + (q.kind === 'triplet' || q.kind === 'pair' ? q.ask.length : 1), 0);
-  if (ambiguous.length / Math.max(1, judgments) > 0.2) warnings.push(`${ambiguous.length} of ${judgments} judgments ambiguous (> 20%)`);
+  if (report.ambiguous.length / Math.max(1, judgments) > 0.2) warnings.push(`${report.ambiguous.length} of ${judgments} judgments ambiguous (> 20%)`);
   return report;
 }
 

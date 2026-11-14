@@ -249,7 +249,7 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   - Thin types are catalog limits: dining chairs are 1 design in the whole catalog.
   - Model harness: all models pinned via `snapshot_download(revision)` + open_clip `local-dir:`; `--resolve-revisions` (metadata only), and `--measure` needs `--yes-download`; licences Apache-2.0/MIT. Weights not downloaded.
   - `IMAGE_PERMISSIONS.md` lists 4 separate permissions: P1 private annotation, P2 temporary copies, P3 embeddings, P4 retention.
-- Checks passing: typecheck, lint, 431 unit tests
+- Checks passing: typecheck, lint, 432 unit tests
 
 ## Phase plan
 

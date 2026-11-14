@@ -315,6 +315,13 @@ describe('calibration (two dimensions)', () => {
     expect(w).toMatch(/rater r2 missed 50%/);
   });
 
+  it('does not call everything ambiguous when only one rater has answered', () => {
+    const r = analyseCalibration(pack, [exp('r1', separates)]);
+    expect(r.ambiguous).toEqual([]);
+    expect(r.warnings.join(' ')).toMatch(/only 1 rater/);
+    expect(r.warnings.join(' ')).not.toMatch(/ambiguous/);
+  });
+
   it('times one-question and two-question screens separately and sizes the workload', () => {
     const r = analyseCalibration(pack, [exp('r1', separates), exp('r2', separates), exp('r3', separates)]);
     expect(r.secondsByScreen['triplet:both']!.median).toBe(6);
