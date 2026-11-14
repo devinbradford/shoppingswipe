@@ -64,13 +64,15 @@ Why both:
 | **Retrieval relevance on the overall look only** | Retrieval exists to show shoppers things they'll like. A separate structure-relevance pool would double the largest task. |
 | **Fallback** | If calibration shows raters give the same answer for both on built-to-differ items more than 90% of the time, the dimensions aren't being separated. Switch to two separate blocks in separate sittings, with fewer items. |
 
-**Full-round plan per rater** (`FULL_ROUND_SCREENS`):
+**Full-round plan per rater** (`FULL_ROUND_SCREENS`; reduced workload approved for Stage 2):
 - 300 two-question triplet screens;
-- 250 two-question pair screens (was 300 single pairs);
+- **150** two-question pair screens;
 - 80 same-thing checks;
-- 200 attribute sets.
+- attributes described by **2 raters per product** (`assignAttributeRaters`: with 3 raters, about 134 each). A field the two disagree on goes to a **third rater**; if there's still no majority it is labelled **uncertain**, never forced (`aggregateAttributes`).
 
-The minutes come from the calibration round (section 6), never from estimates.
+With the round-1 medians this is about **3 hours per rater in 4 sittings**, plus the third-rater adjudication. The real-photo timing pilot (`npm run vision:pilot-pack`, dev products only, released only with permission P1) re-measures this before the plan is fixed, because real photos take longer to read than drawings.
+
+**Privacy:** the repository is public. Raw exports (rater codes, timestamps, per-person answers) stay private and git-ignored; only de-identified summaries are committed (`npm run vision:summarize`).
 
 ## 5. Aggregation (by the tools, never by hand)
 

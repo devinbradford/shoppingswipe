@@ -245,7 +245,11 @@ Each bar is fixed **after** the calibration round and before any test scoring, a
 
 The address rules (same photo, same page) could not see any of these. Nothing has been labelled or scored, so nothing is contaminated yet. But the manifest **must not be used for test scoring as it stands.**
 
-### Proposed manifest v2 (not created; needs approval)
+### Manifest v2 (created in Stage 2: `data/vision-eval/manifest-v2.json`, hash `d8ff09ff…`)
+
+**Stage 2 update:** v2 was created with both rules, and v1 is kept unchanged. The real result matches the dry run below. Every correction is listed in `manifest-v2.corrections.json` (114 in the catalog, 21 touching the sample, 2 leaking groups fixed, 41 products changing side, 0 cross-retailer candidates). The manifest records `imageHashCheck` and `crossRetailerReview` as `not-run`, and test-split scoring refuses until both are done. Status: `docs/vision/STAGE2_REPORT.md`.
+
+*Original proposal, kept for the record:*
 
 Add two grouping rules:
 - **Same-name family:** same store + same `productNameKey`.

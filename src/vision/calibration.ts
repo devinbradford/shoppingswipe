@@ -194,16 +194,17 @@ export function analyseCalibration(pack: QuestionPack, exports: readonly LabelEx
 }
 
 /**
- * Planned screens per rater for the full 200-product round. Every triplet and pair screen asks
- * BOTH dimensions (one look at the pictures, two answers) — the calibration measures what that
- * costs compared with a single question.
+ * Planned screens per rater for the full 200-product round (reduced workload approved for Stage 2):
+ * every triplet and pair screen asks BOTH dimensions; 150 two-question pairs (was 250); attributes
+ * by 2 raters per product, so with 3 raters each describes about 134 products, plus third-rater
+ * adjudication only for fields the first two disagree on.
  */
 export const FULL_ROUND_SCREENS: Record<string, number> = {
   'triplet:both': 300,
-  'pair:both': 250,
+  'pair:both': 150,
   same: 80,
-  attributes: 200,
-  // relevance: sized from the pool in Stage 2
+  attributes: 134,
+  // relevance: sized from the pool in Stage 2; attribute adjudication: measured after the first two passes
 };
 
 /**

@@ -128,7 +128,18 @@ jobs:
 - an estimated full-catalog run under 30 CI minutes;
 - the licence is re-confirmed on its card.
 
-## 7. Stage 2 only (not authorised)
+## 7. Stage 2 additions
+
+- `measure_models.py` also reports **retrieval latency** (top-10 over 2,000 and 10,000 stored vectors) and index size.
+- `.github/workflows/vision-benchmark.yml`: manual-only GitHub Actions run of the synthetic-drawing benchmark. Added, **not started**.
+- `fetch_images.py`: the bounded image pilot. **Not run** until permissions P2 and P3 are recorded. It enforces:
+  - an approval reference, a 600-image hard cap, a 512 px width and the store CDN only;
+  - polite pacing;
+  - `provenance.jsonl` (source, size, SHA-256, time, approval);
+  - dHash duplicate candidates for human review;
+  - `purge` with a deletion record.
+
+## 8. Embedding (Stage 2; needs P2 and P3)
 
 `--embed` turns local images (`<dir>/<product id>.jpg`, kept **outside** the repository) into `{product id: vector}` files for `npm run vision:evaluate`. It refuses to run:
 - without `--approval-ref`, pointing to the recorded approvals P1–P4 in `docs/vision/IMAGE_PERMISSIONS.md`;

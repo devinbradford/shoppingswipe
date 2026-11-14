@@ -50,3 +50,6 @@ example
 
 # Raw rater exports are private (rater codes, timestamps). Only de-identified summaries are committed.
 data/vision-eval/labels/
+
+# Embeddings derived from retailer data (catalog text now; images in Stage 2) stay out of the public repo.
+data/vision-eval/embeddings/

@@ -1,0 +1,197 @@
+{
+ "version": 2,
+ "id": "pilot-real-dev-1",
+ "title": "Real-photo timing pilot (dev products only)",
+ "purpose": "calibration",
+ "questions": [
+  {
+   "kind": "triplet",
+   "id": "p01",
+   "anchor": {
+    "productId": "awin-92307-9fvjz51do9vkr",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Wood_Slim_End_Table_Fully_Assembled_Side_Table_Nightstand_with_3-Drawers-11.jpg?v=1780298766&width=512"
+   },
+   "b": {
+    "productId": "awin-92307-1tjl9p110xryv7",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Wood_Slim_End_Table_Fully_Assembled_Side_Table_Nightstand_with_3-Drawers-9.jpg?v=1780298745&width=512"
+   },
+   "c": {
+    "productId": "awin-110532-7pe2umepx9ww",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND004A2XBKY1504.jpg?v=1785408022&width=512"
+   },
+   "stratum": "shape-vs-colour",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "triplet",
+   "id": "p02",
+   "anchor": {
+    "productId": "awin-92307-19qmwbf1aakx5x",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_b1afb96a-43a7-4551-91f5-d292762135f3.jpg?v=1792747482&width=512"
+   },
+   "b": {
+    "productId": "awin-92307-4n9ddm1x5yvng",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_50c06225-3137-4d56-96a7-15e177f014d3.jpg?v=1756800075&width=512"
+   },
+   "c": {
+    "productId": "awin-110532-7pe2umepx9ww",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND004A2XBKY1504.jpg?v=1785408022&width=512"
+   },
+   "stratum": "shape-vs-colour",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "triplet",
+   "id": "p03",
+   "anchor": {
+    "productId": "awin-92307-1c6iuo4og5qry",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/11_f62ccfc3-36d7-4c5e-adde-4decc511a238.jpg?v=1769493461&width=512"
+   },
+   "b": {
+    "productId": "awin-110532-1w7way2bol5u0",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/SC113A1CLTY0766_ff9fa519-e81e-4e80-a360-e1a60c63c13d.jpg?v=1784699769&width=512"
+   },
+   "c": {
+    "productId": "awin-92307-qxq6xa2rmseo",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6391ace427ade714b70fb966024ae804_33eb80c5-d6d4-45db-b75d-a9976ae998ef.jpg?v=1774584399&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "triplet",
+   "id": "p04",
+   "anchor": {
+    "productId": "awin-92307-1ymq1sh97dvu",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/products/carved-nightstand-white-bedside-table-end-table-with-2-drawers-929896.jpg?v=1698123223&width=512"
+   },
+   "b": {
+    "productId": "awin-92307-x00evdeee74b",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_4b157efd-d2b7-425d-ae3f-c4984812fa06.jpg?v=1793351871&width=512"
+   },
+   "c": {
+    "productId": "awin-110532-140im8lvolcin",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND129A1XBNY1694.jpg?v=1785489408&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "triplet",
+   "id": "p05",
+   "anchor": {
+    "productId": "awin-110532-eh0sumq39b9s",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20261104-135130.jpg?v=1793771513&width=512"
+   },
+   "b": {
+    "productId": "awin-110532-uqunex1hawcbr",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_5dd74a9f-9a63-435c-9f80-77518be69b0f_5f55cfe5-72d8-401c-8276-34e9af12e78f.jpg?v=1789716035&width=512"
+   },
+   "c": {
+    "productId": "awin-110532-1wx33gu14jxsx4",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_482bb485-5640-4860-9502-eeb250443bd1.jpg?v=1787804124&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "triplet",
+   "id": "p06",
+   "anchor": {
+    "productId": "awin-92307-xdpblt4yjwp7",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_0d856aaf-b0f8-47ce-895e-33299464367d.jpg?v=1779086729&width=512"
+   },
+   "b": {
+    "productId": "awin-92307-195xb3i193zauw",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/5_1da5f66a-b884-4bbe-855d-b7e96f006e8d.jpg?v=1791971871&width=512"
+   },
+   "c": {
+    "productId": "awin-92307-16bbdcafmt6rk",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_905620f6-b0ac-4ae5-a7d5-af56397888a8.jpg?v=1785746311&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "pair",
+   "id": "p07",
+   "a": {
+    "productId": "awin-92307-jg18acw1mf8",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_d4ebcac6-3748-4153-811c-64c3a80aa878.jpg?v=1792050608&width=512"
+   },
+   "b": {
+    "productId": "awin-92307-ciw5uq1xx8jis",
+    "src": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_f587ded0-304c-4a46-9fc0-e13f63843f43.jpg?v=1769758487&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "pair",
+   "id": "p08",
+   "a": {
+    "productId": "awin-110532-1x7rqzy1pu85uo",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DR113A1XLTY1194_6632e6dc-29af-4312-b776-cfefa1b44499.jpg?v=1783657640&width=512"
+   },
+   "b": {
+    "productId": "awin-110532-17u91vg1r9cqj6",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260420-135816_0e951bc3-6e94-41f4-a536-3e254ff9990f.jpg?v=1788424350&width=512"
+   },
+   "stratum": "random",
+   "ask": [
+    "structure",
+    "aesthetic"
+   ]
+  },
+  {
+   "kind": "same",
+   "id": "p09",
+   "a": {
+    "productId": "awin-110532-171pbl5t0dkbn",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260618-153707.jpg?v=1781776645&width=512"
+   },
+   "b": {
+    "productId": "awin-110532-15ry7lwcpp7qi",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260618-153707.jpg?v=1781776645&width=512"
+   },
+   "stratum": "random"
+  },
+  {
+   "kind": "attributes",
+   "id": "p10",
+   "product": {
+    "productId": "awin-110532-1nfec3818kvaom",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260730-150722.jpg?v=1785400343&width=512"
+   }
+  },
+  {
+   "kind": "attributes",
+   "id": "p11",
+   "product": {
+    "productId": "awin-110532-1iu4gc7nr88sd",
+    "src": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND004A2XBKY1504.jpg?v=1785408022&width=512"
+   }
+  }
+ ]
+}

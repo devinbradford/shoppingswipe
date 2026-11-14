@@ -251,6 +251,15 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   - `IMAGE_PERMISSIONS.md` lists 4 separate permissions: P1 private annotation, P2 temporary copies, P3 embeddings, P4 retention.
 - Checks passing: typecheck, lint, 432 unit tests
 - Calibration round 1 (14 Nov 2026, pack calibration-v2-1, study lead + 2 outside raters, drawings only): every gate passed (structure κ 1.00, overall look κ 0.87; shape over colour, finish noticed and photography ignored all 100%; attention checks 100%). Colour drove the overall look about 37% of the time when shape and colour disagreed. Ratings α 0.71/0.60 (0.53/0.44 for the outside raters alone): reported, not gated. Two questions on one screen cost 1.44× one. NOT final: independence of the outside raters is unconfirmed (sessions ran back to back on one device), and one more rater may follow. PRIVACY: the repo is public, so raw exports (codes, timestamps) are git-ignored in `data/vision-eval/labels/` and kept privately; only the de-identified `data/vision-eval/labels-summary/*.json` (`npm run vision:summarize`) is committed. Write-up: `docs/vision/CALIBRATION_RESULTS.md`
+- Visual Intelligence Stage 2 (approved 14 Nov 2026; research pilot, no production use). Report: `docs/vision/STAGE2_REPORT.md`.
+  - Retailer-image work PAUSED: Awin permission is verbal only (A1 in `IMAGE_PERMISSIONS.md`), the P1–P4 scope isn't itemised, and there is no advertiser permission yet. A written follow-up request is drafted.
+  - Manifest v2 created (`data/vision-eval/manifest-v2.json`, hash d8ff09ff…, same 200 products, 75/125, 0 leaks; v1 kept). New rules `same-name-family` and `near-identical-page` are opt-in in `groupRelated`, so v1 reproduces byte for byte. `manifest-v2.corrections.json` lists 114 corrections (2 leaks fixed). Grouping record `imageHashCheck` / `crossRetailerReview` are 'not-run'; `testScoringBlockers` refuses test scoring until both are done (`--image-hash-checked` / `--cross-retailer-reviewed` need person-confirmed `--duplicates`).
+  - Privacy: the repo is public. Raw calibration exports were removed from the tree (still in history at a729bf0 until Devin approves a rewrite or makes the repo private).
+  - Baselines `src/vision/baselines.ts` (tags, colour-aware, text TF-IDF, random; `npm run vision:baselines`, vectors git-ignored). Dev sanity check: text prefers the same store 86% vs 76% chance.
+  - Reduced workload: 150 pairs, attributes by 2 raters per product plus a third or "uncertain" (`src/vision/attributes.ts`).
+  - Real-photo timing pack: `src/vision/pilotPack.ts`, `npm run vision:pilot-pack`; dev only, 512 px; the rater file needs `--release --approval-ref`.
+  - Model harness: retrieval latency added. `tools/vision-models/fetch_images.py` (bounded fetch, provenance, dHash candidates, purge) is not run. Manual-only `.github/workflows/vision-benchmark.yml` is not started. Model hosts are still blocked in this session. No model run, no winner.
+- Checks passing: typecheck, lint, 442 unit tests
 
 ## Phase plan
 

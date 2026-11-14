@@ -71,7 +71,9 @@
     "vision:calibration": "tsx scripts/vision/calibration-report.ts",
     "vision:evaluate": "tsx scripts/vision/evaluate.ts",
     "vision:audit": "tsx scripts/vision/audit-manifest.ts",
-    "vision:summarize": "tsx scripts/vision/summarize-labels.ts"
+    "vision:summarize": "tsx scripts/vision/summarize-labels.ts",
+    "vision:pilot-pack": "tsx scripts/vision/make-pilot-pack.ts",
+    "vision:baselines": "tsx scripts/vision/baselines.ts"
   },
   "private": true,
   "jest": {

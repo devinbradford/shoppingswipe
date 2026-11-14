@@ -1,5 +1,10 @@
 import { aggregateGrade, checkTestLock, evaluate, judgmentsFromExports, testScoringBlockers, type TestRun } from '../evaluate';
 import { crossRetailerCandidates, groupingCorrections } from '../corrections';
+import { aggregateAttributes, assignAttributeRaters, needsThirdRater } from '../attributes';
+import { allBaselines } from '../baselines';
+import { FULL_ROUND_SCREENS } from '../calibration';
+import { cosine as cosineSim } from '../metrics';
+import { boundedPhoto, makePilotPack } from '../pilotPack';
 import { findLeaks, groupRelated } from '../grouping';
 import { ART_COLOURS, drawSvg, makeCalibrationPack, randomDesign } from '../fixtureArt';
 import { makeFixturePack, makeFixtureWorld, simulateRaters } from '../fixtures';
@@ -253,5 +258,64 @@ describe('manifest v2 grouping', () => {
     expect(new Set(v2.items.map((i) => i.id))).toEqual(new Set(v1.items.map((i) => i.id)));
     expect(findLeaks(v2.groups, new Map(v2.items.map((i) => [i.id, i.split])))).toEqual([]);
     expect(testScoringBlockers(v2).length).toBeGreaterThan(0);
+  });
+});
+
+describe('stage 2 baselines, attributes and pilot pack', () => {
+  const prods = [
+    { id: 'a', subcategoryId: 'n', styleTags: ['modern'], material: 'oak', color: 'walnut', title: 'Fluted oak nightstand', description: 'Fluted front, tapered legs' },
+    { id: 'b', subcategoryId: 'n', styleTags: ['modern'], material: 'oak', color: 'black', title: 'Fluted oak nightstand', description: 'Fluted front, tapered legs' },
+    { id: 'c', subcategoryId: 'n', styleTags: ['boho'], material: 'rattan', color: 'walnut', title: 'Rattan bedside cabinet', description: 'Woven doors on a plinth' },
+  ];
+
+  it('baselines: tags ignore colour, colour-aware uses it, text follows words, random is the floor', () => {
+    const s = allBaselines(prods);
+    const cos = (n: string, x: string, y: string) => cosineSim(s.get(n as never)!.get(x)!, s.get(n as never)!.get(y)!);
+    expect(cos('tags', 'a', 'b')).toBeCloseTo(1); // same tags, different colour
+    expect(cos('colour-aware', 'a', 'b')).toBeLessThan(cos('tags', 'a', 'b'));
+    expect(cos('colour-aware', 'a', 'c')).toBeGreaterThan(cos('tags', 'a', 'c')); // shared colour now counts
+    expect(cos('text', 'a', 'b')).toBeGreaterThan(cos('text', 'a', 'c'));
+    expect(allBaselines(prods).get('random')).toEqual(s.get('random'));
+    for (const v of s.get('text')!.values()) expect(Math.hypot(...v)).toBeCloseTo(1);
+  });
+
+  it('attributes: two raters agree, a third settles disagreements, otherwise "uncertain"', () => {
+    const two = aggregateAttributes([{ base: 'legs', finish: 'matte' }, { base: 'legs', finish: 'gloss' }]);
+    expect(two.base).toEqual({ status: 'agreed', value: 'legs', votes: 2 });
+    expect(two.finish).toEqual({ status: 'needs-third' });
+    expect(two.silhouette).toEqual({ status: 'needs-third' }); // "not sure" never counts as agreement
+    const three = aggregateAttributes([{ finish: 'matte' }, { finish: 'gloss' }, { finish: 'gloss' }]);
+    expect(three.finish).toEqual({ status: 'agreed', value: 'gloss', votes: 2 });
+    expect(aggregateAttributes([{ finish: 'matte' }, { finish: 'gloss' }, { finish: 'satin' }]).finish).toEqual({ status: 'uncertain' });
+    expect(needsThirdRater(new Map([['p1', [{ base: 'legs' as const }, { base: 'legs' as const }]], ['p2', [{ base: 'legs' as const }, { base: 'plinth' as const }]]]))).toContain('p2');
+  });
+
+  it('attribute assignment: 2 different raters per product, balanced load, deterministic', () => {
+    const ids = Array.from({ length: 200 }, (_, i) => `p${i}`);
+    const a = assignAttributeRaters(ids, ['R1', 'R2', 'R3'], 2, 4);
+    expect(a).toEqual(assignAttributeRaters(ids, ['R1', 'R2', 'R3'], 2, 4));
+    expect([...a.values()].every((r) => r.length === 2 && r[0] !== r[1])).toBe(true);
+    const load = ['R1', 'R2', 'R3'].map((r) => [...a.values()].filter((x) => x.includes(r)).length);
+    expect(Math.max(...load) - Math.min(...load)).toBeLessThanOrEqual(1);
+    expect(load.reduce((s, x) => s + x, 0)).toBe(400);
+  });
+
+  it('pilot pack: dev products only, bounded image size, valid against the schema', () => {
+    const fs = require('node:fs') as typeof import('node:fs');
+    const m = JSON.parse(fs.readFileSync('data/vision-eval/manifest-v2.json', 'utf8')) as Manifest;
+    const { pack } = makePilotPack(m.items, 1);
+    expect(makePilotPack(m.items, 1).pack).toEqual(pack);
+    const splitOf = new Map(m.items.map((i) => [i.id, i.split]));
+    const ids = JSON.stringify(pack).match(/"productId":"[^"]+"/g)!.map((x) => x.slice(13, -1));
+    expect(ids.every((id) => splitOf.get(id) === 'dev')).toBe(true);
+    expect((JSON.stringify(pack).match(/"src":"[^"]+"/g) ?? []).every((x) => x.endsWith('width=512"'))).toBe(true);
+    expect(pack.questions.length).toBeGreaterThanOrEqual(8);
+    expect(validateExport({ version: LABELS_VERSION, packId: pack.id, rater: 'x', startedAt: '', finishedAt: '', answers: [] }, pack)).toEqual([]);
+    expect(boundedPhoto('https://cdn.example.com/a.jpg?v=1&width=2000')).toBe('https://cdn.example.com/a.jpg?v=1&width=512');
+    expect(boundedPhoto('https://cdn.example.com/a.jpg')).toBe('https://cdn.example.com/a.jpg?width=512');
+  });
+
+  it('full-round plan uses the reduced workload', () => {
+    expect(FULL_ROUND_SCREENS).toEqual({ 'triplet:both': 300, 'pair:both': 150, same: 80, attributes: 134 });
   });
 });

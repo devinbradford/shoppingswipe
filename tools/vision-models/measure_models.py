@@ -219,6 +219,7 @@ def measure_one(name: str, loader: Callable[[], Loaded], images: list, batch: in
     def maxdiff(a, b):
         return max(abs(x - y) for u, v in zip(a, b) for x, y in zip(u, v))
 
+    latency = retrieval_latency(len(batched[0]))
     digest = hashlib.sha256(json.dumps([[round(x, 5) for x in v] for v in batched]).encode()).hexdigest()
     return {
         "model": name,
@@ -234,7 +235,29 @@ def measure_one(name: str, loader: Callable[[], Loaded], images: list, batch: in
         "same_run_max_abs_diff": maxdiff(batched, again),
         "batch1_vs_batched_max_abs_diff": maxdiff(single, batched[:16]),
         "embedding_sha256_5dp": digest,
+        **latency,
     }
+
+
+def retrieval_latency(dim: int, sizes=(2000, 10000), k: int = 10, queries: int = 200) -> dict:
+    """Brute-force cosine top-k over N stored unit vectors of this dimension (numpy, float32).
+    Vectors are random: latency depends only on N and dim, not on the content."""
+    import numpy as np
+
+    rng = np.random.default_rng(SEED)
+    out = {}
+    for n in sizes:
+        db = rng.standard_normal((n, dim)).astype(np.float32)
+        db /= np.linalg.norm(db, axis=1, keepdims=True)
+        q = db[rng.integers(0, n, queries)]
+        t = time.perf_counter()
+        for v in q:
+            scores = db @ v
+            top = np.argpartition(-scores, k)[:k]
+            top[np.argsort(-scores[top])]
+        out[f"retrieval_ms_top{k}_of_{n}"] = round((time.perf_counter() - t) * 1000 / queries, 3)
+        out[f"index_mb_float32_{n}"] = round(n * dim * 4 / 2**20, 2)
+    return out
 
 
 def environment(threads: int) -> dict:
@@ -266,7 +289,7 @@ def self_test() -> int:
 
     r = measure_one("stand-in-histogram", loader, images)
     print(json.dumps({"environment": environment(1), "results": [r]}, indent=1))
-    ok = r["dim"] == 48 and r["same_run_max_abs_diff"] == 0 and r["batch1_vs_batched_max_abs_diff"] == 0 and len(images) == 40
+    ok = "retrieval_ms_top10_of_10000" in r and r["dim"] == 48 and r["same_run_max_abs_diff"] == 0 and r["batch1_vs_batched_max_abs_diff"] == 0 and len(images) == 40
     again = measure_one("stand-in-histogram", loader, synthetic_images(40))
     ok = ok and again["embedding_sha256_5dp"] == r["embedding_sha256_5dp"]
     print("SELF-TEST", "PASSED" if ok else "FAILED")

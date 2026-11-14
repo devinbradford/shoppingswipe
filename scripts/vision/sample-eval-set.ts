@@ -12,6 +12,9 @@
  *   manifest-v2.json plus manifest-v2.corrections.json (every correction vs --supersedes, default
  *   the original manifest.json, and cross-retailer candidates for review).
  * --rules v1: the original rules; reproduces data/vision-eval/manifest.json byte for byte.
+ * --image-hash-checked / --cross-retailer-reviewed (with --duplicates): mark those grouping checks
+ *   done once people have confirmed the duplicate candidates (tools/vision-models/fetch_images.py
+ *   hashes, and the corrections file's cross-retailer list). Test scoring stays blocked until both.
  *
  * A snapshot is a JSON array of `products` rows (id, category_id, subcategory_id, retailer_id,
  * image_urls, product_url, style_tags, material, color). `--photo-meta` optionally adds the
@@ -95,6 +98,10 @@ const sample = sampleEvaluationSet(catalog, { seed, confirmedDuplicates: dups, r
 
 let grouping: GroupingRecord | undefined;
 let corrections: object | undefined;
+if ((args.includes('--image-hash-checked') || args.includes('--cross-retailer-reviewed')) && !value('duplicates')) {
+  console.error('--image-hash-checked / --cross-retailer-reviewed need --duplicates <file of person-confirmed duplicate sets> (an empty list [] if none were confirmed)');
+  process.exit(2);
+}
 if (v2) {
   const prevPath = value('supersedes') ?? 'data/vision-eval/manifest.json';
   const prev = readJson<Manifest>(prevPath);
@@ -104,8 +111,9 @@ if (v2) {
   const correctionsFile = (value('out') ?? 'data/vision-eval/manifest-v2.json').replace(/\.json$/, '.corrections.json');
   grouping = {
     rules: ['same-photo-url', 'same-retailer-page', 'confirmed-duplicate', 'same-name-family', 'near-identical-page'],
-    imageHashCheck: 'not-run',
-    crossRetailerReview: 'not-run',
+    // Marked done only with a person-confirmed duplicates file from that check (--duplicates).
+    imageHashCheck: args.includes('--image-hash-checked') ? 'done' : 'not-run',
+    crossRetailerReview: args.includes('--cross-retailer-reviewed') ? 'done' : 'not-run',
     supersedes: prev.hash,
     correctionsFile: basename(correctionsFile),
   };
