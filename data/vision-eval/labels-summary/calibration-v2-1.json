@@ -1,0 +1,190 @@
+{
+ "packId": "calibration-v2-1",
+ "raters": 3,
+ "note": "De-identified summary. Raw exports (rater codes, timestamps, per-person answers) are kept privately and never committed.",
+ "votes": {
+  "c04": {
+   "structure": {
+    "b": 3
+   },
+   "aesthetic": {
+    "b": 3
+   }
+  },
+  "c01": {
+   "structure": {
+    "b": 3
+   },
+   "aesthetic": {
+    "b": 3
+   }
+  },
+  "c12": {
+   "aesthetic": {
+    "c": 3
+   }
+  },
+  "c02": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "c": 2,
+    "cant-tell": 1
+   }
+  },
+  "c09": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "c": 3
+   }
+  },
+  "c13": {
+   "structure": {
+    "5": 3
+   },
+   "aesthetic": {
+    "4": 3
+   }
+  },
+  "c14": {
+   "structure": {
+    "1": 2,
+    "3": 1
+   },
+   "aesthetic": {
+    "3": 3
+   }
+  },
+  "c10": {
+   "structure": {
+    "b": 3
+   },
+   "aesthetic": {
+    "b": 3
+   }
+  },
+  "c16": {
+   "same": {
+    "same-photo": 3
+   }
+  },
+  "c15": {
+   "structure": {
+    "3": 1,
+    "5": 2
+   },
+   "aesthetic": {
+    "3": 1,
+    "4": 2
+   }
+  },
+  "c17": {
+   "attr:silhouette": {
+    "rectilinear": 3
+   },
+   "attr:visualWeight": {
+    "medium": 1,
+    "light": 1
+   },
+   "attr:base": {
+    "sled": 1,
+    "plinth": 2
+   },
+   "attr:finish": {
+    "mixed": 1
+   },
+   "attr:woodTone": {
+    "mid": 2
+   },
+   "attr:texture": {
+    "woven": 1
+   },
+   "attr:photoKind": {
+    "scene": 1
+   }
+  },
+  "c11": {
+   "structure": {
+    "c": 3
+   }
+  },
+  "c07": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "c": 3
+   }
+  },
+  "c06": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "c": 3
+   }
+  },
+  "c05": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "c": 3
+   }
+  },
+  "c03": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "b": 3
+   }
+  },
+  "c08": {
+   "structure": {
+    "c": 3
+   },
+   "aesthetic": {
+    "b": 1,
+    "c": 2
+   }
+  }
+ },
+ "medianSecondsByScreen": {
+  "attributes": 22.3,
+  "pair:both": 17.6,
+  "same": 4.9,
+  "triplet:aesthetic": 8.8,
+  "triplet:both": 11,
+  "triplet:structure": 6.5
+ },
+ "agreement": {
+  "tripletKappa": {
+   "structure": 1,
+   "aesthetic": 0.8743712427922953
+  },
+  "pairAlpha": {
+   "structure": 0.7052154195011338,
+   "aesthetic": 0.6
+  },
+  "sameKappa": 1
+ },
+ "separation": {
+  "structureShapeOverColour": 1,
+  "aestheticShapeOverColour": 0.625,
+  "aestheticNoticesFinish": 1,
+  "structureIgnoresFinish": 0,
+  "photoIgnored": {
+   "structure": 1,
+   "aesthetic": 1
+  },
+  "pairOrdering": 1,
+  "copyRateDivergent": 0.7333333333333333
+ },
+ "attentionChecksAllPassed": true,
+ "ambiguous": [],
+ "warnings": []
+}

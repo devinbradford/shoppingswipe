@@ -1,8 +1,10 @@
 # Calibration round 1: results (pack `calibration-v2-1`, 14 Nov 2026)
 
-These are **real observations from three people** (R1 = Devin, R2, R3) on CureAvo's own drawings. No store photos were used, and no model was involved. The raw exports are in `data/vision-eval/labels/calibration-v2-1/` and are unedited. R2's file uses the code `r2` in lower case, which is kept as recorded.
+These are **real observations from three people** (the study lead and two outside raters) on CureAvo's own drawings. No store photos were used, and no model was involved.
 
-Reproduce:
+**Privacy:** the raw exports (rater codes, timestamps, per-person answers) are kept privately and are **not** in this public repository. The committed record is the de-identified summary `data/vision-eval/labels-summary/calibration-v2-1.json`: vote counts per question, median times, and the report numbers.
+
+Reproduce (needs the private raw exports in a local, git-ignored folder):
 
 ```bash
 npm run vision:calibration -- --labels data/vision-eval/labels/calibration-v2-1
@@ -10,7 +12,7 @@ npm run vision:calibration -- --labels data/vision-eval/labels/calibration-v2-1
 
 ## Result: all gates pass (provisional; see the open question)
 
-| Check | All 3 raters | Without R1 (R2 + R3) | Gate |
+| Check | All 3 raters | Outside raters only (2) | Gate |
 | --- | --- | --- | --- |
 | Structure triplet agreement κ | 1.00 | 1.00 | ≥ 0.40 ✓ |
 | Overall-look triplet agreement κ | 0.87 | 1.00 (1 ambiguous item) | ≥ 0.40 ✓ |
@@ -32,8 +34,8 @@ npm run vision:calibration -- --labels data/vision-eval/labels/calibration-v2-1
 2. **Colour really matters to the overall look.** When shape and colour pointed different ways, overall look went with the colour match about 37% of the time. That's large enough that a structure-only model would miss a real share of what appeals to people, which supports measuring both.
 3. **Finish leaks into "structure" a little.** On the two finish-only screens, both options were the same design, so "can't tell" was the expected structure answer. All three raters instead picked the option with the same finish. That's harmless here, but the next guideline should say: *"If two pieces differ only in colour or finish, the structure answer is Can't tell."*
 4. **1–5 ratings are the weakest part.**
-   - α is 0.71 and 0.60 with all three raters, but only 0.53 and 0.44 without R1.
-   - R3 rated both "only colour/finish differs" pairs 3 and 3, so their two ratings didn't differ at all.
+   - α is 0.71 and 0.60 with all three raters, but only 0.53 and 0.44 for the two outside raters alone.
+   - One rater gave both "only colour/finish differs" pairs the same rating on both questions.
    - There were only three pairs, so this is thin evidence. Ratings stay **reported, not a gate**, as planned.
 5. **Two questions on one screen cost 1.44× one question**, not 2×, so the combined screen saves about 28%. This is based on only 3 one-question screens per kind, so treat it as indicative.
 
@@ -54,8 +56,8 @@ Recommendation:
 
 ## Open question before relying on these numbers
 
-- **Independence.** R3's session started 14 seconds after R2's finished, which suggests the same computer, one after the other. That's fine **if R2 and R3 are different people who answered alone without seeing each other's screen or discussing answers.** If one person did both, or they talked it through, agreement is overstated and round 1 counts as one outside rater, not two.
-- **Speed.** R2 and R3 took 3.5 and 2.9 minutes in total, against Devin's 6.4. That's plausible for 17 easy screens, but quick.
+- **Independence of the two outside raters (unconfirmed).** The session times suggest both outside sessions ran back to back on one device. That's fine **if they were two different people who answered alone, without seeing each other's screen or discussing answers.** Otherwise agreement is overstated, and round 1 counts as one outside rater.
+- A further independent rater may complete the calibration later. **Calibration is not final** until independence is confirmed and that check is done.
 
 ## Limits of this round
 
@@ -64,5 +66,5 @@ Recommendation:
   - **c08:** the "clear mismatch" shared the anchor's doors, rounding and colour.
   - **c17:** the attribute item was too small and thin to tell a plinth from a sled.
 
-  R2 and R3 both said plinth, which was correct; R1 said sled.
+  Two of the three raters said plinth, which was correct.
 - These answers are about drawings only. They are never mixed with real-catalog labels and never used as model inputs.

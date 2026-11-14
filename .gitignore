@@ -47,3 +47,6 @@ example
 .env.*
 !.env.example
 .feeds/
+
+# Raw rater exports are private (rater codes, timestamps). Only de-identified summaries are committed.
+data/vision-eval/labels/

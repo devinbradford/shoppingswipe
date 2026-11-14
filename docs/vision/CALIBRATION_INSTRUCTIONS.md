@@ -17,7 +17,8 @@
    You know what the pack is designed to test, so the analysis is also run without your answers. That's expected, not a problem.
 5. **Collect the answers.**
    - Each rater sends back one file named like `labels-calibration-v2-1-R2.json`. It contains only their code and answers: no name, no email.
-   - Check you have one file per rater, then **attach all of them to your next message to Claude.** Claude puts them in `data/vision-eval/labels/calibration-v2-1/` and runs the analysis.
+   - Check you have one file per rater, then **attach all of them to your next message to Claude.** Claude puts them in `data/vision-eval/labels/calibration-v2-1/`, a **private, git-ignored** folder, and runs the analysis.
+   - Only a de-identified summary (vote counts, median times) is committed, because the repository is public. Keep the original files yourself; they are the private record.
 6. **Don't discuss answers** with the raters until all files are in.
 
 ## For raters (copy this into your message)
