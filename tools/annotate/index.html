@@ -31,6 +31,10 @@
   button.primary { background: var(--accent); color: #fff; }
   button.sel { background: var(--pick); border-color: var(--ink); }
   button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .dim { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 12px; }
+  .dimhead { font-size: 15px; }
+  .small { font-size: 13px; margin: 4px 0 0; }
+  button[disabled] { opacity: .45; cursor: default; }
   .conf { display:flex; gap:8px; align-items:center; margin: 8px 0 16px; flex-wrap: wrap; }
   .attr { display:grid; grid-template-columns: 160px 1fr; gap: 8px 12px; align-items:center; margin: 12px 0; }
   select, input[type=text] { font: inherit; padding: 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); }
@@ -38,18 +42,26 @@
   kbd { border:1px solid var(--line); border-radius:4px; padding:0 4px; font-size: 13px; background:#fff; }
   @media (max-width: 640px) { .imgs.trip .anchor { width: 100%; } .attr { grid-template-columns: 1fr; } }
 </style>
-<script src="packs/calibration-fixture.js"></script>
+<script src="packs/calibration-v2.rater.js"></script>
 </head>
 <body>
 <main id="app"></main>
 <script>
 'use strict';
 // ---------------------------------------------------------------------------------------------
-// Pack/answer formats: src/vision/schema.ts (LABELS_VERSION 1). Answers are stored UN-swapped.
+// Pack/answer formats: src/vision/schema.ts (LABELS_VERSION 2). Answers are stored UN-swapped.
 // ---------------------------------------------------------------------------------------------
-const LABELS_VERSION = 1;
+const LABELS_VERSION = 2;
+const DIMS = ['structure', 'aesthetic'];
+const DIM_TEXT = {
+  structure: { title: 'STRUCTURE: which is closer?', hint: 'Shape, proportions, curves and edges, legs or base, how it is built. Ignore colour, finish, wood tone and the photo.' },
+  aesthetic: { title: 'OVERALL LOOK: which is closer?', hint: 'Would the same person be drawn to both? Shape AND colour, wood tone, finish, texture, how heavy or light it looks. Still ignore the photo, room and lighting.' },
+};
+const DIM_KEYS = { structure: ['a', 's', 'd'], aesthetic: ['j', 'k', 'l'] };
 const app = document.getElementById('app');
-const packs = (window.ANNOTATE_PACKS || []).slice();
+// Raters never see an answer key: drop it from any pack, even if one was included by mistake.
+const stripKey = (p) => ({ ...p, questions: p.questions.map(({ gold, ...q }) => q) });
+const packs = (window.ANNOTATE_PACKS || []).map(stripKey);
 let state = null; // { pack, rater, order, swaps, answers, startedAt, shownAt, idx }
 
 function hashSeed(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -101,26 +113,45 @@ function render() {
   const keys = {};
   const choice = (label, k, fn) => { const b = el('button', { text: `${label}${k ? ` (${k})` : ''}`, onclick: fn }); if (k) keys[k] = fn; choices.append(b); };
 
-  if (q.kind === 'triplet') {
-    const [L, R] = sw ? [q.c, q.b] : [q.b, q.c];
+  if (q.kind === 'triplet' || q.kind === 'pair') {
+    // One screen, one answer per asked dimension (structure first), then Next.
+    const isT = q.kind === 'triplet';
+    const [L, R] = isT ? (sw ? [q.c, q.b] : [q.b, q.c]) : (sw ? [q.b, q.a] : [q.a, q.b]);
     const [lv, rv] = sw ? ['c', 'b'] : ['b', 'c'];
-    app.append(el('div', { class: 'q', text: 'Which piece is closer in DESIGN to the top one?' }), el('p', { class: 'muted', text: 'Design = shape, proportions, legs or base, details. Ignore colour, the photo and the background.' }));
-    app.append(el('div', { class: 'imgs trip' }, el('div', { class: 'anchor' }, figure(q.anchor, 'This one')), figure(L, 'Left'), figure(R, 'Right')));
-    choice('Left', 'a', () => record({ kind: 'triplet', choice: lv }, conf));
-    choice('Right', 'l', () => record({ kind: 'triplet', choice: rv }, conf));
-    choice("Can't tell", 'x', () => record({ kind: 'triplet', choice: 'cant-tell' }, conf));
-  } else if (q.kind === 'pair' || q.kind === 'same') {
-    const [L, R] = sw ? [q.b, q.a] : [q.a, q.b];
-    app.append(el('div', { class: 'imgs two' }, figure(L, 'Left'), figure(R, 'Right')));
-    if (q.kind === 'pair') {
-      app.prepend(el('p', { class: 'muted', text: '1 = nothing alike · 3 = same family, clearly different · 5 = almost the same design. Ignore colour and photo.' }));
-      app.prepend(el('div', { class: 'q', text: 'How similar are these two designs?' }));
-      for (const v of [1, 2, 3, 4, 5]) choice(String(v), String(v), () => record({ kind: 'pair', rating: v }, conf));
-      choice("Can't tell", 'x', () => record({ kind: 'pair', rating: null }, conf));
-    } else {
-      app.prepend(el('div', { class: 'q', text: 'Are these the same product?' }));
-      [['Same photo', '1', 'same-photo'], ['Same design, other colour', '2', 'same-design-diff-colour'], ['Same design, other photo', '3', 'same-design-diff-photo'], ['Different products', '4', 'different'], ["Can't tell", 'x', 'cant-tell']].forEach(([t, k, v]) => choice(t, k, () => record({ kind: 'same', choice: v }, conf)));
+    const ask = DIMS.filter((d) => q.ask.includes(d));
+    app.append(el('div', { class: 'q', text: isT ? 'Compare each piece below with the top one' : 'Compare these two pieces' }));
+    app.append(isT ? el('div', { class: 'imgs trip' }, el('div', { class: 'anchor' }, figure(q.anchor, 'This one')), figure(L, 'Left'), figure(R, 'Right')) : el('div', { class: 'imgs two' }, figure(L, 'Left'), figure(R, 'Right')));
+    const picked = {};
+    const nextBtn = el('button', { class: 'primary', text: 'Next (Enter)', disabled: 'true' });
+    const refresh = () => { if (ask.every((d) => d in picked)) nextBtn.removeAttribute('disabled'); };
+    nextBtn.onclick = () => { if (!ask.every((d) => d in picked)) return; record({ kind: q.kind, ...picked }, conf); };
+    for (const d of ask) {
+      const title = isT ? DIM_TEXT[d].title : DIM_TEXT[d].title.replace('which is closer?', 'how similar, 1–5?');
+      const row = el('div', { class: 'dim' }, el('div', { class: 'dimhead' }, el('strong', { text: title }), el('span', { class: 'muted', text: ` ${isT ? DIM_TEXT[d].hint : DIM_TEXT[d].hint.replace('Would the same person be drawn to both? ', '')}` })));
+      const btns = el('div', { class: 'choices' });
+      const opts = isT
+        ? [['Left', lv], ['Right', rv], ["Can't tell", 'cant-tell']]
+        : [['1', 1], ['2', 2], ['3', 3], ['4', 4], ['5', 5], ["Can't tell", null]];
+      const kk = isT ? DIM_KEYS[d] : [];
+      const all = [];
+      opts.forEach(([label, v], i) => {
+        const b = el('button', { text: kk[i] ? `${label} (${kk[i]})` : label, 'aria-label': `${title} ${label}` });
+        const pick = () => { picked[d] = v; all.forEach((x) => x.classList.toggle('sel', x === b)); refresh(); };
+        b.onclick = pick;
+        if (kk[i]) keys[kk[i]] = pick;
+        all.push(b);
+        btns.append(b);
+      });
+      row.append(btns);
+      if (!isT) row.append(el('p', { class: 'muted small', text: '1 nothing alike · 2 little in common · 3 same family, clearly different · 4 very close · 5 almost the same' }));
+      app.append(row);
     }
+    keys.Enter = () => nextBtn.onclick();
+    choices.append(nextBtn);
+  } else if (q.kind === 'same') {
+    const [L, R] = sw ? [q.b, q.a] : [q.a, q.b];
+    app.append(el('div', { class: 'q', text: 'Are these the same product?' }), el('div', { class: 'imgs two' }, figure(L, 'Left'), figure(R, 'Right')));
+    [['Same photo', '1', 'same-photo'], ['Same design, other colour', '2', 'same-design-diff-colour'], ['Same design, other photo', '3', 'same-design-diff-photo'], ['Different products', '4', 'different'], ["Can't tell", 'x', 'cant-tell']].forEach(([t, k, v]) => choice(t, k, () => record({ kind: 'same', choice: v }, conf)));
   } else if (q.kind === 'relevance') {
     app.append(el('div', { class: 'q', text: 'If someone loved the left piece, how good a suggestion is the right one?' }), el('p', { class: 'muted', text: '0 = not relevant · 1 = same kind, weak match · 2 = good match · 3 = excellent match / same design.' }));
     app.append(el('div', { class: 'imgs two' }, figure(q.query, 'Loved'), figure(q.candidate, 'Suggestion')));
@@ -167,13 +198,13 @@ function finish() {
 function home() {
   app.replaceChildren();
   app.append(el('h1', { text: 'CureAvo design labelling' }));
-  app.append(el('div', { class: 'card' }, el('p', { text: 'You will see furniture pictures and answer short questions about how similar their DESIGNS are. Go with your first honest reading; "Can\'t tell" is a fine answer. There are no right answers you can look up, and no model has answered these.' }), el('p', { class: 'muted', text: 'Guidelines: docs/vision/LABELING_PROTOCOL.md. Your progress stays in this browser; nothing is uploaded.' })));
+  app.append(el('div', { class: 'card' }, el('p', { text: 'You will compare drawings or photos of furniture. Most screens ask two separate questions:' }), el('p', {}, el('strong', { text: 'Structure' }), ' is the shape and build: silhouette, proportions, curves and edges, legs or base. Colour and finish do not count.'), el('p', {}, el('strong', { text: 'Overall look' }), ' is everything you would notice when deciding if you like it: the shape AND the colour, wood tone, finish, texture and how heavy or light it looks.'), el('p', { text: 'For both, ignore the photography (background, room, lighting). Go with your first honest reading; "Can\'t tell" is a fine answer. There are no right answers to look up, and no computer model has answered these.' }), el('p', { class: 'muted', text: 'Your progress stays in this browser and nothing is uploaded. When you finish, you download one file and send it back.' })));
   const name = el('input', { type: 'text', placeholder: 'Your rater code (e.g. R1)', 'aria-label': 'rater code' });
   const sel = el('select', { 'aria-label': 'pack' });
   const refresh = () => { sel.replaceChildren(...packs.map((p, i) => el('option', { value: String(i), text: `${p.title} (${p.questions.length} questions)` }))); };
   refresh();
   const file = el('input', { type: 'file', accept: 'application/json', 'aria-label': 'load a pack file' });
-  file.onchange = async () => { try { const p = JSON.parse(await file.files[0].text()); if (p.version !== LABELS_VERSION || !Array.isArray(p.questions)) throw new Error('not a version 1 pack'); packs.push(p); refresh(); sel.value = String(packs.length - 1); } catch (e) { alert(`Could not load that pack: ${e.message}`); } };
+  file.onchange = async () => { try { const p = JSON.parse(await file.files[0].text()); if (p.version !== LABELS_VERSION || !Array.isArray(p.questions)) throw new Error(`not a version ${LABELS_VERSION} pack`); packs.push(stripKey(p)); refresh(); sel.value = String(packs.length - 1); } catch (e) { alert(`Could not load that pack: ${e.message}`); } };
   app.append(el('div', { class: 'card attr' }, el('label', { text: 'Rater code' }), name, el('label', { text: 'Pack' }), sel, el('label', { text: 'Or load a pack' }), file));
   app.append(el('button', { class: 'primary', text: 'Start / resume', onclick: () => { const r = name.value.trim(); if (!r) { name.focus(); return; } if (!packs.length) { alert('Load a pack first.'); return; } start(packs[Number(sel.value)], r); } }));
 }

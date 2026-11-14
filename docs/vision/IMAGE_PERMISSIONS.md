@@ -1,6 +1,6 @@
 # Image-use permissions needed before Stage 2
 
-**Status:** not verified. Stage 2 (any processing of advertiser images) is **blocked** until the written approvals below are on file. This is not legal advice. If a store or Awin gives unclear answers, ask a lawyer before going ahead.
+**Status (reviewed in Stage 1.5):** nothing verified yet. Stage 2 (any processing of advertiser images) is **blocked** until the written approvals P1–P4 below are on file. This is not legal advice. If a store or Awin gives unclear answers, ask a lawyer before going ahead.
 
 ## What Stage 2 would do with advertiser images
 
@@ -18,6 +18,19 @@ Read this list exactly when asking for permission; the people approving need to 
 4. **Storage of derived data:** keep only the numbers and labels (not the images), tied to the product id. If approved later, store them in our database to recommend **that advertiser's** products inside CureAvo, with every buy link going to the store through Awin as today.
 5. **No other use:** the images and derived data are not used to train or fine-tune a model, are not sold or shared, are not used for other advertisers' products, and are not used outside CureAvo.
 6. **Deletion:** if a program ends or permission is withdrawn, the embeddings and labels derived from that advertiser's images are deleted within 30 days.
+
+## The four permissions, one by one (Stage 1.5 review)
+
+Each activity needs its own yes; a yes to one doesn't imply the others. "Advertiser Materials" in Awin's terms include images and data, so every row involves both Awin's Publisher Terms and the store's own program terms.
+
+| # | Activity | What exactly happens | Permission needed | Lowest-risk way to do it | Status |
+| --- | --- | --- | --- | --- | --- |
+| P1 | **Private human annotation** | 3–4 named raters see product photos in the local labelling page, loaded straight from the store's own image CDN (`cdn.shopify.com`) as the app does. Nothing is stored except their answers. | That showing feed images to a small private panel, outside CureAvo's public "promotional space", for the purpose of improving how CureAvo recommends the advertiser's products, is within the licence. | Load from the CDN at display time (no copies). Raters agree not to save or share images. | **Not confirmed** |
+| P2 | **Temporary processing** | A ≤512 px copy of the first photo of each product is downloaded to the machine running the models, kept only for the run (hours), then deleted. Never committed, published or sent to a third party. | That **reproducing** the image temporarily (a copy) for automated analysis is allowed. Many licences allow *display* but are silent on copying. | Copies in a temporary folder outside the repository; deleted at the end of the run (the harness refuses folders inside the repo); local models only (no hosted AI service). | **Not confirmed** |
+| P3 | **Generated embeddings** | Open-source models compute a list of numbers per photo (a "derived work" in some readings), plus a duplicate fingerprint (perceptual hash) and a photo type. | That creating **derived data** from the images is allowed, and that this isn't a prohibited "modification" or "derivative work". It also covers using that data only to rank that advertiser's products inside CureAvo. | Store numbers only (never images), tagged with model version and source; no training or fine-tuning on the images; not shared, sold or used for other brands' products. | **Not confirmed** |
+| P4 | **Retention of derived attributes** | The embeddings, fingerprints and attributes (silhouette, finish, wood tone …) are kept in CureAvo's database while the product is active, to recommend it. | **How long** derived data may be kept, and what happens when (a) a product leaves the feed, (b) the program ends, or (c) the advertiser asks. Some program terms require deleting or returning "brand materials" when participation ends. | Delete per product within 30 days of it leaving the feed. Delete all of an advertiser's derived data within 30 days of the program ending or on request. Labels from people stay (they are CureAvo's own observations), but without the image. | **Not confirmed** |
+
+**Calibration needs none of these:** it uses only CureAvo's own drawings. **The real-image pilot needs P1–P4 from all three advertisers** (or the pilot is restricted to the stores that say yes) **and from Awin**: confirmation that the Publisher Terms allow it, or a written statement that the advertiser's consent is enough.
 
 ## What needs checking, and where
 
@@ -43,7 +56,7 @@ Send this through Awin messaging to each advertiser, copying Awin publisher supp
 > 4. We keep only this derived data, linked to your product ids, to recommend your products inside CureAvo. All purchases still go through our Awin tracking links.
 > 5. We do not use your images or this data to train AI models, share or sell them, or use them for other brands' products. We delete the derived data within 30 days if our partnership ends or if you ask.
 >
-> Do you permit this use of your feed images? If you have conditions, such as attribution or a deletion timeframe, please tell us.
+> Could you confirm, for each of the four points, whether it is permitted: (1) showing your photos to our private rating panel, (2) temporary copies for processing, (3) computing and using the derived numeric data, and (4) keeping that data while your products are listed, with deletion within 30 days after a product or the partnership ends? If you have conditions, such as attribution or a different deletion timeframe, please tell us.
 
 **What counts as approval:** a written yes from each advertiser (an email or Awin message is enough), plus confirmation from Awin, or a clear clause in the accepted terms, that nothing in the Publisher Terms forbids it. Record each approval (who, date, scope) in this file. Those records are the `--approval-ref` the model harness asks for.
 

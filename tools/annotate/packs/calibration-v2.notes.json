@@ -1,0 +1,19 @@
+{
+ "c01": "v2-shape0: match=b",
+ "c02": "v2-shape1: match=c",
+ "c03": "v2-shape2: match=c",
+ "c04": "v2-finish0: match=b",
+ "c05": "v2-finish1: match=c",
+ "c06": "v2-photo0: match=c",
+ "c07": "v2-photo1: match=c",
+ "c08": "v2-near0: match=c",
+ "c09": "v2-attn0: match=c",
+ "c10": "v2-attn1: match=b",
+ "c11": "v2-single-structure: match=c",
+ "c12": "v2-single-aesthetic: match=c",
+ "c13": "v2-pair-shape: structure ≥ look",
+ "c14": "v2-pair-colour: look ≥ structure",
+ "c15": "v2-pair-finish: look ≤ structure",
+ "c16": "v2-same0: same-photo",
+ "c17": "v2-attr0: base≈plinth"
+}

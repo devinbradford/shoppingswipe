@@ -1,5 +1,5 @@
 import { fleissKappa, krippendorffAlpha, majority } from '../agreement';
-import { analyseCalibration, workload } from '../calibration';
+import { analyseCalibration, dualCost, workload } from '../calibration';
 import { makeFixturePack, makeFixtureWorld, simulateRaters, simulatedGrade } from '../fixtures';
 import { findLeaks, groupIndex, groupRelated, photoKey, questionSplit, splitByGroup } from '../grouping';
 import {
@@ -17,7 +17,7 @@ import {
 } from '../metrics';
 import { buildPool, poolContribution } from '../pooling';
 import { sampleEvaluationSet } from '../sampling';
-import { LABELS_VERSION, validateExport, type CatalogItem, type LabelExport, type QuestionPack } from '../schema';
+import { LABELS_VERSION, raterCopy, validateExport, type CatalogItem, type LabelExport, type QuestionPack } from '../schema';
 
 const item = (id: string, over: Partial<CatalogItem> = {}): CatalogItem => ({
   id,
@@ -152,7 +152,7 @@ describe('metrics', () => {
     const exports = simulateRaters(world, pack, 3);
     const triplets: LabelledTriplet[] = pack.questions.flatMap((q) => {
       if (q.kind !== 'triplet') return [];
-      const votes = exports.map((e) => e.answers.find((a) => a.questionId === q.id)!.value).map((v) => (v.kind === 'triplet' ? v.choice : 'cant-tell'));
+      const votes = exports.map((e) => e.answers.find((a) => a.questionId === q.id)!.value).map((v) => (v.kind === 'triplet' ? (v.structure ?? 'cant-tell') : 'cant-tell'));
       return [{ id: q.id, anchor: q.anchor.productId, b: q.b.productId, c: q.c.productId, human: majority(votes).label as 'b' | 'c' | 'ambiguous', stratum: q.stratum }];
     });
     const good = tripletAccuracy(triplets, world.systems.get('design')!);
@@ -246,56 +246,102 @@ describe('pooling', () => {
   });
 });
 
-describe('calibration', () => {
+describe('calibration (two dimensions)', () => {
   const img = (id: string) => ({ productId: id, src: `https://img.example.com/${id}.jpg` });
+  const BOTH = ['structure', 'aesthetic'] as const;
   const pack: QuestionPack = {
     version: LABELS_VERSION,
     id: 'cal',
     title: 'cal',
     purpose: 'calibration',
     questions: [
-      { kind: 'triplet', id: 'colour', anchor: img('a'), b: img('same-design-other-colour'), c: img('other-design-same-colour'), stratum: 'colour-trap', gold: 'b' },
-      { kind: 'triplet', id: 'photo', anchor: img('a'), b: img('same-design-room-photo'), c: img('other-design-studio'), stratum: 'photo-trap', gold: 'b' },
-      { kind: 'triplet', id: 'gold', anchor: img('a'), b: img('a-copy'), c: img('rug'), stratum: 'gold', gold: 'b' },
-      { kind: 'pair', id: 'p1', a: img('a'), b: img('b'), stratum: 'random' },
+      // b = same shape in another colour; c = other shape in the anchor's colour.
+      { kind: 'triplet', id: 'shape', anchor: img('a'), b: img('a-blue'), c: img('x-red'), stratum: 'shape-vs-colour', ask: BOTH, gold: { structure: 'b' } },
+      // b = same design, same finish; c = same design, gloss.
+      { kind: 'triplet', id: 'finish', anchor: img('a'), b: img('a2'), c: img('a-gloss'), stratum: 'finish-only', ask: BOTH, gold: { aesthetic: 'b' } },
+      { kind: 'triplet', id: 'photo', anchor: img('a'), b: img('a-room'), c: img('y-studio'), stratum: 'photo-style', ask: BOTH, gold: { structure: 'b', aesthetic: 'b' } },
+      { kind: 'triplet', id: 'attn', anchor: img('a'), b: img('a-copy'), c: img('rug'), stratum: 'gold', ask: BOTH, gold: { structure: 'b', aesthetic: 'b' } },
+      { kind: 'triplet', id: 'one', anchor: img('a'), b: img('p'), c: img('q'), stratum: 'random', ask: ['structure'] },
+      { kind: 'pair', id: 'pshape', a: img('a'), b: img('a-blue'), stratum: 'same-shape-diff-colour', ask: BOTH },
+      { kind: 'pair', id: 'pcolour', a: img('a'), b: img('x-red'), stratum: 'same-colour-diff-shape', ask: BOTH },
     ],
   };
-  const exp = (rater: string, colour: 'b' | 'c', photo: 'b' | 'c', gold: 'b' | 'c', rating: 1 | 2 | 3 | 4 | 5): LabelExport => ({
-    version: LABELS_VERSION,
-    packId: 'cal',
-    rater,
-    startedAt: 't',
-    finishedAt: 't',
-    answers: [
-      { questionId: 'colour', value: { kind: 'triplet', choice: colour }, confidence: 2, ms: 4000, order: 0, swapped: false, at: 't' },
-      { questionId: 'photo', value: { kind: 'triplet', choice: photo }, confidence: 2, ms: 6000, order: 1, swapped: true, at: 't' },
-      { questionId: 'gold', value: { kind: 'triplet', choice: gold }, confidence: 3, ms: 2000, order: 2, swapped: false, at: 't' },
-      { questionId: 'p1', value: { kind: 'pair', rating }, confidence: 2, ms: 5000, order: 3, swapped: false, at: 't' },
-    ],
+  type Sheet = { shape: [string, string]; finish: [string, string]; photo: [string, string]; attn: [string, string]; pshape: [number, number]; pcolour: [number, number] };
+  const exp = (rater: string, x: Sheet): LabelExport => {
+    const t = (id: string, [s, a]: [string, string], ms: number, order: number) => ({ questionId: id, value: { kind: 'triplet' as const, structure: s as 'b', aesthetic: a as 'b' }, confidence: 2 as const, ms, order, swapped: false, at: 't' });
+    const p = (id: string, [s, a]: [number, number], order: number) => ({ questionId: id, value: { kind: 'pair' as const, structure: s as 1, aesthetic: a as 1 }, confidence: 2 as const, ms: 7000, order, swapped: false, at: 't' });
+    return {
+      version: LABELS_VERSION,
+      packId: 'cal',
+      rater,
+      startedAt: 't',
+      finishedAt: 't',
+      answers: [
+        t('shape', x.shape, 6000, 0),
+        t('finish', x.finish, 6000, 1),
+        t('photo', x.photo, 6000, 2),
+        t('attn', x.attn, 6000, 3),
+        { questionId: 'one', value: { kind: 'triplet', structure: 'b' }, confidence: 2, ms: 4000, order: 4, swapped: false, at: 't' },
+        p('pshape', x.pshape, 5),
+        p('pcolour', x.pcolour, 6),
+      ],
+    };
+  };
+  const separates: Sheet = { shape: ['b', 'c'], finish: ['cant-tell', 'b'], photo: ['b', 'b'], attn: ['b', 'b'], pshape: [5, 3], pcolour: [1, 3] };
+  const colourLed: Sheet = { shape: ['c', 'c'], finish: ['b', 'c'], photo: ['c', 'c'], attn: ['b', 'c'], pshape: [2, 3], pcolour: [4, 2] };
+
+  it('measures each dimension separately and recognises raters who separate them', () => {
+    const r = analyseCalibration(pack, [exp('r1', separates), exp('r2', separates), exp('r3', separates)]);
+    expect(r.separation.structureShapeOverColour).toBe(1);
+    expect(r.separation.aestheticShapeOverColour).toBe(0); // people let colour drive the overall look here: allowed
+    expect(r.separation.aestheticNoticesFinish).toBe(1);
+    expect(r.separation.structureIgnoresFinish).toBe(1);
+    expect(r.separation.photoIgnored).toEqual({ structure: 1, aesthetic: 1 });
+    expect(r.separation.pairOrdering).toBe(1);
+    expect(r.separation.copyRateDivergent).toBe(0);
+    expect(r.goldAccuracyByRater).toEqual({ r1: 1, r2: 1, r3: 1 });
+    expect(r.warnings.filter((w) => !w.includes('κ'))).toEqual([]);
   });
 
-  it('measures time, trap accuracy, attention checks, and warns when raters follow colour', () => {
-    const r = analyseCalibration(pack, [exp('r1', 'b', 'b', 'b', 4), exp('r2', 'c', 'b', 'b', 4), exp('r3', 'c', 'c', 'c', 5)]);
-    expect(r.secondsByKind.triplet!.median).toBe(4);
-    expect(r.trapAccuracy.colour).toBeCloseTo(1 / 3);
-    expect(r.trapAccuracy.photo).toBeCloseTo(2 / 3);
-    expect(r.goldAccuracyByRater).toEqual({ r1: 1, r2: 1, r3: 0 });
-    expect(r.warnings.some((w) => w.includes('colour'))).toBe(true);
-    expect(r.warnings.some((w) => w.includes('r3'))).toBe(true);
+  it('flags raters who judge structure by colour, follow photography or miss finishes', () => {
+    const r = analyseCalibration(pack, [exp('r1', separates), exp('r2', colourLed), exp('r3', colourLed)]);
+    expect(r.separation.structureShapeOverColour).toBeCloseTo(1 / 3);
+    expect(r.separation.aestheticNoticesFinish).toBeCloseTo(1 / 3);
+    expect(r.separation.pairOrdering).toBeCloseTo(1 / 3);
+    const w = r.warnings.join(' | ');
+    expect(w).toMatch(/structure answers followed colour/);
+    expect(w).toMatch(/missed a finish change/);
+    expect(w).toMatch(/followed the photography/);
+    expect(w).toMatch(/rater r2 missed 50%/);
   });
 
-  it('turns measured times into a workload per rater', () => {
-    const r = analyseCalibration(pack, [exp('r1', 'b', 'b', 'b', 4), exp('r2', 'b', 'b', 'b', 4), exp('r3', 'b', 'b', 'b', 4)]);
-    const w = workload(r, { triplet: 300, pair: 300 });
-    // 300 × 4 s + 300 × 5 s = 45 min, +15% ≈ 52 min.
-    expect(w.minutesPerRater).toBe(52);
+  it('times one-question and two-question screens separately and sizes the workload', () => {
+    const r = analyseCalibration(pack, [exp('r1', separates), exp('r2', separates), exp('r3', separates)]);
+    expect(r.secondsByScreen['triplet:both']!.median).toBe(6);
+    expect(r.secondsByScreen['triplet:structure']!.median).toBe(4);
+    expect(dualCost(r, 'triplet')).toBeCloseTo(1.5);
+    // 300 × 6 s + 250 × 7 s = 59.2 min, +15% = 68 min; same and attributes not measured here.
+    const w = workload(r, { 'triplet:both': 300, 'pair:both': 250, same: 80 });
+    expect(w.minutesPerRater).toBe(68);
     expect(w.sittings).toBe(2);
+    expect(w.unmeasured).toEqual(['same']);
   });
 
-  it('validates exports against their pack', () => {
-    const good = exp('r1', 'b', 'b', 'b', 4);
+  it('validates exports: every asked dimension answered, nothing unasked', () => {
+    const good = exp('r1', separates);
     expect(validateExport(good, pack)).toEqual([]);
-    const bad = { ...good, answers: [...good.answers, good.answers[0]!, { ...good.answers[0]!, questionId: 'nope' }] };
-    expect(validateExport(bad, pack).length).toBeGreaterThanOrEqual(2);
+    const missing = { ...good, answers: good.answers.map((a) => (a.questionId === 'shape' ? { ...a, value: { kind: 'triplet' as const, structure: 'b' as const } } : a)) };
+    expect(validateExport(missing, pack)).toEqual(['shape: aesthetic not answered']);
+    const extra = { ...good, answers: good.answers.map((a) => (a.questionId === 'one' ? { ...a, value: { kind: 'triplet' as const, structure: 'b' as const, aesthetic: 'c' as const } } : a)) };
+    expect(validateExport(extra, pack)).toEqual(['one: aesthetic answered but not asked']);
+    expect(validateExport({ ...good, version: 1 }, pack)[0]).toMatch(/version 1/);
+  });
+
+  it('the rater copy of a pack carries no answer key', () => {
+    const copy = raterCopy(pack);
+    expect(copy.questions.map((q) => q.id)).toEqual(pack.questions.map((q) => q.id));
+    expect(JSON.stringify(copy)).not.toContain('"gold":');
+    expect(new Set(copy.questions.map((q) => ('stratum' in q ? q.stratum : 'random')))).toEqual(new Set(['random']));
+    expect(JSON.stringify(pack)).toContain('"gold":');
   });
 });

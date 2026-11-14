@@ -227,7 +227,7 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   Commands:
   - `npm run vision:sample` (manifest `data/vision-eval/manifest.json` from the 9 Nov snapshot: 200 products, dev 76 / test 124, 0 leaks, hash d711082b…; `-- --verify`);
   - `vision:fixture-pack`;
-  - `vision:calibration` (`-- --simulate` dry run);
+  - `vision:calibration` (Stage 1.5: `--simulate` replaced by `--tool-check`);
   - `vision:evaluate -- --fixture` (whole pipeline on synthetic data). A test-split run needs `--reason` and dev thresholds, runs once per manifest + system, and is logged in `data/vision-eval/test-runs.json`.
 
   Other pieces:
@@ -235,6 +235,21 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   - Model pilot: `tools/vision-models/` (pinned Python CPU environment; `measure_models.py --self-test` passes here; `--measure` blocked here because huggingface.co and download.pytorch.org are not allowed; `--embed` refuses without `--approval-ref`).
   - Docs: `docs/vision/EVALUATION_METHOD.md` (method, provisional acceptance bars), `LABELING_PROTOCOL.md` (rater guide, calibration, workload), `IMAGE_PERMISSIONS.md` (approvals needed from Awin + Tribesigns 92307, Sicotas 110532, Welax 108888, with request text).
 - Checks passing: typecheck, lint, 427 unit tests
+- Visual Intelligence Stage 1.5 (Nov 2026; still no real image processed; Stage 2 NOT approved). Two kinds of similarity:
+  - `LABELS_VERSION` 2: triplets and pairs carry `ask` ('structure' | 'aesthetic', usually both on one screen; structure first), and answers store one value per dimension.
+    - Structure: silhouette, proportions, edges, legs/base, construction; ignores colour, finish and photo.
+    - Overall look (`aesthetic`): structure plus colour, wood tone, finish, texture and visual weight; ignores only the photography.
+    - Retrieval relevance is judged on overall look. The primary gate is overall-look accuracy; structure is the diagnostic.
+  - Calibration analysis per dimension: shape vs colour, finish noticed, photography ignored, contrast-pair ordering, copy rate, one- vs two-question timing (`dualCost`).
+  - `evaluate` reports per dimension plus a "divergent" set (people's two answers differ); the fixture shows the structure-only and colour-aware stand-ins crossing over. Test lock unchanged.
+  - Calibration pack v2 (`makeCalibrationPack`, drawn SVG with matte/gloss/woodgrain finishes): 17 screens, 30 judgments, neutral ids c01…; `raterCopy` strips the key and strata.
+  - Outputs: `tools/annotate/cureavo-calibration-v2.html` (one standalone file for raters) and `packs/calibration-v2.json` (with key, for analysis).
+  - Instructions: `docs/vision/CALIBRATION_INSTRUCTIONS.md`. `npm run vision:calibration -- --labels <dir>`, or `--tool-check` (scripted sheets, never reported as results).
+  - Read-only `npm run vision:audit`: the frozen manifest is valid and its grouping re-derives identically, but 3 same-store families span dev/test (a Stria coffee table listed twice on near-identical pages, caught only by `pageKey`; a Stria name collision; Cas TV cabinet 2-door vs 3-door). Manifest v2 with same-name (`productNameKey`) + near-identical-page (`pageKey`) rules is proposed, NOT created (dry run: same 200 products, 41 change side, 75/125, all three resolved): do it once in Stage 2 after the perceptual-hash check. Until then v1 must not be used for test scoring.
+  - Thin types are catalog limits: dining chairs are 1 design in the whole catalog.
+  - Model harness: all models pinned via `snapshot_download(revision)` + open_clip `local-dir:`; `--resolve-revisions` (metadata only), and `--measure` needs `--yes-download`; licences Apache-2.0/MIT. Weights not downloaded.
+  - `IMAGE_PERMISSIONS.md` lists 4 separate permissions: P1 private annotation, P2 temporary copies, P3 embeddings, P4 retention.
+- Checks passing: typecheck, lint, 431 unit tests
 
 ## Phase plan
 

@@ -1,6 +1,6 @@
 /**
  * Evaluation runner (pure): human labels + system embeddings → one report per system, for ONE
- * split. Labels are aggregated from several raters' exports; model outputs are only ever scored,
+ * split, scored separately for structure and overall aesthetic similarity. Labels are aggregated from several raters' exports; model outputs are only ever scored,
  * never stored as labels. The CLI (scripts/vision/evaluate.ts) does the file I/O and the test lock.
  */
 import { majority } from './agreement';
@@ -20,7 +20,7 @@ import {
   type RetrievalReport,
   type TripletResult,
 } from './metrics';
-import type { LabelExport, QuestionPack, SameAnswer, Split } from './schema';
+import type { Dimension, LabelExport, QuestionPack, SameAnswer, Split } from './schema';
 import { estimate, type Estimate } from '@/recommendation/lab/metrics';
 
 export interface EvalProduct {
@@ -45,10 +45,16 @@ export interface EvalInput {
 }
 
 export interface SystemReport {
-  triplets: TripletResult;
-  /** Spearman between mean human 1–5 rating and cosine similarity. */
-  pairSpearman: number;
-  pairs: number;
+  /** Triplet accuracy per dimension (structure / overall aesthetic), against that dimension's human majority. */
+  triplets: Record<Dimension, TripletResult>;
+  /**
+   * Accuracy on triplets where people's structure and overall-look majorities DISAGREE — the items
+   * that show which notion of similarity a model actually follows. One embedding can't win both.
+   */
+  divergent: Record<Dimension, TripletResult>;
+  /** Spearman between mean human 1–5 rating and cosine similarity, per dimension. */
+  pairSpearman: Record<Dimension, number>;
+  pairs: Record<Dimension, number>;
   sameDesign: { ap: number; positives: number; negatives: number; threshold: number | null; atThreshold: { precision: number; recall: number } | null };
   /** Pooled retrieval at depth 5 (for P@5) and 10 (for nDCG@10, judged@10, pooled recall@10). */
   retrieval: { at5: RetrievalReport; at10: RetrievalReport } | null;
@@ -58,7 +64,16 @@ export interface SystemReport {
 
 export interface EvalReport {
   split: Split;
-  labels: { triplets: number; ambiguousTriplets: number; pairs: number; same: number; excludedMixedSplit: number; raters: number };
+  labels: {
+    triplets: Record<Dimension, number>;
+    ambiguousTriplets: Record<Dimension, number>;
+    /** Triplets with a clear majority on both dimensions that point to different options. */
+    divergentTriplets: number;
+    pairs: Record<Dimension, number>;
+    same: number;
+    excludedMixedSplit: number;
+    raters: number;
+  };
   systems: Record<string, SystemReport>;
 }
 
@@ -100,8 +115,8 @@ export function evaluate(input: EvalInput): EvalReport {
     if (!byQ.has(a.questionId)) byQ.set(a.questionId, []);
     byQ.get(a.questionId)!.push(a);
   }
-  const triplets: LabelledTriplet[] = [];
-  const pairs: { a: string; b: string; rating: number }[] = [];
+  const triplets: Record<Dimension, LabelledTriplet[]> = { structure: [], aesthetic: [] };
+  const pairs: Record<Dimension, { a: string; b: string; rating: number }[]> = { structure: [], aesthetic: [] };
   const same: { a: string; b: string; positive: boolean }[] = [];
   let excludedMixedSplit = 0;
   for (const pack of input.packs) for (const q of pack.questions) {
@@ -115,22 +130,40 @@ export function evaluate(input: EvalInput): EvalReport {
     }
     if (side !== input.split) continue;
     if (q.kind === 'triplet') {
-      const m = majority(ans.map((a) => (a.value.kind === 'triplet' ? a.value.choice : 'cant-tell')));
-      triplets.push({ id: q.id, anchor: ids[0]!, b: ids[1]!, c: ids[2]!, human: m.label as LabelledTriplet['human'], stratum: q.stratum });
+      for (const d of q.ask) {
+        const m = majority(ans.map((a) => (a.value.kind === 'triplet' ? (a.value[d] ?? 'cant-tell') : 'cant-tell')));
+        triplets[d].push({ id: q.id, anchor: ids[0]!, b: ids[1]!, c: ids[2]!, human: m.label as LabelledTriplet['human'], stratum: q.stratum });
+      }
     } else if (q.kind === 'pair') {
-      const r = ans.flatMap((a) => (a.value.kind === 'pair' && a.value.rating !== null ? [a.value.rating] : []));
-      if (r.length >= 2) pairs.push({ a: ids[0]!, b: ids[1]!, rating: r.reduce((s, x) => s + x, 0) / r.length });
+      for (const d of q.ask) {
+        const r = ans.flatMap((a) => (a.value.kind === 'pair' && a.value[d] != null ? [a.value[d]!] : []));
+        if (r.length >= 2) pairs[d].push({ a: ids[0]!, b: ids[1]!, rating: r.reduce((s, x) => s + x, 0) / r.length });
+      }
     } else if (q.kind === 'same') {
       const m = majority(ans.map((a) => (a.value.kind === 'same' ? a.value.choice : 'cant-tell')));
       if (m.label !== 'ambiguous') same.push({ a: ids[0]!, b: ids[1]!, positive: SAME_DESIGN.includes(m.label as SameAnswer) });
     }
   }
 
+  // Items where both dimensions have a clear, different majority.
+  const aestheticById = new Map(triplets.aesthetic.map((t) => [t.id, t.human]));
+  const divergentIds = new Set(
+    triplets.structure.filter((t) => t.human !== 'ambiguous' && aestheticById.has(t.id) && aestheticById.get(t.id) !== 'ambiguous' && aestheticById.get(t.id) !== t.human).map((t) => t.id),
+  );
+  const divergent: Record<Dimension, LabelledTriplet[]> = {
+    structure: triplets.structure.filter((t) => divergentIds.has(t.id)),
+    aesthetic: triplets.aesthetic.filter((t) => divergentIds.has(t.id)),
+  };
+
   const inSplit = input.products.filter((p) => p.split === input.split);
   const storeOf = new Map(input.products.map((p) => [p.id, p.retailerId]));
   const systems: Record<string, SystemReport> = {};
   for (const [name, emb] of [...input.systems].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
-    const scorable = pairs.filter((p) => emb.has(p.a) && emb.has(p.b));
+    const scorable = (d: Dimension) => pairs[d].filter((p) => emb.has(p.a) && emb.has(p.b));
+    const rho = (d: Dimension) => {
+      const sc = scorable(d);
+      return sc.length >= 3 ? spearman(sc.map((p) => p.rating), sc.map((p) => cosine(emb.get(p.a)!, emb.get(p.b)!))) : NaN;
+    };
     const sameScores = same.filter((s) => emb.has(s.a) && emb.has(s.b)).map((s) => ({ score: cosine(emb.get(s.a)!, emb.get(s.b)!), positive: s.positive }));
     const threshold = input.split === 'dev' ? (sameScores.length ? chooseThreshold(sameScores) : null) : (input.thresholds?.[name] ?? null);
     let retrieval: SystemReport['retrieval'] = null;
@@ -148,9 +181,10 @@ export function evaluate(input: EvalInput): EvalReport {
       crossStore = ratios.length ? estimate(ratios, seed) : null;
     }
     systems[name] = {
-      triplets: tripletAccuracy(triplets, emb, seed),
-      pairSpearman: scorable.length >= 3 ? spearman(scorable.map((p) => p.rating), scorable.map((p) => cosine(emb.get(p.a)!, emb.get(p.b)!))) : NaN,
-      pairs: scorable.length,
+      triplets: { structure: tripletAccuracy(triplets.structure, emb, seed), aesthetic: tripletAccuracy(triplets.aesthetic, emb, seed) },
+      divergent: { structure: tripletAccuracy(divergent.structure, emb, seed), aesthetic: tripletAccuracy(divergent.aesthetic, emb, seed) },
+      pairSpearman: { structure: rho('structure'), aesthetic: rho('aesthetic') },
+      pairs: { structure: scorable('structure').length, aesthetic: scorable('aesthetic').length },
       sameDesign: {
         ap: averagePrecision(sameScores),
         positives: sameScores.filter((s) => s.positive).length,
@@ -165,9 +199,10 @@ export function evaluate(input: EvalInput): EvalReport {
   return {
     split: input.split,
     labels: {
-      triplets: triplets.length,
-      ambiguousTriplets: triplets.filter((t) => t.human === 'ambiguous').length,
-      pairs: pairs.length,
+      triplets: { structure: triplets.structure.length, aesthetic: triplets.aesthetic.length },
+      ambiguousTriplets: { structure: triplets.structure.filter((t) => t.human === 'ambiguous').length, aesthetic: triplets.aesthetic.filter((t) => t.human === 'ambiguous').length },
+      divergentTriplets: divergentIds.size,
+      pairs: { structure: pairs.structure.length, aesthetic: pairs.aesthetic.length },
       same: same.length,
       excludedMixedSplit,
       raters: new Set(input.exports.map((e) => e.rater)).size,

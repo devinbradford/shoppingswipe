@@ -1,10 +1,9 @@
-import { analyseCalibration } from '../calibration';
 import { aggregateGrade, checkTestLock, evaluate, judgmentsFromExports, type TestRun } from '../evaluate';
 import { ART_COLOURS, drawSvg, makeCalibrationPack, randomDesign } from '../fixtureArt';
 import { makeFixturePack, makeFixtureWorld, simulateRaters } from '../fixtures';
-import { canonicalJson, checkManifest, manifestBody, retailerPage, snapshotRowToItem } from '../manifest';
+import { canonicalJson, checkManifest, manifestBody, pageKey, productNameKey, retailerPage, snapshotRowToItem } from '../manifest';
 import { sampleEvaluationSet } from '../sampling';
-import { LABELS_VERSION, type LabelExport, type Manifest, type QuestionPack } from '../schema';
+import { LABELS_VERSION, validateExport, type LabelExport, type Manifest, type QuestionPack } from '../schema';
 import { createRng } from '@/recommendation/random';
 
 // A stand-in hash for tests (the script uses SHA-256 from node:crypto).
@@ -29,6 +28,21 @@ describe('manifest', () => {
     expect(JSON.stringify(item)).not.toContain('awin');
   });
 
+  it('productNameKey finds one design family under colour, size and count wording', () => {
+    const k = (t: string) => productNameKey(t, ['alder']);
+    expect(productNameKey('Cas TV Cabinet with 2-Door, Set of 2 in Grey Alder')).toBe('cas tv cabinet door alder');
+    expect(productNameKey('Cas TV Cabinet with 3-Door, Set of 2 in White Alder')).toBe('cas tv cabinet door alder');
+    expect(productNameKey('Stria Round Coffee Tables in Dark Grey Alder')).toBe('stria round coffee table alder');
+    expect(k('Stria Coffee Table in Dark Grey Alder')).toBe('stria coffee table');
+    expect(productNameKey('Black Sofa')).toBe(''); // too generic to mean the same design
+    // The real Stria duplicate differs in name ("Round … Tables") but its pages match once singularised.
+    expect(pageKey('sicotas.com/products/stria-round-coffee-tables-living-room-mid-century-fluted-center-table')).toBe(
+      pageKey('sicotas.com/products/stria-round-coffee-table-living-room-mid-century-fluted-center-table'),
+    );
+    expect(pageKey('a.example.com/products/oak-bed')).toBe('');
+    expect(productNameKey('Oak 47 inch Nightstand (Set of 2)')).toBe('');
+  });
+
   it('a valid manifest passes; tampering, a leak or a stray partner is caught', () => {
     const world = makeFixtureWorld(90, 3, 3);
     const sample = sampleEvaluationSet(world.catalog, { quotas: { nightstands: 10, sofas: 10 }, partners: { colourVariant: 3, samePhoto: 0 }, seed: 1 });
@@ -47,67 +61,71 @@ describe('manifest', () => {
   });
 });
 
-describe('calibration art', () => {
-  it('is deterministic, has traps, gold checks and balanced stored answers', () => {
+describe('calibration art (v2)', () => {
+  const palette = Object.values(ART_COLOURS) as string[];
+  const fill = (src: string) => [...decodeURIComponent(src).matchAll(/fill="(#[0-9a-f]{6})"/g)].map((m) => m[1]).find((c) => palette.includes(c!));
+  const matchOf = (q: { b: { src: string }; c: { src: string } }, note: string) => (note.endsWith('match=b') ? [q.b, q.c] : [q.c, q.b]);
+
+  it('is deterministic and covers every contrast with about 30 judgments', () => {
     const a = makeCalibrationPack(1);
     expect(makeCalibrationPack(1)).toEqual(a);
     const qs = a.pack.questions;
-    expect(qs).toHaveLength(28);
-    expect(qs.filter((q) => q.kind === 'triplet' && q.stratum === 'colour-trap')).toHaveLength(3);
-    expect(qs.filter((q) => q.kind === 'triplet' && q.stratum === 'photo-trap')).toHaveLength(3);
-    const answers = qs.filter((q) => q.kind === 'triplet').map((q) => a.expected[q.id]);
-    expect(answers.filter((x) => x === 'b').length).toBeGreaterThan(4);
-    expect(answers.filter((x) => x === 'c').length).toBeGreaterThan(4);
+    const judgments = qs.reduce((n, q) => n + (q.kind === 'triplet' || q.kind === 'pair' ? q.ask.length : 1), 0);
+    expect(judgments).toBe(30);
+    const count = (st: string) => qs.filter((q) => (q.kind === 'triplet' || q.kind === 'pair') && q.stratum === st).length;
+    expect(count('shape-vs-colour')).toBe(3);
+    expect(count('finish-only')).toBe(2);
+    expect(count('photo-style')).toBe(2);
+    expect(count('near-identical')).toBe(1);
+    expect(count('gold')).toBe(2);
+    expect(['same-shape-diff-colour', 'same-colour-diff-shape', 'same-design-diff-finish'].map(count)).toEqual([1, 1, 1]);
+    const positions = qs.filter((q) => q.kind === 'triplet').map((q) => a.expected[q.id]);
+    expect(positions.filter((x) => x!.endsWith('match=b')).length).toBeGreaterThan(2);
+    expect(positions.filter((x) => x!.endsWith('match=c')).length).toBeGreaterThan(2);
+    expect(qs.map((q) => q.id)).toEqual(qs.map((_, i) => `c${String(i + 1).padStart(2, '0')}`));
     // Every image is our own drawing, never an address.
     expect(JSON.stringify(a.pack)).not.toMatch(/https?:\/\/(?!www\.w3\.org)/);
+    // Answers validate against the pack shape (one value per asked dimension).
+    expect(validateExport({ version: LABELS_VERSION, packId: a.pack.id, rater: 'x', startedAt: '', finishedAt: '', answers: [] }, a.pack)).toEqual([]);
   });
 
-  it('colour traps really differ in colour the "wrong" way', () => {
-    const { pack, expected } = makeCalibrationPack(3);
-    for (const q of pack.questions) {
-      if (q.kind !== 'triplet' || q.stratum !== 'colour-trap') continue;
-      const match = expected[q.id] === 'b' ? q.b : q.c;
-      const other = expected[q.id] === 'b' ? q.c : q.b;
-      const palette = Object.values(ART_COLOURS) as string[];
-      const fill = (src: string) => [...decodeURIComponent(src).matchAll(/fill="(#[0-9a-f]{6})"/g)].map((m) => m[1]).find((c) => palette.includes(c!));
-      expect(fill(other.src)).toBe(fill(q.anchor.src)); // decoy shares the anchor's colour
-      expect(fill(match.src)).not.toBe(fill(q.anchor.src));
+  it('shape-vs-colour: the shape match has another colour, the decoy has the anchor colour', () => {
+    for (const seed of [1, 2, 3]) {
+      const { pack, expected } = makeCalibrationPack(seed);
+      for (const q of pack.questions) {
+        if (q.kind !== 'triplet' || q.stratum !== 'shape-vs-colour') continue;
+        const [match, decoy] = matchOf(q, expected[q.id]!);
+        expect(fill(decoy!.src)).toBe(fill(q.anchor.src));
+        expect(fill(match!.src)).not.toBe(fill(q.anchor.src));
+        expect(q.gold).toEqual({ structure: expected[q.id]!.slice(-1) });
+      }
     }
   });
 
-  it('draws valid SVG for every kind', () => {
-    const rng = createRng(1);
-    for (const kind of ['cabinet', 'sofa', 'table'] as const)
-      for (const scene of ['studio', 'room'] as const) expect(drawSvg({ design: randomDesign(rng, 'x', kind), colour: '#7a5235', scene })).toMatch(/^<svg[^>]+>.*<\/svg>$/);
+  it('finish-only: all three share colour and design kind; only the decoy changes finish', () => {
+    const { pack, expected } = makeCalibrationPack(1);
+    const finishOf = (src: string) => (decodeURIComponent(src).includes('opacity="0.38"') ? 'gloss' : decodeURIComponent(src).includes('stroke-width="1.1"') ? 'woodgrain' : 'matte');
+    for (const q of pack.questions) {
+      if (q.kind !== 'triplet' || q.stratum !== 'finish-only') continue;
+      const [match, decoy] = matchOf(q, expected[q.id]!);
+      expect(new Set([fill(q.anchor.src), fill(match!.src), fill(decoy!.src)]).size).toBe(1);
+      expect(finishOf(match!.src)).toBe(finishOf(q.anchor.src));
+      expect(finishOf(decoy!.src)).not.toBe(finishOf(q.anchor.src));
+      expect(q.gold).toEqual({ aesthetic: expected[q.id]!.slice(-1) });
+    }
   });
 
-  it('calibration analysis catches a rater who always picks the same colour', () => {
-    const { pack, expected } = makeCalibrationPack(2);
-    const mk = (rater: string, followColour: boolean): LabelExport => ({
-      version: LABELS_VERSION,
-      packId: pack.id,
-      rater,
-      startedAt: 't',
-      finishedAt: 't',
-      answers: pack.questions.map((q, order) => {
-        const exp = expected[q.id]!;
-        const value =
-          q.kind === 'triplet'
-            ? { kind: 'triplet' as const, choice: (followColour && q.stratum === 'colour-trap' ? (exp === 'b' ? 'c' : 'b') : exp) as 'b' | 'c' }
-            : q.kind === 'pair'
-              ? { kind: 'pair' as const, rating: (exp === '4-5' ? 5 : 1) as 1 | 5 }
-              : q.kind === 'same'
-                ? { kind: 'same' as const, choice: exp as 'same-photo' }
-                : { kind: 'attributes' as const, value: {} };
-        return { questionId: q.id, value, confidence: 2 as const, ms: 5000, order, swapped: false, at: 't' };
-      }),
-    });
-    const good = analyseCalibration(pack, [mk('a', false), mk('b', false), mk('c', false)]);
-    expect(good.trapAccuracy.colour).toBe(1);
-    expect(good.agreement.tripletKappa).toBeCloseTo(1);
-    const bad = analyseCalibration(pack, [mk('a', true), mk('b', true), mk('c', false)]);
-    expect(bad.trapAccuracy.colour).toBeCloseTo(1 / 3);
-    expect(bad.warnings.join(' ')).toMatch(/colour/);
+  it('draws valid SVG for every kind, scene and finish; a finish never changes the outline', () => {
+    const rng = createRng(1);
+    for (const kind of ['cabinet', 'sofa', 'table'] as const) {
+      const d = randomDesign(rng, 'x', kind);
+      for (const scene of ['studio', 'room'] as const)
+        for (const finish of ['matte', 'gloss', 'woodgrain'] as const) {
+          const svg = drawSvg({ design: d, colour: '#7a5235', scene, finish });
+          expect(svg).toMatch(/^<svg[^>]+>.*<\/svg>$/);
+          if (finish !== 'matte') expect(svg.startsWith(drawSvg({ design: d, colour: '#7a5235', scene }).replace('</svg>', ''))).toBe(true);
+        }
+    }
   });
 });
 
@@ -139,8 +157,22 @@ describe('evaluate', () => {
     expect(dev.labels.excludedMixedSplit).toBe(test.labels.excludedMixedSplit);
     const devIds = new Set(products.filter((p) => p.split === 'dev').map((p) => p.id));
     const devQs = pack.questions.filter((q) => q.kind === 'triplet' && [q.anchor, q.b, q.c].every((x) => devIds.has(x.productId)));
-    expect(dev.labels.triplets).toBe(devQs.length);
+    expect(dev.labels.triplets).toEqual({ structure: devQs.length, aesthetic: devQs.length });
     expect(evaluate({ split: 'dev', products, packs: [pack], exports, systems: world.systems })).toEqual(dev);
+  });
+
+  it('scores structure and overall look separately; where they disagree, each model wins its own dimension', () => {
+    const world = makeFixtureWorld(90, 3, 12);
+    const products = world.catalog.map((c) => ({ id: c.id, split: 'dev' as const, retailerId: c.retailerId, subcategoryId: c.subcategoryId }));
+    const pack = makeFixturePack(world, 300, 6);
+    const r = evaluate({ split: 'dev', products, packs: [pack], exports: simulateRaters(world, pack, 3), systems: world.systems });
+    expect(r.labels.divergentTriplets).toBeGreaterThan(20);
+    const design = r.systems.design!;
+    const colour = r.systems['colour-aware']!;
+    expect(design.divergent.structure.accuracy.mean).toBeGreaterThan(colour.divergent.structure.accuracy.mean + 0.2);
+    expect(colour.divergent.aesthetic.accuracy.mean).toBeGreaterThan(design.divergent.aesthetic.accuracy.mean + 0.2);
+    // On divergent items one embedding can't be right on both: accuracies sum to ~1.
+    expect(design.divergent.structure.accuracy.mean + design.divergent.aesthetic.accuracy.mean).toBeCloseTo(1, 1);
   });
 
   it('test lock: once per manifest and system, needs a reason, repeats need force', () => {

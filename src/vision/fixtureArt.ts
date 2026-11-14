@@ -5,7 +5,7 @@
  * on purpose. Pure and seeded.
  */
 import { createRng, hashSeed, type Rng } from '@/recommendation/random';
-import { LABELS_VERSION, type Question, type QuestionPack, type ShownImage } from './schema';
+import { DIMENSIONS, LABELS_VERSION, type Dimension, type Question, type QuestionPack, type ShownImage, type Stratum } from './schema';
 
 export type ArtKind = 'cabinet' | 'sofa' | 'table';
 export type ArtBase = 'tapered-legs' | 'straight-legs' | 'plinth' | 'sled';
@@ -24,10 +24,14 @@ export interface ArtDesign {
   divisions: number;
 }
 
+export type ArtFinish = 'matte' | 'gloss' | 'woodgrain';
+
 export interface ArtShot {
   design: ArtDesign;
   colour: string;
   scene: 'studio' | 'room';
+  /** Surface finish drawn over the body (default matte). */
+  finish?: ArtFinish;
 }
 
 export const ART_COLOURS = { walnut: '#7a5235', oak: '#c49a6c', black: '#2b2b2b', white: '#ecece6', sage: '#8f9e86', rust: '#a4553a' } as const;
@@ -59,7 +63,7 @@ const shade = (hex: string, f: number) => {
   return `#${((c(16) << 16) | (c(8) << 8) | c(0)).toString(16).padStart(6, '0')}`;
 };
 
-export function drawSvg({ design: d, colour, scene }: ArtShot): string {
+export function drawSvg({ design: d, colour, scene, finish = 'matte' }: ArtShot): string {
   const W = 240;
   const H = 180;
   const floor = 150;
@@ -103,33 +107,64 @@ export function drawSvg({ design: d, colour, scene }: ArtShot): string {
       parts.push(`<circle cx="${x + i * fw + fw / 2}" cy="${top + 12}" r="2" fill="${dark}"/>`);
     }
   }
+  if (finish !== 'matte') {
+    // Clipped to the body, so the finish never changes the silhouette.
+    parts.push(`<clipPath id="body"><rect x="${x}" y="${top}" width="${d.w}" height="${d.h}" rx="${d.kind === 'sofa' ? r + 4 : r}"/></clipPath>`);
+    if (finish === 'gloss')
+      parts.push(
+        `<g clip-path="url(#body)"><rect x="${x}" y="${top}" width="${d.w}" height="${Math.max(3, d.h * 0.28)}" fill="#ffffff" opacity="0.38"/>` +
+          `<path d="M${x + d.w * 0.15} ${top + d.h} L${x + d.w * 0.32} ${top} h${d.w * 0.08} L${x + d.w * 0.23} ${top + d.h} z" fill="#ffffff" opacity="0.22"/></g>`,
+      );
+    else {
+      const lines: string[] = [];
+      const step = Math.max(3, d.h / 7);
+      for (let yy = top + step / 2, i = 0; yy < top + d.h; yy += step, i++)
+        lines.push(`<path d="M${x} ${yy} q${d.w / 4} ${i % 2 ? 3 : -3} ${d.w / 2} 0 t${d.w / 2} 0" fill="none" stroke="${shade(colour, 0.62)}" stroke-width="1.1" opacity="0.75"/>`);
+      parts.push(`<g clip-path="url(#body)">${lines.join('')}</g>`);
+    }
+  }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${parts.join('')}</svg>`;
 }
 
 export const svgDataUri = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
 /**
- * A calibration pack drawn only from our own art:
- *   12 triplets (design similarity), 3 colour traps, 3 photo traps, 2 gold triplets (attention
- *   checks), 4 pairs (1–5), 2 same-thing checks (1 of them gold), 2 attribute sets (28 in all).
- * Ground truth for traps and gold is known by construction; ordinary triplets have a constructed
- * "expected" answer that is used only to sanity-check the tool, never as a label. The design match
- * sits in b or c at random (balanced stored answers); the tool also swaps left/right per rater.
+ * Calibration pack v2 (Stage 1.5), drawn only from CureAvo's own SVG furniture. 17 screens, 30
+ * judgments; most screens ask BOTH structure and overall look (one look, two answers):
+ *
+ *   shape-vs-colour ×3   same shape in another colour  vs  different shape in the anchor's colour
+ *                         structure: shape match (known) · overall look: no right answer (measured)
+ *   finish-only ×2       same design, same finish  vs  same design, different finish (same colour)
+ *                         overall look: same finish (known) · structure: "can't tell" expected
+ *   photo-style ×2       same design in a room photo  vs  different design photographed like the anchor
+ *                         both: the same design (photography is ignored for both)
+ *   near-identical ×1    near-identical design  vs  clear mismatch, all one colour → both agree
+ *   attention ×2         the identical picture  vs  a different kind of furniture
+ *   single-question ×2   one structure-only and one look-only triplet (to time one question vs two)
+ *   pairs ×3 (1–5 both)  same shape/other colour · same colour/other shape · same design/other finish
+ *   same-thing ×1        identical photo (attention check)
+ *   attributes ×1        one product described (times the attribute task)
+ *
+ * The match sits in b or c at random; the tool also swaps left/right per rater. `expected` is a
+ * construction note for checking the tool, never a label.
  */
 export function makeCalibrationPack(seed = 1): { pack: QuestionPack; expected: Record<string, string> } {
-  const rng = createRng(hashSeed(`calibration-art:${seed}`));
-  const colourNames = Object.keys(ART_COLOURS) as (keyof typeof ART_COLOURS)[];
-  const colour = () => ART_COLOURS[colourNames[Math.floor(rng() * colourNames.length)]!];
+  const rng = createRng(hashSeed(`calibration-v2:${seed}`));
+  const palette = Object.values(ART_COLOURS);
+  const colour = () => palette[Math.floor(rng() * palette.length)]!;
   const otherColour = (c: string) => {
-    const others = Object.values(ART_COLOURS).filter((x) => x !== c);
+    const others = palette.filter((x) => x !== c);
     return others[Math.floor(rng() * others.length)]!;
   };
   let n = 0;
-  const img = (shot: ArtShot): ShownImage => ({ productId: `art-${shot.design.id}-${shot.colour.slice(1)}-${shot.scene}`, src: svgDataUri(drawSvg(shot)) });
+  const img = (shot: ArtShot): ShownImage => ({
+    productId: `art-${shot.design.id}-${shot.colour.slice(1)}-${shot.scene}-${shot.finish ?? 'matte'}`,
+    src: svgDataUri(drawSvg(shot)),
+  });
   const design = (kind?: ArtKind) => randomDesign(rng, `d${n++}`, kind);
-  /** A different design of the same kind that differs clearly in base and proportions. */
+  const near = (d: ArtDesign) => nudge(rng, d, `d${n++}`);
+  /** A different design of the same kind that differs clearly in base and width. */
   const contrast = (d: ArtDesign) => {
-    // Bounded: after 50 tries, force the base to differ.
     let o = design(d.kind);
     for (let t = 0; t < 50 && (o.base === d.base || Math.abs(o.w - d.w) < 20); t++) o = design(d.kind);
     if (o.base === d.base) o = { ...o, base: d.base === 'plinth' ? 'tapered-legs' : 'plinth' };
@@ -137,66 +172,77 @@ export function makeCalibrationPack(seed = 1): { pack: QuestionPack; expected: R
   };
   const questions: Question[] = [];
   const expected: Record<string, string> = {};
-  /** Puts the design match in b or c at random, so stored answers are balanced (agreement statistics need that). */
-  const triplet = (id: string, anchor: ShownImage, match: ShownImage, other: ShownImage, stratum: 'random' | 'colour-trap' | 'photo-trap' | 'gold', gold: boolean) => {
-    const flip = rng() < 0.5;
-    const right = flip ? 'c' : 'b';
-    questions.push({ kind: 'triplet', id, anchor, b: flip ? other : match, c: flip ? match : other, stratum, ...(gold ? { gold: right } : {}) });
-    expected[id] = right;
+  const triplet = (id: string, anchor: ShownImage, match: ShownImage, other: ShownImage, stratum: Stratum, ask: readonly Dimension[], goldFor: readonly Dimension[]) => {
+    const pos = rng() < 0.5 ? 'b' : 'c';
+    const gold = goldFor.length ? Object.fromEntries(goldFor.map((d) => [d, pos])) : undefined;
+    questions.push({ kind: 'triplet', id, anchor, b: pos === 'b' ? match : other, c: pos === 'b' ? other : match, stratum, ask, ...(gold ? { gold } : {}) });
+    expected[id] = `match=${pos}`;
   };
+  const BOTH = DIMENSIONS;
 
-  for (let i = 0; i < 12; i++) {
-    const a = design();
-    const c1 = colour();
-    const sim = nudge(rng, a, `d${n++}`);
-    const diff = contrast(a);
-    const id = `cal-t${i}`;
-    triplet(id, img({ design: a, colour: c1, scene: 'studio' }), img({ design: sim, colour: colour(), scene: 'studio' }), img({ design: diff, colour: colour(), scene: 'studio' }), 'random', false);
-  }
   for (let i = 0; i < 3; i++) {
     const a = design();
     const c1 = colour();
-    const id = `cal-colour${i}`;
-    // b: same design in another colour; c: a different design in the anchor's colour.
-    triplet(id, img({ design: a, colour: c1, scene: 'studio' }), img({ design: nudge(rng, a, `d${n++}`), colour: otherColour(c1), scene: 'studio' }), img({ design: contrast(a), colour: c1, scene: 'studio' }), 'colour-trap', true);
+    triplet(`v2-shape${i}`, img({ design: a, colour: c1, scene: 'studio' }), img({ design: near(a), colour: otherColour(c1), scene: 'studio' }), img({ design: contrast(a), colour: c1, scene: 'studio' }), 'shape-vs-colour', BOTH, ['structure']);
   }
-  for (let i = 0; i < 3; i++) {
-    const a = design();
-    const c1 = colour();
-    const id = `cal-photo${i}`;
-    // b: same design in a room photo; c: a different design photographed like the anchor (studio).
-    triplet(id, img({ design: a, colour: c1, scene: 'studio' }), img({ design: nudge(rng, a, `d${n++}`), colour: c1, scene: 'room' }), img({ design: contrast(a), colour: c1, scene: 'studio' }), 'photo-trap', true);
-  }
-  for (let i = 0; i < 2; i++) {
+  const finishes: [string, ArtFinish, ArtFinish][] = [
+    [ART_COLOURS.walnut, 'woodgrain', 'gloss'],
+    [ART_COLOURS.black, 'matte', 'gloss'],
+  ];
+  finishes.forEach(([c1, keep, change], i) => {
     const a = design('cabinet');
-    const c1 = colour();
-    const id = `cal-gold${i}`;
-    // b is the very same picture; c is a different kind of furniture.
-    triplet(id, img({ design: a, colour: c1, scene: 'studio' }), img({ design: a, colour: c1, scene: 'studio' }), img({ design: design('sofa'), colour: otherColour(c1), scene: 'studio' }), 'gold', true);
-  }
-  for (let i = 0; i < 4; i++) {
+    a.h = Math.max(a.h, 50); // tall enough for the finish to be clearly visible
+    triplet(`v2-finish${i}`, img({ design: a, colour: c1, scene: 'studio', finish: keep }), img({ design: near(a), colour: c1, scene: 'studio', finish: keep }), img({ design: near(a), colour: c1, scene: 'studio', finish: change }), 'finish-only', BOTH, ['aesthetic']);
+  });
+  for (let i = 0; i < 2; i++) {
     const a = design();
-    const close = i % 2 === 0;
-    const id = `cal-p${i}`;
-    questions.push({ kind: 'pair', id, a: img({ design: a, colour: colour(), scene: 'studio' }), b: img({ design: close ? nudge(rng, a, `d${n++}`) : contrast(a), colour: colour(), scene: 'studio' }), stratum: 'random' });
-    expected[id] = close ? '4-5' : '1-2';
+    const c1 = colour();
+    triplet(`v2-photo${i}`, img({ design: a, colour: c1, scene: 'studio' }), img({ design: near(a), colour: c1, scene: 'room' }), img({ design: contrast(a), colour: c1, scene: 'studio' }), 'photo-style', BOTH, BOTH);
   }
   {
     const a = design();
     const c1 = colour();
-    const shot = { design: a, colour: c1, scene: 'studio' as const };
-    questions.push({ kind: 'same', id: 'cal-s0', a: img(shot), b: img(shot), stratum: 'gold', gold: 'same-photo' });
-    expected['cal-s0'] = 'same-photo';
-    questions.push({ kind: 'same', id: 'cal-s1', a: img(shot), b: img({ ...shot, colour: otherColour(c1) }), stratum: 'same-design-diff-colour' });
-    expected['cal-s1'] = 'same-design-diff-colour';
+    triplet('v2-near0', img({ design: a, colour: c1, scene: 'studio' }), img({ design: near(a), colour: c1, scene: 'studio' }), img({ design: contrast(a), colour: c1, scene: 'studio' }), 'near-identical', BOTH, []);
   }
   for (let i = 0; i < 2; i++) {
-    const a = design();
-    questions.push({ kind: 'attributes', id: `cal-a${i}`, product: img({ design: a, colour: colour(), scene: i ? 'room' : 'studio' }) });
-    expected[`cal-a${i}`] = a.base === 'plinth' ? 'base:plinth' : a.base === 'sled' ? 'base:sled' : 'base:legs';
+    const a = design('cabinet');
+    const c1 = colour();
+    const shot = { design: a, colour: c1, scene: 'studio' as const };
+    triplet(`v2-attn${i}`, img(shot), img(shot), img({ design: design('sofa'), colour: otherColour(c1), scene: 'studio' }), 'gold', BOTH, BOTH);
   }
+  for (const d of DIMENSIONS) {
+    const a = design();
+    triplet(`v2-single-${d}`, img({ design: a, colour: colour(), scene: 'studio' }), img({ design: near(a), colour: colour(), scene: 'studio' }), img({ design: contrast(a), colour: colour(), scene: 'studio' }), 'random', [d], []);
+  }
+  {
+    const a = design();
+    const c1 = colour();
+    questions.push({ kind: 'pair', id: 'v2-pair-shape', a: img({ design: a, colour: c1, scene: 'studio' }), b: img({ design: near(a), colour: otherColour(c1), scene: 'studio' }), stratum: 'same-shape-diff-colour', ask: BOTH });
+    expected['v2-pair-shape'] = 'structure ≥ look';
+    const b = design();
+    const c2 = colour();
+    questions.push({ kind: 'pair', id: 'v2-pair-colour', a: img({ design: b, colour: c2, scene: 'studio' }), b: img({ design: contrast(b), colour: c2, scene: 'studio' }), stratum: 'same-colour-diff-shape', ask: BOTH });
+    expected['v2-pair-colour'] = 'look ≥ structure';
+    const c = design('cabinet');
+    questions.push({ kind: 'pair', id: 'v2-pair-finish', a: img({ design: c, colour: ART_COLOURS.oak, scene: 'studio', finish: 'woodgrain' }), b: img({ design: near(c), colour: ART_COLOURS.oak, scene: 'studio', finish: 'gloss' }), stratum: 'same-design-diff-finish', ask: BOTH });
+    expected['v2-pair-finish'] = 'look ≤ structure';
+  }
+  {
+    const shot = { design: design(), colour: colour(), scene: 'studio' as const };
+    questions.push({ kind: 'same', id: 'v2-same0', a: img(shot), b: img(shot), stratum: 'gold', gold: 'same-photo' });
+    expected['v2-same0'] = 'same-photo';
+  }
+  {
+    const a = design();
+    questions.push({ kind: 'attributes', id: 'v2-attr0', product: img({ design: a, colour: ART_COLOURS.oak, scene: 'room', finish: 'woodgrain' }) });
+    expected['v2-attr0'] = `base≈${a.base}`;
+  }
+  // Neutral ids (c01…), so nothing visible to a rater names what a screen tests.
+  const rename = new Map(questions.map((q, i) => [q.id, `c${String(i + 1).padStart(2, '0')}`]));
+  for (const q of questions) q.id = rename.get(q.id)!;
+  const notes = Object.fromEntries(Object.entries(expected).map(([k, v]) => [rename.get(k)!, `${k}: ${v}`]));
   return {
-    pack: { version: LABELS_VERSION, id: `calibration-fixture-${seed}`, title: 'Calibration (drawn furniture, practice)', purpose: 'calibration', questions },
-    expected,
+    expected: notes,
+    pack: { version: LABELS_VERSION, id: `calibration-v2-${seed}`, title: 'Calibration (drawn furniture): structure and overall look', purpose: 'calibration', questions },
   };
 }

@@ -5,10 +5,14 @@ Visual-model pilot harness (V3 Milestone 1). Offline, CPU, isolated from the app
   python measure_models.py --self-test
       Checks this harness with a tiny built-in stand-in model (no downloads, no torch needed).
 
+  python measure_models.py --resolve-revisions [--models …]
+      Metadata only (no weights): records each model's current commit, licence tag and size in
+      models.lock.json. Needs huggingface.co.
+
   python measure_models.py --measure [--models siglip2-b,marqo-ecom-b,dinov2-b,openclip-b32] [--out results.json]
-      Stage 1, allowed now: downloads the open model weights once (Hugging Face), then measures
-      size, load time, peak memory, speed and run-to-run reproducibility on SYNTHETIC drawn images
-      only. No retailer image is read.
+      Throughput benchmark on CureAvo's own SYNTHETIC drawings only (no retailer image). Without
+      --yes-download it only lists what it would download; with it, it fetches the pinned weights
+      once and measures size, load time, peak memory, speed and run-to-run reproducibility.
 
   python measure_models.py --embed --manifest ../../data/vision-eval/manifest.json --images <dir> \
         --approval-ref "<where Stage 2 approval is recorded>" --models … --out-dir emb/
@@ -32,14 +36,18 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-# The candidate models. `revision` should be pinned to a commit hash after the first download
-# (models.lock.json is written by --measure with the resolved commit of each).
+# The candidate models. Every model is fetched with huggingface_hub.snapshot_download at a pinned
+# commit (`revision`) and loaded from that local folder, so runs are reproducible. Commits are
+# resolved once (--resolve-revisions, metadata only) and stored in models.lock.json.
+# Licences per the model cards (re-check the card when resolving revisions):
+#   siglip2-b Apache-2.0 · marqo-ecom-b/l Apache-2.0 · dinov2-b Apache-2.0 (was CC-BY-NC until 2023)
+#   · openclip-b32 MIT (weights; LAION notes its datasets are for research).
 MODELS = {
-    "siglip2-b": {"kind": "hf", "repo": "google/siglip2-base-patch16-224", "note": "SigLIP 2 Base/16, 224 px"},
-    "marqo-ecom-b": {"kind": "open_clip", "repo": "hf-hub:Marqo/marqo-ecommerce-embeddings-B", "note": "Marqo e-commerce B (ViT-B/16 SigLIP)"},
-    "dinov2-b": {"kind": "hf", "repo": "facebook/dinov2-base", "note": "DINOv2 Base/14, image only (CLS)"},
-    "openclip-b32": {"kind": "open_clip", "repo": "ViT-B-32", "pretrained": "laion2b_s34b_b79k", "note": "OpenCLIP ViT-B/32 LAION-2B"},
-    "marqo-ecom-l": {"kind": "open_clip", "repo": "hf-hub:Marqo/marqo-ecommerce-embeddings-L", "note": "optional, large"},
+    "siglip2-b": {"kind": "hf", "repo": "google/siglip2-base-patch16-224", "licence": "apache-2.0", "approx_mb": 1500, "note": "SigLIP 2 Base/16, 224 px, image+text"},
+    "marqo-ecom-b": {"kind": "open_clip", "repo": "Marqo/marqo-ecommerce-embeddings-B", "licence": "apache-2.0", "approx_mb": 820, "note": "Marqo e-commerce B (ViT-B/16 SigLIP), 768-d"},
+    "dinov2-b": {"kind": "hf", "repo": "facebook/dinov2-base", "licence": "apache-2.0", "approx_mb": 350, "note": "DINOv2 Base/14, image only (CLS)"},
+    "openclip-b32": {"kind": "open_clip", "repo": "laion/CLIP-ViT-B-32-laion2B-s34B-b79K", "licence": "mit", "approx_mb": 610, "note": "OpenCLIP ViT-B/32 LAION-2B"},
+    "marqo-ecom-l": {"kind": "open_clip", "repo": "Marqo/marqo-ecommerce-embeddings-L", "licence": "apache-2.0", "approx_mb": 2600, "note": "optional, large"},
 }
 DEFAULT = ["siglip2-b", "marqo-ecom-b", "dinov2-b", "openclip-b32"]
 SEED = 20261113
@@ -122,23 +130,33 @@ def configure_determinism(threads: int) -> None:
 
 def load(name: str, revision: str | None) -> Loaded:
     import torch
+    from huggingface_hub import snapshot_download
 
     spec = MODELS[name]
+    # Exactly one weights file per model (repos often hold the same weights in several formats),
+    # plus small config/tokenizer files. safetensors preferred; .bin only if no safetensors exists.
+    small = ["*.json", "*.txt", "*.model"]
+    weights = ["open_clip_model.safetensors", "open_clip_pytorch_model.safetensors"] if spec["kind"] == "open_clip" else ["model.safetensors"]
+    path = snapshot_download(spec["repo"], revision=revision, allow_patterns=small + weights)
+    if not any((Path(path) / w).exists() for w in weights):
+        fallback = ["open_clip_pytorch_model.bin"] if spec["kind"] == "open_clip" else ["pytorch_model.bin"]
+        path = snapshot_download(spec["repo"], revision=revision, allow_patterns=small + fallback)
+    rev = Path(path).name  # the HF cache folder is named after the commit hash
+    if revision and rev != revision:
+        raise SystemExit(f"{name}: got revision {rev}, expected {revision}")
     if spec["kind"] == "hf":
-        from huggingface_hub import snapshot_download
         from transformers import AutoImageProcessor, AutoModel
 
-        path = snapshot_download(spec["repo"], revision=revision, allow_patterns=["*.json", "*.safetensors", "*.txt", "*.model"])
         model = AutoModel.from_pretrained(path).eval()
         proc = AutoImageProcessor.from_pretrained(path)
-        rev = Path(path).name
 
         def embed(images):
             with torch.inference_mode():
                 inputs = proc(images=images, return_tensors="pt")
                 if hasattr(model, "get_image_features"):
+                    # transformers 5 returns BaseModelOutputWithPooling; pooler_output is the image embedding.
                     v = model.get_image_features(**inputs)
-                else:  # DINOv2: CLS token
+                else:  # DINOv2: CLS token of the (layer-normed) last hidden state
                     v = model(**inputs).last_hidden_state[:, 0]
                 v = getattr(v, "pooler_output", v)
                 return torch.nn.functional.normalize(v.float(), dim=-1).tolist()
@@ -146,10 +164,9 @@ def load(name: str, revision: str | None) -> Loaded:
     else:
         import open_clip
 
-        model, _, preprocess = open_clip.create_model_and_transforms(spec["repo"], pretrained=spec.get("pretrained"))
+        # 'local-dir:' (open_clip >= 3) loads config + weights from the pinned snapshot folder.
+        model, _, preprocess = open_clip.create_model_and_transforms(f"local-dir:{path}")
         model.eval()
-        path = None
-        rev = spec.get("pretrained") or "hf-hub"
 
         def embed(images):
             with torch.inference_mode():
@@ -157,8 +174,25 @@ def load(name: str, revision: str | None) -> Loaded:
                 return torch.nn.functional.normalize(model.encode_image(x).float(), dim=-1).tolist()
 
     params = sum(p.numel() for p in model.parameters())
-    files_mb = sum(f.stat().st_size for f in Path(path).rglob("*") if f.is_file()) / 2**20 if path else params * 4 / 2**20
+    files_mb = sum(f.stat().st_size for f in Path(path).rglob("*") if f.is_file()) / 2**20
     return Loaded(embed=embed, params=params, files_mb=files_mb, revision=rev)
+
+
+def resolve_revisions(names: list[str]) -> dict:
+    """Metadata only (no weights): current commit, licence tag and total file size of each model repo."""
+    from huggingface_hub import HfApi
+
+    api = HfApi()
+    lock = {}
+    for n in names:
+        info = api.model_info(MODELS[n]["repo"], files_metadata=True)
+        card_licence = (info.card_data or {}).get("license") if info.card_data else None
+        size = sum((f.size or 0) for f in (info.siblings or [])) / 2**20
+        lock[n] = {"repo": MODELS[n]["repo"], "revision": info.sha, "licence_on_card": card_licence, "repo_mb": round(size)}
+        if card_licence and card_licence != MODELS[n]["licence"]:
+            print(f"WARNING {n}: card says licence {card_licence}, expected {MODELS[n]['licence']} — stop and review")
+        print(json.dumps(lock[n]))
+    return lock
 
 
 def measure_one(name: str, loader: Callable[[], Loaded], images: list, batch: int = 16) -> dict:
@@ -245,6 +279,7 @@ def main() -> int:
     g.add_argument("--self-test", action="store_true")
     g.add_argument("--measure", action="store_true")
     g.add_argument("--embed", action="store_true")
+    g.add_argument("--resolve-revisions", action="store_true", help="metadata only: write models.lock.json with current commits")
     ap.add_argument("--models", default=",".join(DEFAULT))
     ap.add_argument("--revision", action="append", default=[], help="name=commit (pin a model revision)")
     ap.add_argument("--threads", type=int, default=4)
@@ -253,6 +288,7 @@ def main() -> int:
     ap.add_argument("--approval-ref", help="Stage 2: where the written image-use approval is recorded")
     ap.add_argument("--out", default="results.json")
     ap.add_argument("--out-dir", default="emb")
+    ap.add_argument("--yes-download", action="store_true", help="confirm downloading the listed model weights (--measure)")
     a = ap.parse_args()
     if a.self_test:
         return self_test()
@@ -262,17 +298,30 @@ def main() -> int:
     if unknown:
         print(f"unknown models: {unknown}; choose from {list(MODELS)}")
         return 2
-    revisions = dict(r.split("=", 1) for r in a.revision)
+    if a.resolve_revisions:
+        Path("models.lock.json").write_text(json.dumps(resolve_revisions(names), indent=1) + "\n")
+        print("wrote models.lock.json (commit it; later runs use these exact revisions)")
+        return 0
+    lock = json.loads(Path("models.lock.json").read_text()) if Path("models.lock.json").exists() else {}
+    revisions = {n: lock[n]["revision"] for n in names if n in lock}
+    revisions.update(dict(r.split("=", 1) for r in a.revision))
+    if a.measure and not a.yes_download:
+        total = sum(MODELS[n]["approx_mb"] for n in names)
+        print("Would download (approx.):")
+        for n in names:
+            print(f"  {n:13} {MODELS[n]['repo']:42} ~{MODELS[n]['approx_mb']} MB  revision {revisions.get(n, 'UNPINNED (run --resolve-revisions first)')}  licence {MODELS[n]['licence']}")
+        print(f"  total ~{total} MB into ~/.cache/huggingface. Re-run with --yes-download once approved.")
+        return 2
     configure_determinism(a.threads)
 
     if a.measure:
         images = synthetic_images(64)
-        results, lock = [], {}
+        results = []
         for n in names:
             print(f"measuring {n} …", flush=True)
             r = measure_one(n, lambda n=n: load(n, revisions.get(n)), images)
             results.append(r)
-            lock[n] = {"repo": MODELS[n]["repo"], "revision": r["revision"]}
+            lock[n] = {**lock.get(n, {}), "repo": MODELS[n]["repo"], "revision": r["revision"]}
             print(json.dumps(r), flush=True)
         Path(a.out).write_text(json.dumps({"measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "environment": environment(a.threads), "results": results}, indent=1) + "\n")
         Path("models.lock.json").write_text(json.dumps(lock, indent=1) + "\n")

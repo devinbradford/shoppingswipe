@@ -5,15 +5,19 @@
  * touched.
  *
  * Each fake product has a hidden design vector; colour variants share it; each store has its own
- * "photo style" offset. Three fake systems:
- *   - 'design'       sees the design (what a good visual model should approximate)
+ * "photo style" offset. Simulated structure judgments follow the design; simulated overall-look
+ * judgments follow the design AND the colour. Four fake systems:
+ *   - 'design'       sees the design only (what a structure-only model looks like)
+ *   - 'colour-aware' sees the design plus the colour (what an overall-look model looks like)
  *   - 'store-biased' sees mostly the photo style (what a background/store shortcut looks like)
  *   - 'text'         sees only noisy tags (a text-only baseline)
  * Simulated raters judge by design with some noise and occasional "can't tell".
  */
 import { createRng, hashSeed, type Rng } from '@/recommendation/random';
-import type { CatalogItem, Question, QuestionPack, LabelExport, Answer, Stratum } from './schema';
-import { LABELS_VERSION } from './schema';
+import type { CatalogItem, Question, QuestionPack, LabelExport, Answer, Stratum, Dimension, TripletChoice, Rating } from './schema';
+import { DIMENSIONS, LABELS_VERSION } from './schema';
+
+const BOTH = DIMENSIONS;
 
 const DIM = 8;
 
@@ -64,6 +68,8 @@ export function makeFixtureWorld(designs = 60, stores = 3, seed = 7): FixtureWor
   const sys = (name: string, f: (id: string) => number[]) => systems.set(name, new Map(catalog.map((c) => [c.id, f(c.id)])));
   const styleOf = (id: string) => storeStyle[Number(store.get(id)!.split('-').pop())]!;
   sys('design', (id) => design.get(id)!.map((x) => x + 0.3 * gaussian(rng)));
+  const colourOf = new Map(catalog.map((c) => [c.id, c.color]));
+  sys('colour-aware', (id) => [...design.get(id)!.map((x) => x + 0.3 * gaussian(rng)), ...colours.map((c) => (colourOf.get(id) === c ? 2.2 : 0))]);
   sys('store-biased', (id) => design.get(id)!.map((x, i) => 0.35 * x + 1.6 * styleOf(id)[i]! + 0.3 * gaussian(rng)));
   sys('text', (id) => {
     const c = catalog.find((x) => x.id === id)!;
@@ -73,6 +79,12 @@ export function makeFixtureWorld(designs = 60, stores = 3, seed = 7): FixtureWor
     return t.map((x, i) => x + 0.5 * m[i]! + 0.2 * gaussian(rng));
   });
   return { catalog, design, store, systems };
+}
+
+/** Overall-look similarity a simulated rater perceives: design plus colour. */
+function aestheticSim(world: FixtureWorld, a: string, b: string): number {
+  const colour = (id: string) => world.catalog.find((c) => c.id === id)!.color;
+  return 0.6 * cos(world.design.get(a)!, world.design.get(b)!) + 0.4 * (colour(a) === colour(b) ? 1 : -0.3);
 }
 
 const cos = (a: number[], b: number[]) => {
@@ -96,12 +108,12 @@ export function makeFixturePack(world: FixtureWorld, n = 40, seed = 3): Question
   for (let i = 0; i < n; i++) {
     const [a, b, c] = [0, 0, 0].map(() => ids[Math.floor(rng() * ids.length)]!);
     if (a === b || a === c || b === c) continue;
-    questions.push({ kind: 'triplet', id: `t${i}`, anchor: img(a), b: img(b), c: img(c), stratum: 'random' as Stratum });
+    questions.push({ kind: 'triplet', id: `t${i}`, anchor: img(a), b: img(b), c: img(c), stratum: 'random' as Stratum, ask: BOTH });
   }
   for (let i = 0; i < n / 2; i++) {
     const [a, b] = [0, 0].map(() => ids[Math.floor(rng() * ids.length)]!);
     if (a === b) continue;
-    questions.push({ kind: 'pair', id: `p${i}`, a: img(a), b: img(b), stratum: 'random' });
+    questions.push({ kind: 'pair', id: `p${i}`, a: img(a), b: img(b), stratum: 'random', ask: BOTH });
   }
   // Same-thing checks: colour variants (same page) and random pairs of the same type.
   const byPage = new Map<string, string[]>();
@@ -122,16 +134,20 @@ export function simulateRaters(world: FixtureWorld, pack: QuestionPack, raters =
     const rng = createRng(hashSeed(`vision-rater:${r}:${pack.id}`));
     const answers: Answer[] = pack.questions.map((q, order) => {
       const base = { confidence: 2 as const, ms: 2000 + Math.floor(rng() * 6000), order, swapped: rng() < 0.5, at: '2026-11-14T00:00:00Z' };
+      const sim = (d: Dimension, x: string, y: string) => (d === 'structure' ? cos(world.design.get(x)!, world.design.get(y)!) : aestheticSim(world, x, y));
       if (q.kind === 'triplet') {
-        const sb = cos(world.design.get(q.anchor.productId)!, world.design.get(q.b.productId)!) + noise * gaussian(rng);
-        const sc = cos(world.design.get(q.anchor.productId)!, world.design.get(q.c.productId)!) + noise * gaussian(rng);
-        const choice = rng() < cantTell ? 'cant-tell' : sb >= sc ? 'b' : 'c';
-        return { ...base, questionId: q.id, value: { kind: 'triplet', choice } };
+        const value: { kind: 'triplet' } & Partial<Record<Dimension, TripletChoice>> = { kind: 'triplet' };
+        for (const d of q.ask) {
+          const sb = sim(d, q.anchor.productId, q.b.productId) + noise * gaussian(rng);
+          const sc = sim(d, q.anchor.productId, q.c.productId) + noise * gaussian(rng);
+          value[d] = rng() < cantTell ? 'cant-tell' : sb >= sc ? 'b' : 'c';
+        }
+        return { ...base, questionId: q.id, value };
       }
       if (q.kind === 'pair') {
-        const s = cos(world.design.get(q.a.productId)!, world.design.get(q.b.productId)!) + noise * gaussian(rng);
-        const rating = Math.max(1, Math.min(5, Math.round(3 + 2.2 * s))) as 1 | 2 | 3 | 4 | 5;
-        return { ...base, questionId: q.id, value: { kind: 'pair', rating } };
+        const value: { kind: 'pair' } & Partial<Record<Dimension, Rating>> = { kind: 'pair' };
+        for (const d of q.ask) value[d] = Math.max(1, Math.min(5, Math.round(3 + 2.2 * (sim(d, q.a.productId, q.b.productId) + noise * gaussian(rng))))) as Rating;
+        return { ...base, questionId: q.id, value };
       }
       if (q.kind === 'same') {
         const s = cos(world.design.get(q.a.productId)!, world.design.get(q.b.productId)!) + (noise / 3) * gaussian(rng);
@@ -144,8 +160,11 @@ export function simulateRaters(world: FixtureWorld, pack: QuestionPack, raters =
   });
 }
 
-/** Graded relevance a simulated rater panel would give (0–3), for pooled retrieval tests. */
+/**
+ * Graded relevance a simulated rater panel would give (0–3), for pooled retrieval tests.
+ * Relevance is judged on the overall look ("would appeal to the same shopper").
+ */
 export function simulatedGrade(world: FixtureWorld, q: string, c: string): number {
-  const s = cos(world.design.get(q)!, world.design.get(c)!);
-  return s > 0.9 ? 3 : s > 0.5 ? 2 : s > 0.15 ? 1 : 0;
+  const s = aestheticSim(world, q, c);
+  return s > 0.85 ? 3 : s > 0.5 ? 2 : s > 0.15 ? 1 : 0;
 }

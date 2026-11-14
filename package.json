@@ -69,7 +69,8 @@
     "vision:sample": "tsx scripts/vision/sample-eval-set.ts",
     "vision:fixture-pack": "tsx scripts/vision/make-fixture-pack.ts",
     "vision:calibration": "tsx scripts/vision/calibration-report.ts",
-    "vision:evaluate": "tsx scripts/vision/evaluate.ts"
+    "vision:evaluate": "tsx scripts/vision/evaluate.ts",
+    "vision:audit": "tsx scripts/vision/audit-manifest.ts"
   },
   "private": true,
   "jest": {

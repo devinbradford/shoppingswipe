@@ -29,7 +29,7 @@ import { nearest } from '../../src/vision/metrics';
 import { buildPool, poolContribution } from '../../src/vision/pooling';
 import { groupIndex, groupRelated } from '../../src/vision/grouping';
 import { sampleEvaluationSet } from '../../src/vision/sampling';
-import type { LabelExport, Manifest, QuestionPack, Split } from '../../src/vision/schema';
+import { DIMENSIONS, type LabelExport, type Manifest, type QuestionPack, type Split } from '../../src/vision/schema';
 
 const args = process.argv.slice(2);
 const values = (name: string) => args.flatMap((a, i) => (a === `--${name}` && args[i + 1] ? [args[i + 1]!] : []));
@@ -42,12 +42,14 @@ const ci = (e: { mean: number; lo: number; hi: number; n: number }, f = pct) => 
 
 function print(r: EvalReport) {
   const l = r.labels;
-  console.log(`\n== ${r.split.toUpperCase()} split ==  raters ${l.raters} · triplets ${l.triplets} (${l.ambiguousTriplets} ambiguous, excluded) · pairs ${l.pairs} · same-design ${l.same} · questions mixing splits dropped ${l.excludedMixedSplit}`);
+  console.log(`\n== ${r.split.toUpperCase()} split ==  raters ${l.raters} · triplets structure ${l.triplets.structure} / overall look ${l.triplets.aesthetic} (ambiguous excluded: ${l.ambiguousTriplets.structure} / ${l.ambiguousTriplets.aesthetic}; dimensions disagree on ${l.divergentTriplets}) · pairs ${l.pairs.structure}/${l.pairs.aesthetic} · same-design ${l.same} · questions mixing splits dropped ${l.excludedMixedSplit}`);
   for (const [name, s] of Object.entries(r.systems)) {
     console.log(`\n  ${name}`);
-    console.log(`    triplet accuracy      ${ci(s.triplets.accuracy)}`);
-    for (const [st, e] of Object.entries(s.triplets.byStratum)) console.log(`      ${st.padEnd(28)} ${ci(e)}`);
-    console.log(`    1–5 rating Spearman   ${num(s.pairSpearman)} (${s.pairs} pairs)`);
+    for (const d of DIMENSIONS) {
+      const label = d === 'structure' ? 'structure' : 'overall look';
+      console.log(`    ${label.padEnd(13)} triplets ${ci(s.triplets[d].accuracy)}   where dimensions disagree ${ci(s.divergent[d].accuracy)}   1–5 Spearman ${num(s.pairSpearman[d])} (${s.pairs[d]})`);
+      for (const [st, e] of Object.entries(s.triplets[d].byStratum)) if (st !== 'random') console.log(`      ${st.padEnd(28)} ${ci(e)}`);
+    }
     console.log(`    same-design AP        ${num(s.sameDesign.ap)} (${s.sameDesign.positives}+/${s.sameDesign.negatives}-)` + (s.sameDesign.atThreshold ? `  at threshold ${num(s.sameDesign.threshold!)} (${r.split === 'dev' ? 'chosen on dev' : 'from dev'}): precision ${pct(s.sameDesign.atThreshold.precision)} recall ${pct(s.sameDesign.atThreshold.recall)}` : ''));
     if (s.retrieval) {
       const t5 = s.retrieval.at5;

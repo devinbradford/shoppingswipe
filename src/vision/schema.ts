@@ -7,7 +7,21 @@
  */
 
 export const MANIFEST_VERSION = 1;
-export const LABELS_VERSION = 1;
+/** 2 (Stage 1.5): triplets and pairs ask about structure, overall aesthetic, or both (no v1 labels were ever collected). */
+export const LABELS_VERSION = 2;
+
+/**
+ * What a similarity judgment is about.
+ *   structure  silhouette, proportions, curves and edges, legs/base, construction, design language.
+ *              Ignores colour, finish, photography, lighting and background.
+ *   aesthetic  the overall look a shopper responds to: structure AND colour, wood tone, finish,
+ *              material appearance, texture, visual weight and character. Still ignores the
+ *              photography (background, lighting, room vs cut-out).
+ */
+export type Dimension = 'structure' | 'aesthetic';
+export const DIMENSIONS: readonly Dimension[] = ['structure', 'aesthetic'];
+export type TripletChoice = 'b' | 'c' | 'cant-tell';
+export type Rating = 1 | 2 | 3 | 4 | 5;
 
 /** One catalog product as the evaluation sees it: ids, the photo address and grouping keys only. */
 export interface CatalogItem {
@@ -80,8 +94,19 @@ export type Stratum =
   | 'near-duplicate'
   | 'cross-type-language'
   | 'random'
-  | 'colour-trap'
-  | 'photo-trap'
+  /** Triplet: one option has the anchor's shape in another colour, the other a different shape in the anchor's colour. */
+  | 'shape-vs-colour'
+  /** Triplet: both options are the anchor's design; one keeps its finish, the other changes finish (same colour family). */
+  | 'finish-only'
+  /** Triplet: the same design photographed differently vs a different design photographed like the anchor. */
+  | 'photo-style'
+  /** Triplet: a near-identical design vs a clear mismatch, all in one colour. */
+  | 'near-identical'
+  /** Pairs built to pull the two dimensions apart. */
+  | 'same-shape-diff-colour'
+  | 'same-colour-diff-shape'
+  | 'same-design-diff-finish'
+  /** Attention checks (identical photo vs a different kind of furniture). */
   | 'gold';
 
 /** Image to show: an address (Stage 2, loaded straight from the store's CDN) or a data URI (fixtures). */
@@ -91,8 +116,19 @@ export interface ShownImage {
 }
 
 export type Question =
-  | { kind: 'triplet'; id: string; anchor: ShownImage; b: ShownImage; c: ShownImage; stratum: Stratum; gold?: 'b' | 'c' }
-  | { kind: 'pair'; id: string; a: ShownImage; b: ShownImage; stratum: Stratum }
+  | {
+      kind: 'triplet';
+      id: string;
+      anchor: ShownImage;
+      b: ShownImage;
+      c: ShownImage;
+      stratum: Stratum;
+      /** Which judgments this screen asks for (both = one screen, two answers). */
+      ask: readonly Dimension[];
+      /** Known-by-construction answers, per dimension (traps and attention checks only). Stripped from packs sent to raters. */
+      gold?: Partial<Record<Dimension, 'b' | 'c'>>;
+    }
+  | { kind: 'pair'; id: string; a: ShownImage; b: ShownImage; stratum: Stratum; ask: readonly Dimension[] }
   | { kind: 'same'; id: string; a: ShownImage; b: ShownImage; stratum: Stratum; gold?: SameAnswer }
   | { kind: 'attributes'; id: string; product: ShownImage }
   | { kind: 'relevance'; id: string; query: ShownImage; candidate: ShownImage };
@@ -126,8 +162,10 @@ export interface AttributeAnswer {
 }
 
 export type AnswerValue =
-  | { kind: 'triplet'; choice: 'b' | 'c' | 'cant-tell' }
-  | { kind: 'pair'; rating: 1 | 2 | 3 | 4 | 5 | null }
+  /** One field per asked dimension (structure / aesthetic). */
+  | { kind: 'triplet'; structure?: TripletChoice; aesthetic?: TripletChoice }
+  /** 1–5 per asked dimension; null = can't tell. */
+  | { kind: 'pair'; structure?: Rating | null; aesthetic?: Rating | null }
   | { kind: 'same'; choice: SameAnswer }
   | { kind: 'attributes'; value: AttributeAnswer }
   | { kind: 'relevance'; grade: 0 | 1 | 2 | 3 | null };
@@ -135,9 +173,9 @@ export type AnswerValue =
 export interface Answer {
   questionId: string;
   value: AnswerValue;
-  /** 1 = unsure … 3 = sure. */
+  /** 1 = unsure … 3 = sure (one per screen, covering every answer on it). */
   confidence: 1 | 2 | 3;
-  /** Time from the question appearing to the answer, ms. */
+  /** Time from the screen appearing (images loaded) to the last answer on it, ms. */
   ms: number;
   /** Position in this rater's order (questions are shuffled per rater). */
   order: number;
@@ -164,6 +202,34 @@ export interface LabelExport {
   answers: Answer[];
 }
 
+/** The answer for one dimension, or undefined when that dimension wasn't asked. */
+export function answerFor(value: AnswerValue, d: Dimension): TripletChoice | Rating | null | undefined {
+  if (value.kind === 'triplet' || value.kind === 'pair') return value[d];
+  return undefined;
+}
+
+/**
+ * The pack as sent to raters: same questions and ids, without the answer key, and with every
+ * stratum shown as 'random' so the file says nothing about what a screen is testing.
+ */
+export function raterCopy(pack: QuestionPack): QuestionPack {
+  return {
+    ...pack,
+    questions: pack.questions.map((q): Question => {
+      if (q.kind === 'triplet') {
+        const { gold: _gold, ...rest } = q;
+        return { ...rest, stratum: 'random' };
+      }
+      if (q.kind === 'same') {
+        const { gold: _gold, ...rest } = q;
+        return { ...rest, stratum: 'random' };
+      }
+      if (q.kind === 'pair') return { ...q, stratum: 'random' };
+      return q;
+    }),
+  };
+}
+
 /** Returns problems with an export (empty when valid). */
 export function validateExport(e: LabelExport, pack: QuestionPack): string[] {
   const problems: string[] = [];
@@ -178,6 +244,13 @@ export function validateExport(e: LabelExport, pack: QuestionPack): string[] {
     else if (q.kind !== a.value.kind) problems.push(`${a.questionId}: answer kind ${a.value.kind} for a ${q.kind} question`);
     if (seen.has(a.questionId)) problems.push(`${a.questionId}: answered twice`);
     seen.add(a.questionId);
+    if (q && (q.kind === 'triplet' || q.kind === 'pair') && q.kind === a.value.kind) {
+      const v = a.value as Partial<Record<Dimension, unknown>>;
+      for (const d of DIMENSIONS) {
+        if (q.ask.includes(d) && v[d] === undefined) problems.push(`${a.questionId}: ${d} not answered`);
+        if (!q.ask.includes(d) && v[d] !== undefined) problems.push(`${a.questionId}: ${d} answered but not asked`);
+      }
+    }
     if (!(a.ms >= 0)) problems.push(`${a.questionId}: bad time`);
     if (![1, 2, 3].includes(a.confidence)) problems.push(`${a.questionId}: bad confidence`);
   }
