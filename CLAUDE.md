@@ -250,6 +250,7 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   - Model harness: all models pinned via `snapshot_download(revision)` + open_clip `local-dir:`; `--resolve-revisions` (metadata only), and `--measure` needs `--yes-download`; licences Apache-2.0/MIT. Weights not downloaded.
   - `IMAGE_PERMISSIONS.md` lists 4 separate permissions: P1 private annotation, P2 temporary copies, P3 embeddings, P4 retention.
 - Checks passing: typecheck, lint, 432 unit tests
+- Calibration round 1 (14 Nov 2026, pack calibration-v2-1, R1 Devin + R2 + R3, drawings only): every gate passed (structure κ 1.00, overall look κ 0.87; shape over colour, finish noticed and photography ignored all 100%; attention checks 100%). Colour drove the overall look about 37% of the time when shape and colour disagreed. Ratings α 0.71/0.60 (0.53/0.44 without R1): reported, not gated. Two questions on one screen cost 1.44× one. Measured workload ~240 min/rater; recommended ~178 (pairs 150, attributes by 2 raters per product). Open question: R3 started 14 s after R2 finished, so independence is to be confirmed by Devin. Raw exports in `data/vision-eval/labels/calibration-v2-1/`; write-up in `docs/vision/CALIBRATION_RESULTS.md`
 
 ## Phase plan
 
