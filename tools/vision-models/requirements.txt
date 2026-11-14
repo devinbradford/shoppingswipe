@@ -1,0 +1,15 @@
+# Offline pilot environment for the visual evaluation (V3 Milestone 1). NOT part of the app:
+# nothing here is installed by npm, Expo or the app build. CPU only. Python 3.12 or 3.13.
+# Pins = newest release at least two weeks old on 2026-11-14 (checked against PyPI).
+# Linux: install CPU torch first to avoid ~2 GB of CUDA libraries:
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0 torchvision==0.29.2
+torch==2.15.0
+torchvision==0.29.2
+transformers==5.22.1
+open_clip_torch==3.3.0
+timm==1.0.30
+huggingface_hub==2.4.0
+safetensors==0.8.0
+pillow==13.0.0
+numpy==2.5.4
+psutil==7.2.2

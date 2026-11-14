@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Local only: no external scripts, fonts or analytics. Images: our own data: URIs, or (Stage 2,
+     once approved) the store's own image CDN. Nothing is sent anywhere; answers stay in this
+     browser until you export them. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self' file:; style-src 'unsafe-inline'; img-src data: https://cdn.shopify.com; connect-src 'none'; form-action 'none'">
+<title>CureAvo labelling</title>
+<style>
+  :root { --bg:#FBF7EC; --ink:#1C2A22; --muted:#5D6A61; --accent:#23412F; --line:#d9d2c0; --card:#fff; --pick:#EBCB6B; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin: 8px 0 16px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom: 12px; }
+  .progress { flex:1; height:6px; background:var(--line); border-radius:3px; overflow:hidden; min-width:120px; }
+  .progress > div { height:100%; background:var(--accent); }
+  .q { font-size: 18px; font-weight: 600; margin: 8px 0 12px; }
+  .imgs { display:grid; gap:12px; }
+  .imgs.two { grid-template-columns: 1fr 1fr; }
+  .imgs.trip { grid-template-columns: 1fr 1fr; }
+  .imgs.trip .anchor { grid-column: 1 / span 2; justify-self:center; width: 46%; }
+  figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px; text-align:center; }
+  figure img { width:100%; height:auto; max-height: 210px; object-fit: contain; display:block; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 4px; letter-spacing: .06em; text-transform: uppercase; }
+  .choices { display:flex; gap:8px; flex-wrap:wrap; margin: 16px 0 8px; }
+  button { font: inherit; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--card); color: var(--ink); cursor: pointer; min-height: 44px; }
+  button.primary { background: var(--accent); color: #fff; }
+  button.sel { background: var(--pick); border-color: var(--ink); }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .conf { display:flex; gap:8px; align-items:center; margin: 8px 0 16px; flex-wrap: wrap; }
+  .attr { display:grid; grid-template-columns: 160px 1fr; gap: 8px 12px; align-items:center; margin: 12px 0; }
+  select, input[type=text] { font: inherit; padding: 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); }
+  .card { background: var(--card); border:1px solid var(--line); border-radius: 10px; padding: 16px; margin: 12px 0; }
+  kbd { border:1px solid var(--line); border-radius:4px; padding:0 4px; font-size: 13px; background:#fff; }
+  @media (max-width: 640px) { .imgs.trip .anchor { width: 100%; } .attr { grid-template-columns: 1fr; } }
+</style>
+<script src="packs/calibration-fixture.js"></script>
+</head>
+<body>
+<main id="app"></main>
+<script>
+'use strict';
+// ---------------------------------------------------------------------------------------------
+// Pack/answer formats: src/vision/schema.ts (LABELS_VERSION 1). Answers are stored UN-swapped.
+// ---------------------------------------------------------------------------------------------
+const LABELS_VERSION = 1;
+const app = document.getElementById('app');
+const packs = (window.ANNOTATE_PACKS || []).slice();
+let state = null; // { pack, rater, order, swaps, answers, startedAt, shownAt, idx }
+
+function hashSeed(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const key = (p, r) => `cureavo-label:${p}:${r}`;
+const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === 'onclick') e.onclick = v; else if (k === 'text') e.textContent = v; else e.setAttribute(k, v); } for (const k of kids) e.append(k); return e; };
+const save = () => { try { localStorage.setItem(key(state.pack.id, state.rater), JSON.stringify({ answers: state.answers, startedAt: state.startedAt })); } catch (e) { /* private window: progress is not kept */ } };
+
+function start(pack, rater) {
+  const r = rng(hashSeed(`${pack.id}:${rater}`));
+  const order = pack.questions.map((q, i) => ({ i, k: r() })).sort((a, b) => a.k - b.k).map((x) => x.i);
+  const swaps = pack.questions.map(() => r() < 0.5);
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(key(pack.id, rater)) || 'null'); } catch (e) { saved = null; }
+  state = { pack, rater, order, swaps, answers: saved ? saved.answers : [], startedAt: saved ? saved.startedAt : new Date().toISOString(), idx: 0, shownAt: 0 };
+  next();
+}
+
+function next() {
+  const done = new Set(state.answers.map((a) => a.questionId));
+  state.idx = state.order.findIndex((i) => !done.has(state.pack.questions[i].id));
+  if (state.idx < 0) return finish();
+  render();
+}
+
+function record(value, confidence) {
+  const qi = state.order[state.idx];
+  const q = state.pack.questions[qi];
+  state.answers.push({ questionId: q.id, value, confidence, ms: Math.round(performance.now() - state.shownAt), order: state.idx, swapped: state.swaps[qi], at: new Date().toISOString() });
+  save();
+  next();
+}
+
+function figure(img, caption) { return el('figure', {}, el('img', { src: img.src, alt: caption, draggable: 'false' }), el('figcaption', { text: caption })); }
+
+function render() {
+  const qi = state.order[state.idx];
+  const q = state.pack.questions[qi];
+  const sw = state.swaps[qi];
+  app.replaceChildren();
+  const pct = (state.answers.length / state.pack.questions.length) * 100;
+  app.append(el('div', { class: 'bar' }, el('span', { class: 'muted', text: `${state.answers.length + 1} of ${state.pack.questions.length}` }), el('div', { class: 'progress' }, el('div', { style: `width:${pct}%` })), el('button', { onclick: exportNow, text: 'Export so far' })));
+  let conf = 2;
+  const confRow = el('div', { class: 'conf' }, el('span', { class: 'muted', text: 'How sure?' }));
+  const confBtns = [[1, 'Unsure'], [2, 'Fairly sure'], [3, 'Sure']].map(([v, t]) => { const b = el('button', { text: `${t} (${v})`, onclick: () => setConf(v) }); confRow.append(b); return b; });
+  const setConf = (v) => { conf = v; confBtns.forEach((b, i) => b.classList.toggle('sel', i + 1 === v)); };
+  setConf(2);
+  const choices = el('div', { class: 'choices' });
+  const keys = {};
+  const choice = (label, k, fn) => { const b = el('button', { text: `${label}${k ? ` (${k})` : ''}`, onclick: fn }); if (k) keys[k] = fn; choices.append(b); };
+
+  if (q.kind === 'triplet') {
+    const [L, R] = sw ? [q.c, q.b] : [q.b, q.c];
+    const [lv, rv] = sw ? ['c', 'b'] : ['b', 'c'];
+    app.append(el('div', { class: 'q', text: 'Which piece is closer in DESIGN to the top one?' }), el('p', { class: 'muted', text: 'Design = shape, proportions, legs or base, details. Ignore colour, the photo and the background.' }));
+    app.append(el('div', { class: 'imgs trip' }, el('div', { class: 'anchor' }, figure(q.anchor, 'This one')), figure(L, 'Left'), figure(R, 'Right')));
+    choice('Left', 'a', () => record({ kind: 'triplet', choice: lv }, conf));
+    choice('Right', 'l', () => record({ kind: 'triplet', choice: rv }, conf));
+    choice("Can't tell", 'x', () => record({ kind: 'triplet', choice: 'cant-tell' }, conf));
+  } else if (q.kind === 'pair' || q.kind === 'same') {
+    const [L, R] = sw ? [q.b, q.a] : [q.a, q.b];
+    app.append(el('div', { class: 'imgs two' }, figure(L, 'Left'), figure(R, 'Right')));
+    if (q.kind === 'pair') {
+      app.prepend(el('p', { class: 'muted', text: '1 = nothing alike · 3 = same family, clearly different · 5 = almost the same design. Ignore colour and photo.' }));
+      app.prepend(el('div', { class: 'q', text: 'How similar are these two designs?' }));
+      for (const v of [1, 2, 3, 4, 5]) choice(String(v), String(v), () => record({ kind: 'pair', rating: v }, conf));
+      choice("Can't tell", 'x', () => record({ kind: 'pair', rating: null }, conf));
+    } else {
+      app.prepend(el('div', { class: 'q', text: 'Are these the same product?' }));
+      [['Same photo', '1', 'same-photo'], ['Same design, other colour', '2', 'same-design-diff-colour'], ['Same design, other photo', '3', 'same-design-diff-photo'], ['Different products', '4', 'different'], ["Can't tell", 'x', 'cant-tell']].forEach(([t, k, v]) => choice(t, k, () => record({ kind: 'same', choice: v }, conf)));
+    }
+  } else if (q.kind === 'relevance') {
+    app.append(el('div', { class: 'q', text: 'If someone loved the left piece, how good a suggestion is the right one?' }), el('p', { class: 'muted', text: '0 = not relevant · 1 = same kind, weak match · 2 = good match · 3 = excellent match / same design.' }));
+    app.append(el('div', { class: 'imgs two' }, figure(q.query, 'Loved'), figure(q.candidate, 'Suggestion')));
+    for (const v of [0, 1, 2, 3]) choice(String(v), String(v), () => record({ kind: 'relevance', grade: v }, conf));
+    choice("Can't tell", 'x', () => record({ kind: 'relevance', grade: null }, conf));
+  } else if (q.kind === 'attributes') {
+    const vocab = { silhouette: ['rectilinear', 'softened', 'rounded', 'sculptural'], visualWeight: ['light', 'medium', 'heavy'], base: ['legs', 'plinth', 'sled', 'pedestal', 'none-visible'], finish: ['matte', 'satin', 'gloss', 'mixed'], woodTone: ['light', 'mid', 'dark', 'none'], texture: ['smooth', 'woven', 'tactile', 'upholstered'], ornament: ['1', '2', '3', '4'], photoKind: ['cutout', 'scene', 'mixed'], wholeVisible: ['yes', 'partly', 'no'] };
+    app.append(el('div', { class: 'q', text: 'Describe what you see' }), el('div', { class: 'imgs two' }, figure(q.product, 'This piece')));
+    const form = el('div', { class: 'attr' });
+    const sels = {};
+    for (const [k, opts] of Object.entries(vocab)) { const s = el('select', { 'aria-label': k }); s.append(el('option', { value: '', text: '— not sure —' })); for (const o of opts) s.append(el('option', { value: o, text: o })); sels[k] = s; form.append(el('label', { text: k }), s); }
+    const lang = el('input', { type: 'text', 'aria-label': 'design language', placeholder: 'e.g. japandi, chunky farmhouse' });
+    form.append(el('label', { text: 'design language' }), lang);
+    app.append(form);
+    choice('Save', 'Enter', () => { const value = {}; for (const [k, s] of Object.entries(sels)) if (s.value) value[k] = k === 'ornament' ? Number(s.value) : s.value; if (lang.value.trim()) value.language = lang.value.trim(); record({ kind: 'attributes', value }, conf); });
+  }
+  app.append(confRow, choices, el('p', { class: 'muted' }, 'Keys: ', ...Object.keys(keys).flatMap((k) => [el('kbd', { text: k }), ' ']), ' · confidence ', el('kbd', { text: 'q' }), el('kbd', { text: 'w' }), el('kbd', { text: 'e' })));
+  document.onkeydown = (e) => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+    if (e.key === 'q') setConf(1); else if (e.key === 'w') setConf(2); else if (e.key === 'e') setConf(3);
+    else if (keys[e.key]) { e.preventDefault(); keys[e.key](); }
+  };
+  // Start the clock once every image has loaded, so slow images don't count as thinking time.
+  const imgs = [...app.querySelectorAll('img')];
+  state.shownAt = performance.now();
+  Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; })))).then(() => { state.shownAt = performance.now(); });
+}
+
+function exportData(finished) {
+  return { version: LABELS_VERSION, packId: state.pack.id, rater: state.rater, startedAt: state.startedAt, finishedAt: finished ? new Date().toISOString() : null, answers: state.answers };
+}
+function download(obj) {
+  const blob = new Blob([JSON.stringify(obj, null, 1)], { type: 'application/json' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: `labels-${obj.packId}-${obj.rater}.json` });
+  document.body.append(a); a.click(); a.remove();
+}
+function exportNow() { download(exportData(false)); }
+
+function finish() {
+  document.onkeydown = null;
+  app.replaceChildren(el('h1', { text: 'All done. Thank you!' }), el('p', { text: `${state.answers.length} answers saved in this browser.` }), el('p', { class: 'muted', text: 'Download your answers and send the file to the study lead. Please do not discuss answers with other raters until everyone has finished.' }), el('button', { class: 'primary', text: 'Download answers', onclick: () => download(exportData(true)) }));
+}
+
+function home() {
+  app.replaceChildren();
+  app.append(el('h1', { text: 'CureAvo design labelling' }));
+  app.append(el('div', { class: 'card' }, el('p', { text: 'You will see furniture pictures and answer short questions about how similar their DESIGNS are. Go with your first honest reading; "Can\'t tell" is a fine answer. There are no right answers you can look up, and no model has answered these.' }), el('p', { class: 'muted', text: 'Guidelines: docs/vision/LABELING_PROTOCOL.md. Your progress stays in this browser; nothing is uploaded.' })));
+  const name = el('input', { type: 'text', placeholder: 'Your rater code (e.g. R1)', 'aria-label': 'rater code' });
+  const sel = el('select', { 'aria-label': 'pack' });
+  const refresh = () => { sel.replaceChildren(...packs.map((p, i) => el('option', { value: String(i), text: `${p.title} (${p.questions.length} questions)` }))); };
+  refresh();
+  const file = el('input', { type: 'file', accept: 'application/json', 'aria-label': 'load a pack file' });
+  file.onchange = async () => { try { const p = JSON.parse(await file.files[0].text()); if (p.version !== LABELS_VERSION || !Array.isArray(p.questions)) throw new Error('not a version 1 pack'); packs.push(p); refresh(); sel.value = String(packs.length - 1); } catch (e) { alert(`Could not load that pack: ${e.message}`); } };
+  app.append(el('div', { class: 'card attr' }, el('label', { text: 'Rater code' }), name, el('label', { text: 'Pack' }), sel, el('label', { text: 'Or load a pack' }), file));
+  app.append(el('button', { class: 'primary', text: 'Start / resume', onclick: () => { const r = name.value.trim(); if (!r) { name.focus(); return; } if (!packs.length) { alert('Load a pack first.'); return; } start(packs[Number(sel.value)], r); } }));
+}
+home();
+</script>
+</body>
+</html>

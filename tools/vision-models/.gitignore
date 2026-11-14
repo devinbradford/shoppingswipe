@@ -1,0 +1,4 @@
+.venv/
+emb/
+__pycache__/
+models.lock.json.tmp

@@ -212,6 +212,29 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
 - Checks passing: typecheck, lint, 377 unit tests
 - Engine Lab, Milestone 0 (Nov 2026): offline, reproducible evaluation in `src/recommendation/lab/` (synthetic catalogs with a hidden truth V2 never sees: design families, 6-dim visual space with 3 untagged dims, variants, label noise; shoppers defined on that truth; production pipeline: eligibility, `sampleIds` batches, refill, pinned re-rank, useDeck seeds; policies v2 / random / content / oracle; bootstrap CIs, paired comparisons). `npm run engine-lab` (full, ~11 min), `-- --quick` (~35 s), `-- --perf`. Baseline: `docs/ENGINE_LAB_BASELINE.md`, `docs/engine-lab/v2-baseline.{json,md}`. Golden snapshot test pins V2 (fails on any ranking/learning change). Old `sim/simulate.ts` kept for its tests. Finding: production candidate/first-deck seeds have no shopper component, so every new shopper gets the same first deck
 - Checks passing: typecheck, lint, 397 unit tests
+- Visual Intelligence, Milestone 1 Stage 1 (Nov 2026; plan `docs/VISUAL_INTELLIGENCE_M1_PLAN.md`; Stage 2 NOT approved): evaluation infrastructure only. No image was opened or embedded, and no app, ranking, learning, sampling, UI, schema or affiliate code changed. Pure modules in `src/vision/`:
+  - schema (versioned manifest, questions, answers, export, `validateExport`);
+  - grouping (union-find over same photo address without query string, same image hash in Stage 2, same store page decoded from the Awin `ued` link without `?variant=`, and confirmed duplicates; whole groups split per type, 60% test target, `findLeaks`, `questionSplit`);
+  - sampling (seeded 200: type quotas, ≤60% per store, ≥30% hard cases, 12 colour-variant + 6 same-photo partners);
+  - manifest (canonical JSON + SHA-256, `checkManifest`);
+  - agreement (majority/ambiguous, Fleiss κ, Krippendorff α);
+  - metrics (triplet accuracy, Spearman, pooled P@5/nDCG@10 as lower/upper/condensed with judged@k and a low-coverage flag, "pooled recall" only, AP, dev-only thresholds, cross-store ratio);
+  - pooling (equal depth for every system + random + same group, same split and type only);
+  - calibration (times, κ/α, colour and photo traps, attention checks, `workload`);
+  - evaluate (runner + test lock);
+  - fixtures and fixtureArt (synthetic world; drawn SVG furniture practice pack).
+
+  Commands:
+  - `npm run vision:sample` (manifest `data/vision-eval/manifest.json` from the 9 Nov snapshot: 200 products, dev 76 / test 124, 0 leaks, hash d711082b…; `-- --verify`);
+  - `vision:fixture-pack`;
+  - `vision:calibration` (`-- --simulate` dry run);
+  - `vision:evaluate -- --fixture` (whole pipeline on synthetic data). A test-split run needs `--reason` and dev thresholds, runs once per manifest + system, and is logged in `data/vision-eval/test-runs.json`.
+
+  Other pieces:
+  - Annotation tool: `tools/annotate/index.html` (one local file, no libraries, a security policy blocking all network except our data and cdn.shopify.com images, per-rater shuffle and left/right swap, confidence, timing, resume, JSON export).
+  - Model pilot: `tools/vision-models/` (pinned Python CPU environment; `measure_models.py --self-test` passes here; `--measure` blocked here because huggingface.co and download.pytorch.org are not allowed; `--embed` refuses without `--approval-ref`).
+  - Docs: `docs/vision/EVALUATION_METHOD.md` (method, provisional acceptance bars), `LABELING_PROTOCOL.md` (rater guide, calibration, workload), `IMAGE_PERMISSIONS.md` (approvals needed from Awin + Tribesigns 92307, Sicotas 110532, Welax 108888, with request text).
+- Checks passing: typecheck, lint, 427 unit tests
 
 ## Phase plan
 
