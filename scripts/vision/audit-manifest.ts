@@ -23,7 +23,7 @@ const values = (name: string) => args.flatMap((a, i) => (a === `--${name}` && ar
 const readJson = <T>(p: string): T => JSON.parse(readFileSync(p, 'utf8')) as T;
 const sha256 = (s: string) => createHash('sha256').update(s, 'utf8').digest('hex');
 
-const manifest = readJson<Manifest>(values('manifest')[0] ?? 'data/vision-eval/manifest.json');
+const manifest = readJson<Manifest>(values('manifest')[0] ?? 'data/vision-eval/manifest-v2.json');
 const rows = values('snapshot').flatMap((p) => readJson<(SnapshotRow & { title?: string })[]>(p));
 if (!rows.length) {
   console.error('usage: --snapshot <file.json> [--snapshot …] [--manifest …]');
@@ -38,8 +38,11 @@ problems += v.length;
 
 // 2. Reproducibility of grouping
 const byId = new Map(rows.map((r) => [r.id, r]));
-const catalog = [...byId.values()].map((r) => snapshotRowToItem(r));
-const regrouped = groupRelated(catalog);
+// Re-derive with the rules this manifest declares (v2 adds name and page families).
+const v2 = manifest.version >= 2;
+const allColours = [...new Set([...byId.values()].map((r) => r.color ?? ''))];
+const catalog = [...byId.values()].map((r) => snapshotRowToItem(r, undefined, v2 ? allColours : undefined));
+const regrouped = groupRelated(catalog, [], v2 ? { nameFamily: true, pageFamily: true } : {});
 const regroupOf = new Map(regrouped.flatMap((g) => g.members.map((m) => [m, g] as const)));
 let mismatched = 0;
 for (const g of manifest.groups) {

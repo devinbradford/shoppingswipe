@@ -1,0 +1,1971 @@
+{
+ "supersedes": {
+  "file": "manifest.json",
+  "hash": "d711082b606a1c571b1400037afee57d9e9f4c4f0968d66a6dd7a6ba65a73140"
+ },
+ "note": "Every related group that v2 rules form by joining groups v1 kept apart. \"fixesLeak\" = v1 had sampled members of this group on both dev and test. Cross-retailer candidates are for human review only and are NOT merged.",
+ "summary": {
+  "correctionsInCatalog": 114,
+  "touchingSample": 21,
+  "leaksFixed": 2,
+  "sampledProductsChangingSide": 41,
+  "crossRetailerCandidates": 0
+ },
+ "corrections": [
+  {
+   "group": "g:awin-110532-16cc9iy17pimto",
+   "merged": [
+    "g:awin-110532-16cc9iy17pimto",
+    "g:awin-110532-i1k7g3v72ybp",
+    "g:awin-110532-sgzang1t30686"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [
+    {
+     "id": "awin-110532-16cc9iy17pimto",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-2f3xiy1ms0bmk",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-i1k7g3v72ybp",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-sgzang1t30686",
+     "before": "dev",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-sp8wr41wt75va",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": true
+  },
+  {
+   "group": "g:awin-110532-1g4qkq6ov6pj4",
+   "merged": [
+    "g:awin-110532-1g4qkq6ov6pj4",
+    "g:awin-110532-1r21e2h18563jb",
+    "g:awin-110532-ezreud1jz8j0z",
+    "g:awin-110532-l8qiy71ywsmll",
+    "g:awin-110532-y5255t163y86z"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 5,
+   "sampled": [
+    {
+     "id": "awin-110532-1r21e2h18563jb",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-y5255t163y86z",
+     "before": "dev",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": true
+  },
+  {
+   "group": "g:awin-110532-10whp2y1rwl8pk",
+   "merged": [
+    "g:awin-110532-10whp2y1rwl8pk",
+    "g:awin-110532-1iu4gc7nr88sd",
+    "g:awin-110532-1wjg4xl1ail80n"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 13,
+   "sampled": [
+    {
+     "id": "awin-110532-15ry7lwcpp7qi",
+     "before": "dev",
+     "after": "dev"
+    },
+    {
+     "id": "awin-110532-171pbl5t0dkbn",
+     "before": "dev",
+     "after": "dev"
+    },
+    {
+     "id": "awin-110532-1iu4gc7nr88sd",
+     "before": "dev",
+     "after": "dev"
+    },
+    {
+     "id": "awin-110532-7pe2umepx9ww",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-13oebcx1se3gan",
+   "merged": [
+    "g:awin-110532-13oebcx1se3gan",
+    "g:awin-110532-151g4q8fe4392",
+    "g:awin-110532-16o52n21vbgcjc",
+    "g:awin-110532-17b3djirxv4ik",
+    "g:awin-110532-1amjn3e1au42s8",
+    "g:awin-110532-1oaksyq149i0cg",
+    "g:awin-110532-1tgs4rendwbd",
+    "g:awin-110532-1we6yiyiwczp0",
+    "g:awin-110532-8n0a2p1vhw3ov",
+    "g:awin-110532-rs36mj1t3oht9",
+    "g:awin-110532-yh612ruvez"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 15,
+   "sampled": [
+    {
+     "id": "awin-110532-151g4q8fe4392",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-1tgs4rendwbd",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-140im8lvolcin",
+   "merged": [
+    "g:awin-110532-140im8lvolcin",
+    "g:awin-110532-5385ym1av9trs"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-110532-140im8lvolcin",
+     "before": "dev",
+     "after": "dev"
+    },
+    {
+     "id": "awin-110532-5385ym1av9trs",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1gca9981d55lt6",
+   "merged": [
+    "g:awin-110532-1gca9981d55lt6",
+    "g:awin-110532-1gtpfema5vga8",
+    "g:awin-110532-1tfrha91rnsb13"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 10,
+   "sampled": [
+    {
+     "id": "awin-110532-1gca9981d55lt6",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-vb55pfb0417h",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1gftxbfzx4gsl",
+   "merged": [
+    "g:awin-110532-1gftxbfzx4gsl",
+    "g:awin-110532-1pzgkz3gfhp2d"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [
+    {
+     "id": "awin-110532-rtezrd15h264v",
+     "before": "test",
+     "after": "test"
+    },
+    {
+     "id": "awin-110532-sgfe4x1bp8t7f",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1iyseqk1b93w7y",
+   "merged": [
+    "g:awin-92307-1iyseqk1b93w7y",
+    "g:awin-92307-1tzytnlsr98u7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 7,
+   "sampled": [
+    {
+     "id": "awin-92307-1tzytnlsr98u7",
+     "before": "dev",
+     "after": "dev"
+    },
+    {
+     "id": "awin-92307-jcl99j1lcyrel",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-108x3ih1fmi3dr",
+   "merged": [
+    "g:awin-110532-108x3ih1fmi3dr",
+    "g:awin-110532-159cquf15y7hel",
+    "g:awin-110532-1goc4ny1f9foek",
+    "g:awin-110532-1mpbg4opk58d2"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 7,
+   "sampled": [
+    {
+     "id": "awin-110532-1w7way2bol5u0",
+     "before": "test",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-11m8ap3vil92d",
+   "merged": [
+    "g:awin-110532-11m8ap3vil92d",
+    "g:awin-110532-1ebzn1d44x8bb"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [
+    {
+     "id": "awin-110532-1i0yfwr13gus19",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-14ckojf1qnpoix",
+   "merged": [
+    "g:awin-110532-14ckojf1qnpoix",
+    "g:awin-110532-14dwvg9cu2e5n",
+    "g:awin-110532-1o08mck21ngby",
+    "g:awin-110532-5ft4xtv1hnj",
+    "g:awin-110532-qiah6omrdpyq"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 7,
+   "sampled": [
+    {
+     "id": "awin-110532-14ckojf1qnpoix",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-14sux2f10tdred",
+   "merged": [
+    "g:awin-110532-14sux2f10tdred",
+    "g:awin-110532-heal57sx2271",
+    "g:awin-110532-t77w8w1egq8hm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-110532-t77w8w1egq8hm",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1987qll1wbrjxb",
+   "merged": [
+    "g:awin-110532-1987qll1wbrjxb",
+    "g:awin-110532-1gfemcy1s9apr8"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-110532-1pi1g629sof30",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-19wq3dg11ymube",
+   "merged": [
+    "g:awin-110532-19wq3dg11ymube",
+    "g:awin-110532-1il64bj1f75oa5"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [
+    {
+     "id": "awin-110532-1il64bj1f75oa5",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1d3ap6favx2nh",
+   "merged": [
+    "g:awin-110532-1d3ap6favx2nh",
+    "g:awin-110532-1n6rmd1aqkbkf",
+    "g:awin-110532-1n9bcc6x1mwk8",
+    "g:awin-110532-1nfec3818kvaom",
+    "g:awin-110532-m0f6klsq72db",
+    "g:awin-110532-p92w2v1xoyba5",
+    "g:awin-110532-r2hba8llvsxa"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 9,
+   "sampled": [
+    {
+     "id": "awin-110532-1nfec3818kvaom",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ht0wg217v71vw",
+   "merged": [
+    "g:awin-110532-1ht0wg217v71vw",
+    "g:awin-110532-1ker5ne1pfv5o4",
+    "g:awin-110532-fwupv91ft2wrz"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-110532-fwupv91ft2wrz",
+     "before": "dev",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ne1il846y0gu",
+   "merged": [
+    "g:awin-110532-1ne1il846y0gu",
+    "g:awin-110532-idaepw17m3gkm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [
+    {
+     "id": "awin-110532-1ne1il846y0gu",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1tuvab3u7kutd",
+   "merged": [
+    "g:awin-110532-1tuvab3u7kutd",
+    "g:awin-110532-1yuwq2g1l9xoi",
+    "g:awin-110532-rhh5zw13uw1mi"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-110532-rhh5zw13uw1mi",
+     "before": "dev",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1x2pi5b1t29nhp",
+   "merged": [
+    "g:awin-110532-1x2pi5b1t29nhp",
+    "g:awin-110532-e7ztif18l7yo1"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [
+    {
+     "id": "awin-110532-1x2pi5b1t29nhp",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-2a0w6t17ddz5r",
+   "merged": [
+    "g:awin-110532-2a0w6t17ddz5r",
+    "g:awin-110532-qp7lhu111jf44"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [
+    {
+     "id": "awin-110532-2a0w6t17ddz5r",
+     "before": "test",
+     "after": "test"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1fcon0n1r7u2qp",
+   "merged": [
+    "g:awin-92307-1fcon0n1r7u2qp",
+    "g:awin-92307-ghjsaf8a7oad"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [
+    {
+     "id": "awin-92307-1fcon0n1r7u2qp",
+     "before": "test",
+     "after": "dev"
+    }
+   ],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-107qby01bzdrd2",
+   "merged": [
+    "g:awin-110532-107qby01bzdrd2",
+    "g:awin-110532-16x7uel182s0uv",
+    "g:awin-110532-21ms7t7f7b0f"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-10gapr51kl37q3",
+   "merged": [
+    "g:awin-110532-10gapr51kl37q3",
+    "g:awin-110532-1s40vh794nno9",
+    "g:awin-110532-1uieoak1ovioq",
+    "g:awin-110532-48jkus1m0ho2q",
+    "g:awin-110532-e513d1fy6skz",
+    "g:awin-110532-f9ogq09xmhjm",
+    "g:awin-110532-fjblf911ufmcv",
+    "g:awin-110532-kqr07o11wiwgi",
+    "g:awin-110532-u31bub16lssq9",
+    "g:awin-110532-v7j2om1co1dkk",
+    "g:awin-110532-wuw3c2z7ftj0"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 11,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-10mquck12vmfnu",
+   "merged": [
+    "g:awin-110532-10mquck12vmfnu",
+    "g:awin-110532-13lwrx01o3d4aa",
+    "g:awin-110532-2bzh6g1vdd5du",
+    "g:awin-110532-7mjkga9v09qg"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-11g8vt114rfdv3",
+   "merged": [
+    "g:awin-110532-11g8vt114rfdv3",
+    "g:awin-110532-1qppu3lt9dx83",
+    "g:awin-110532-ujsol2ln3neo"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-127jq2e309b74",
+   "merged": [
+    "g:awin-110532-127jq2e309b74",
+    "g:awin-110532-2estdb1mwdc9x"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 7,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-12gigdd58hd9n",
+   "merged": [
+    "g:awin-110532-12gigdd58hd9n",
+    "g:awin-110532-1eu2ghoj4rgt6",
+    "g:awin-110532-s6cjqleupz77"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-12tbbilq3zll7",
+   "merged": [
+    "g:awin-110532-12tbbilq3zll7",
+    "g:awin-110532-1u41l5u87zt28"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-12xm05n1b6buol",
+   "merged": [
+    "g:awin-110532-12xm05n1b6buol",
+    "g:awin-110532-txt4eu1iy6ol4"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-131aixaeq92qc",
+   "merged": [
+    "g:awin-110532-131aixaeq92qc",
+    "g:awin-110532-cmbdnkboetia"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-13cmnqkxyd622",
+   "merged": [
+    "g:awin-110532-13cmnqkxyd622",
+    "g:awin-110532-19ux5emx6zvlk",
+    "g:awin-110532-1cwfjfgw4lkaq"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 11,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-13rhetd88tv1v",
+   "merged": [
+    "g:awin-110532-13rhetd88tv1v",
+    "g:awin-110532-15z7dfskjpcpe"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-13rr042t6kn7k",
+   "merged": [
+    "g:awin-110532-13rr042t6kn7k",
+    "g:awin-110532-1slf9mnrwj6s9",
+    "g:awin-110532-pdcyuwkk041m"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-148s8vt1x3cc9f",
+   "merged": [
+    "g:awin-110532-148s8vt1x3cc9f",
+    "g:awin-110532-zapzzmpmzfmk"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-14lv6zi155ppbc",
+   "merged": [
+    "g:awin-110532-14lv6zi155ppbc",
+    "g:awin-110532-1mgyawkxylfci",
+    "g:awin-110532-1xy7hhq17mxwkw",
+    "g:awin-110532-au0rqk1dt8kgu"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-14vv0pj1e24pox",
+   "merged": [
+    "g:awin-110532-14vv0pj1e24pox",
+    "g:awin-110532-1gokqh8kpgbwi",
+    "g:awin-110532-vbw7vpurgktv"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-15le6gm59v3kc",
+   "merged": [
+    "g:awin-110532-15le6gm59v3kc",
+    "g:awin-110532-1o5op6xxgst5v"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-15m4thrgtzlv",
+   "merged": [
+    "g:awin-110532-15m4thrgtzlv",
+    "g:awin-110532-1wihtnx1o4ouyz"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-15mz4fr1jv9wzh",
+   "merged": [
+    "g:awin-110532-15mz4fr1jv9wzh",
+    "g:awin-110532-1szct0l1bhwm8z"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-15o0hlt1yzrv5r",
+   "merged": [
+    "g:awin-110532-15o0hlt1yzrv5r",
+    "g:awin-110532-1i4hjyu1uwf77o",
+    "g:awin-110532-1p4u7d81d8dfoa"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-15wdt561ewmyxg",
+   "merged": [
+    "g:awin-110532-15wdt561ewmyxg",
+    "g:awin-110532-48voag1fop0ji",
+    "g:awin-110532-5elz68y43kiy"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-161v1d13c3taf",
+   "merged": [
+    "g:awin-110532-161v1d13c3taf",
+    "g:awin-110532-1sbjpk31qeip69"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-162uk7kfc19u6",
+   "merged": [
+    "g:awin-110532-162uk7kfc19u6",
+    "g:awin-110532-1nplcpz11popz9",
+    "g:awin-110532-piznt5mvrt"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-16kemzg1c2zvpa",
+   "merged": [
+    "g:awin-110532-16kemzg1c2zvpa",
+    "g:awin-110532-1cmluxt1mighi7",
+    "g:awin-110532-1itkplbbs2p71"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1763e0a5i4dmg",
+   "merged": [
+    "g:awin-110532-1763e0a5i4dmg",
+    "g:awin-110532-4g4vsr175vtl9",
+    "g:awin-110532-ffyjk0dbpc9m"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-177zfnn1j0d9kl",
+   "merged": [
+    "g:awin-110532-177zfnn1j0d9kl",
+    "g:awin-110532-g3mwegqv2v12"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-179669p1xt1g3n",
+   "merged": [
+    "g:awin-110532-179669p1xt1g3n",
+    "g:awin-110532-1hydav51wvqgtv"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-17h74aojz6xje",
+   "merged": [
+    "g:awin-110532-17h74aojz6xje",
+    "g:awin-110532-17j42n5scfedv",
+    "g:awin-110532-1l80djv139keq1",
+    "g:awin-110532-4ojrf57iq50j"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 15,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-17hq08ngi7zi",
+   "merged": [
+    "g:awin-110532-17hq08ngi7zi",
+    "g:awin-110532-i2c47u1kidyng"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-183hy7z14e5pvt",
+   "merged": [
+    "g:awin-110532-183hy7z14e5pvt",
+    "g:awin-110532-1m8twdi1pv1by4",
+    "g:awin-110532-y6ynt3hn2u71"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-19jvqnq1jws4z8",
+   "merged": [
+    "g:awin-110532-19jvqnq1jws4z8",
+    "g:awin-110532-1k6wpv5605b9"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1a64azk12qio72",
+   "merged": [
+    "g:awin-110532-1a64azk12qio72",
+    "g:awin-110532-1ea5fye1fzxi0"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ahg5uigbu6c8",
+   "merged": [
+    "g:awin-110532-1ahg5uigbu6c8",
+    "g:awin-110532-1fl1eol150btjr",
+    "g:awin-110532-1nauhf31iwc0wt"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1b0a0iw1jcmc9q",
+   "merged": [
+    "g:awin-110532-1b0a0iw1jcmc9q",
+    "g:awin-110532-1hwmgff16h5uwd",
+    "g:awin-110532-1iqpzk4bfoxp2",
+    "g:awin-110532-gt3ap41njxiy2",
+    "g:awin-110532-qbizub1pqt0b1"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 8,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1b2irwvb96v55",
+   "merged": [
+    "g:awin-110532-1b2irwvb96v55",
+    "g:awin-110532-1fw159jls8f8p",
+    "g:awin-110532-lmgwa01vdl5vu"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1b4xyyx1rz1zz",
+   "merged": [
+    "g:awin-110532-1b4xyyx1rz1zz",
+    "g:awin-110532-1sfv1nr1f0vhnx"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1b7mf24uikpam",
+   "merged": [
+    "g:awin-110532-1b7mf24uikpam",
+    "g:awin-110532-dep6oh131ngwb"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1beaw8w18ddnqa",
+   "merged": [
+    "g:awin-110532-1beaw8w18ddnqa",
+    "g:awin-110532-1hicn4jmwc5zh"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1bymjv26ym05",
+   "merged": [
+    "g:awin-110532-1bymjv26ym05",
+    "g:awin-110532-1oin4821dl56p8"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1c0visheep77r",
+   "merged": [
+    "g:awin-110532-1c0visheep77r",
+    "g:awin-110532-1hguirr11iom9h",
+    "g:awin-110532-1vqr80cj7rgwi",
+    "g:awin-110532-mjbdhunynsf",
+    "g:awin-110532-ohb50kb6mtky"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 7,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1cf90j91rdxq7b",
+   "merged": [
+    "g:awin-110532-1cf90j91rdxq7b",
+    "g:awin-110532-1hjbnv39eis1t",
+    "g:awin-110532-j7jn9h1w4moo7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1cm0c5o1tiq4nu",
+   "merged": [
+    "g:awin-110532-1cm0c5o1tiq4nu",
+    "g:awin-110532-1luar1usq7a6o",
+    "g:awin-110532-1u8ufygw43x9e",
+    "g:awin-110532-lou3c31n91qvp"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1dkef4wkysma2",
+   "merged": [
+    "g:awin-110532-1dkef4wkysma2",
+    "g:awin-110532-s1p0yj7on1i9"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1dykj5r18ury3p",
+   "merged": [
+    "g:awin-110532-1dykj5r18ury3p",
+    "g:awin-110532-ct93x9cn0r93",
+    "g:awin-110532-m07r0i1arehmw"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1e3jhfdba6nnz",
+   "merged": [
+    "g:awin-110532-1e3jhfdba6nnz",
+    "g:awin-110532-1icjn8f15x61g5"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ewqhl51jjc5bn",
+   "merged": [
+    "g:awin-110532-1ewqhl51jjc5bn",
+    "g:awin-110532-1ffet7u1kwrjtw",
+    "g:awin-110532-ungzybvfldnl"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1fdg0squ6j8i8",
+   "merged": [
+    "g:awin-110532-1fdg0squ6j8i8",
+    "g:awin-110532-1hmrvnps3ew53",
+    "g:awin-110532-4vup0j1qcn8rh"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1fibyl9iwie07",
+   "merged": [
+    "g:awin-110532-1fibyl9iwie07",
+    "g:awin-110532-1hsazerigy3xh"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1gyvi56i35xj8",
+   "merged": [
+    "g:awin-110532-1gyvi56i35xj8",
+    "g:awin-110532-kbjoqtv78sbb"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1iwsoi2q6x77w",
+   "merged": [
+    "g:awin-110532-1iwsoi2q6x77w",
+    "g:awin-110532-4tk7mb1ld4arx"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1jwl354tg90f6",
+   "merged": [
+    "g:awin-110532-1jwl354tg90f6",
+    "g:awin-110532-628wgj1ieldwl"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1kbfrg31ccbval",
+   "merged": [
+    "g:awin-110532-1kbfrg31ccbval",
+    "g:awin-110532-1y27q3zs992yx"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 8,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1l5c0uqcpzklg",
+   "merged": [
+    "g:awin-110532-1l5c0uqcpzklg",
+    "g:awin-110532-pye3yo1yk3f0u"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1m5sv4y1kly6k4",
+   "merged": [
+    "g:awin-110532-1m5sv4y1kly6k4",
+    "g:awin-110532-fb5pfdigktyv"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1mb1tapfveb8v",
+   "merged": [
+    "g:awin-110532-1mb1tapfveb8v",
+    "g:awin-110532-4ovw3e95my",
+    "g:awin-110532-f23wd21pp5jxo"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1mimark18fn05e",
+   "merged": [
+    "g:awin-110532-1mimark18fn05e",
+    "g:awin-110532-6wsww91ybph5v"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1mwgo3w115xire",
+   "merged": [
+    "g:awin-110532-1mwgo3w115xire",
+    "g:awin-110532-k30z2k1c2m9mi"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ndmwa21tf5ed4",
+   "merged": [
+    "g:awin-110532-1ndmwa21tf5ed4",
+    "g:awin-110532-bg0jr1vatlyf"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1nmouzk1knuf1q",
+   "merged": [
+    "g:awin-110532-1nmouzk1knuf1q",
+    "g:awin-110532-1ttjt95tqmyfn",
+    "g:awin-110532-1xvaa432tdj61",
+    "g:awin-110532-u839101ofx9c2"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1o4v4c51ge3lw3",
+   "merged": [
+    "g:awin-110532-1o4v4c51ge3lw3",
+    "g:awin-110532-1qowbeau6bf54"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1pzc6snujjni1",
+   "merged": [
+    "g:awin-110532-1pzc6snujjni1",
+    "g:awin-110532-7kjtkh16y4h63"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1r81qt1mm2487",
+   "merged": [
+    "g:awin-110532-1r81qt1mm2487",
+    "g:awin-110532-n4tnize5ittl"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1t1e67d1h1hhe7",
+   "merged": [
+    "g:awin-110532-1t1e67d1h1hhe7",
+    "g:awin-110532-6az7c410i710a"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1t3qwhrdou7f",
+   "merged": [
+    "g:awin-110532-1t3qwhrdou7f",
+    "g:awin-110532-zpa9so6knr4a"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1tartd21xaswlk",
+   "merged": [
+    "g:awin-110532-1tartd21xaswlk",
+    "g:awin-110532-1x2yggmhg9pe0"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1tvzsja9z51j4",
+   "merged": [
+    "g:awin-110532-1tvzsja9z51j4",
+    "g:awin-110532-1v3cisg1fwpi8q"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ub7b1uoktgho",
+   "merged": [
+    "g:awin-110532-1ub7b1uoktgho",
+    "g:awin-110532-ismrxl1dutaxv",
+    "g:awin-110532-vsjnop1vlqk5v"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1v72fba1op0szw",
+   "merged": [
+    "g:awin-110532-1v72fba1op0szw",
+    "g:awin-110532-pkprxy1n8tw94"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1vt8d20gdj7qm",
+   "merged": [
+    "g:awin-110532-1vt8d20gdj7qm",
+    "g:awin-110532-99qn5r12ew78p"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1w96emq55d88o",
+   "merged": [
+    "g:awin-110532-1w96emq55d88o",
+    "g:awin-110532-fitz3o1mk4mbm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1wr529j1e2jkfh",
+   "merged": [
+    "g:awin-110532-1wr529j1e2jkfh",
+    "g:awin-110532-npnfw018551qe"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1xf2pwz1unt81t",
+   "merged": [
+    "g:awin-110532-1xf2pwz1unt81t",
+    "g:awin-110532-3j6fey1p3v6uw"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1xova971cgnntd",
+   "merged": [
+    "g:awin-110532-1xova971cgnntd",
+    "g:awin-110532-6dtqil1jp52rj",
+    "g:awin-110532-d56ji69o70is"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 6,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-1ywkekwvb7j3q",
+   "merged": [
+    "g:awin-110532-1ywkekwvb7j3q",
+    "g:awin-110532-k1bi31d3wwxb"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-2den6q6eabp0",
+   "merged": [
+    "g:awin-110532-2den6q6eabp0",
+    "g:awin-110532-axs9u81yeghya"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-7ffg6zlylbcl",
+   "merged": [
+    "g:awin-110532-7ffg6zlylbcl",
+    "g:awin-110532-sdlncq1qiswq4"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-cquxb0er73tm",
+   "merged": [
+    "g:awin-110532-cquxb0er73tm",
+    "g:awin-110532-fb5v5j1ifiakx"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-ei8h87zi49nt",
+   "merged": [
+    "g:awin-110532-ei8h87zi49nt",
+    "g:awin-110532-ql1x0nlmwiv5"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-f0dhuf1b9g6nx",
+   "merged": [
+    "g:awin-110532-f0dhuf1b9g6nx",
+    "g:awin-110532-odnob41msxodu"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-jnnt1b1bhlq5h",
+   "merged": [
+    "g:awin-110532-jnnt1b1bhlq5h",
+    "g:awin-110532-zwt74w13gdree"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-110532-xqibqljjgm43",
+   "merged": [
+    "g:awin-110532-xqibqljjgm43",
+    "g:awin-110532-zsvfxmpj123s"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-108ddftg28rpz",
+   "merged": [
+    "g:awin-92307-108ddftg28rpz",
+    "g:awin-92307-xgrlhpxayffr"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-11rgjq912anwhj",
+   "merged": [
+    "g:awin-92307-11rgjq912anwhj",
+    "g:awin-92307-1yqwn4z1nu365p",
+    "g:awin-92307-7re4a32z0sg5",
+    "g:awin-92307-wzpt0fwjur9"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-12cfi0d1aqnqyn",
+   "merged": [
+    "g:awin-92307-12cfi0d1aqnqyn",
+    "g:awin-92307-145pvacm5redi",
+    "g:awin-92307-gnr8ky1jse7z0"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 13,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-150brkkh4sxty",
+   "merged": [
+    "g:awin-92307-150brkkh4sxty",
+    "g:awin-92307-1sk1pt0qdoq2",
+    "g:awin-92307-vo28io1xbv5x2"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 9,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-17c0hmgc5qca6",
+   "merged": [
+    "g:awin-92307-17c0hmgc5qca6",
+    "g:awin-92307-4lq6ot1rcrp23"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-18e308s1s68666",
+   "merged": [
+    "g:awin-92307-18e308s1s68666",
+    "g:awin-92307-1j258mg1m28yba"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-18ka1zvjzdxoh",
+   "merged": [
+    "g:awin-92307-18ka1zvjzdxoh",
+    "g:awin-92307-1ecbs1n16xjmi1",
+    "g:awin-92307-1hekru91xmkgqf",
+    "g:awin-92307-1xa9n4pwzhovr"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1as5j1j1vhh1ud",
+   "merged": [
+    "g:awin-92307-1as5j1j1vhh1ud",
+    "g:awin-92307-zfod3gx5mgh2"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1k2dqs31phgop",
+   "merged": [
+    "g:awin-92307-1k2dqs31phgop",
+    "g:awin-92307-hiji8r1ljz9tl"
+   ],
+   "reasons": [
+    "same-name-family"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1npwzo2u1fvv8",
+   "merged": [
+    "g:awin-92307-1npwzo2u1fvv8",
+    "g:awin-92307-hl8qyy8dedo"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 5,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1q86bb9w0lv0b",
+   "merged": [
+    "g:awin-92307-1q86bb9w0lv0b",
+    "g:awin-92307-ppr2opu0rw3j"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ],
+   "members": 2,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-1s6iq9gajpgbe",
+   "merged": [
+    "g:awin-92307-1s6iq9gajpgbe",
+    "g:awin-92307-1x4lshb8w3upl"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 3,
+   "sampled": [],
+   "fixesLeak": false
+  },
+  {
+   "group": "g:awin-92307-ckdo2fg6hsw1",
+   "merged": [
+    "g:awin-92307-ckdo2fg6hsw1",
+    "g:awin-92307-gk056hi6ni5b",
+    "g:awin-92307-yhvaptr4cpqn"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ],
+   "members": 4,
+   "sampled": [],
+   "fixesLeak": false
+  }
+ ],
+ "crossRetailerCandidates": []
+}

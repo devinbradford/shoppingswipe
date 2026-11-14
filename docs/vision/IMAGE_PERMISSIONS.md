@@ -1,13 +1,71 @@
-# Image-use permissions needed before Stage 2
+# Image-use permissions for Stage 2
 
-**Status (reviewed in Stage 1.5):** nothing verified yet. Stage 2 (any processing of advertiser images) is **blocked** until the written approvals P1–P4 below are on file. This is not legal advice. If a store or Awin gives unclear answers, ask a lawyer before going ahead.
+**Status (14 Nov 2026, Stage 2 review):** retailer-image processing is **paused**. Stage 2 is approved by Devin, but the image permissions are not yet established for P1–P4 (see "Authorization record"). This is not legal advice. If a store or Awin gives unclear answers, ask a lawyer before going ahead.
+
+## Authorization record
+
+| # | Date | From | Form | What it covers | Recorded by |
+| --- | --- | --- | --- | --- | --- |
+| A1 | Reported to Claude on 14 Nov 2026 (call date: Devin to fill in) | **Awin**, by phone (contact name: Devin to fill in) | **Verbal only.** Not written confirmation | "Permission for the intended product-image analysis", in Devin's words. The call's exact scope against P1–P4, any conditions, and whether Awin spoke for the advertisers are **not recorded** | Devin (reported); written into this file by Claude |
+
+**Not yet on record:**
+- written confirmation from Awin;
+- any permission from **Tribesigns** (92307), **Sicotas** (110532) or **Welax / HONSIT** (108888);
+- a reading of those three programs' terms.
+
+## Does the authorization cover P1–P4? (assessment)
+
+| Permission | Covered by A1? | Why it's still unclear |
+| --- | --- | --- |
+| P1 private annotation | Unclear | The verbal grant isn't itemised. Showing photos outside CureAvo's listed promotional space is a different use from the app's display. |
+| P2 temporary copies | Unclear | Copying is often treated separately from display. Nothing records that copies were discussed. |
+| P3 embeddings / derived data | Unclear | Earlier research found no Awin clause that addresses derived data or "modification" for analysis. The verbal grant doesn't say whether this was discussed. |
+| P4 retention of derived data | **Not covered** | Retention, and deletion on program end or on request, needs agreed terms. Some program terms require deleting brand materials when participation ends. |
+| Advertiser layer, for all four | **Not covered** | Images are the advertisers' "Advertiser Materials". Each program's own terms can restrict use, and the publisher must follow them. A statement from Awin alone may not grant rights the advertiser hasn't given. |
+
+**Decision:** all retailer-image work is paused under Devin's instruction ("if any scope is unclear … pause that portion"):
+- showing photos to raters (P1);
+- downloading thumbnails (P2);
+- image duplicate checks and embeddings (P3);
+- keeping derived data (P4).
+
+**Everything that needs no retailer image goes ahead:**
+- manifest v2 from catalog metadata;
+- text, tag and colour baselines;
+- the model harness and synthetic-image benchmarks;
+- pilot-pack preparation (built but not sent);
+- documentation.
+
+**To lift the pause** (fastest path):
+1. Send Awin the confirmation request below and get a reply in writing (email is enough).
+2. Open each of the three advertisers' Program Terms in Awin (Advertisers → the brand → Terms). Paste or screenshot any clause about product data, images, feeds, modification, scraping, AI or machine learning, or deletion.
+3. Send the advertiser request (further down) to each brand, unless Awin's written reply explicitly states that its approval covers the advertisers' materials for these four uses.
+4. Record each written reply in the table above as A2, A3, …, with its scope. That record is the `--approval-ref` the model harness requires.
+
+## Follow-up confirmation request to Awin (to send, for our records)
+
+> Subject: Written confirmation of our call about product-image analysis (publisher 3147062, CureAvo)
+>
+> Hello [name],
+>
+> Thank you for speaking with me on [date] about CureAvo's use of product images from the Awin feeds of Tribesigns (92307), Sicotas (110532) and Welax/HONSIT (108888). For our records, could you please confirm in writing that the following is permitted, and tell us of any conditions?
+>
+> 1. **Private evaluation:** showing feed product photos, loaded from the advertisers' own image servers, to a private panel of 3–4 people who rate visual similarity. This is not shown to the public.
+> 2. **Temporary processing:** making temporary small copies (at most 512 px; at most 600 images in the pilot) on our own computers, deleted after processing. Never published, never stored in a code repository, never sent to third-party AI services.
+> 3. **Derived data:** computing numeric "embeddings", duplicate fingerprints and simple style attributes from those images with open-source models run on our own computers.
+> 4. **Retention:** keeping only that derived data (no images), linked to product ids, while the products are listed, to recommend the advertisers' products inside CureAvo through our Awin tracking links. We delete it within 30 days after a product leaves the feed, the program ends, or the advertiser asks.
+>
+> We will not use the images or derived data to train models, share or sell them, or use them for other brands. Could you also confirm whether your approval covers the advertisers' own rights in these images, or whether we should ask each advertiser directly?
+>
+> Thank you,
+> Devin, CureAvo
 
 ## What Stage 2 would do with advertiser images
 
 Read this list exactly when asking for permission; the people approving need to know precisely what they're agreeing to.
 
 1. **Display:** show product photos to 3–4 human raters in a private labelling page, loaded from the store's own CDN (`cdn.shopify.com`) the same way the app shows them. No copies are kept.
-2. **Temporary copies:** download a small copy (at most 512 px) of the first photo of about 200 products, later the whole catalog. The copies are kept only on the evaluation computer or CI runner, deleted after the run, and never committed to GitHub or shared.
+2. **Temporary copies:** download a small copy (at most 512 px) of up to 3 photos each of at most 200 products (no more than 600 thumbnails) for the pilot. A whole-catalog run would need a separate approval. The copies are kept only on the evaluation computer or CI runner, deleted after the run, and never committed to GitHub or shared.
 3. **Analysis on our own machines:** run open-source image models (SigLIP 2, Marqo e-commerce, DINOv2, OpenCLIP) locally to compute:
    - **embeddings**: a list of numbers summarising each photo's look;
    - a **perceptual hash** (a duplicate fingerprint);
@@ -45,9 +103,9 @@ Each activity needs its own yes; a yes to one doesn't imply the others. "Adverti
 
 Two research limits apply. Earlier research found that Awin defines Advertiser Materials to include images, and that some programs limit use to feed content as supplied. It did **not** find a clause that clearly allows or forbids computing embeddings. This session couldn't open awin.com because the host isn't in its network allowlist, so the exact clauses must be read from your account.
 
-## Approval to request in writing
+## Request to each advertiser
 
-Send this through Awin messaging to each advertiser, copying Awin publisher support, and keep the replies:
+Send this through Awin messaging to each advertiser (copying Awin publisher support if useful), and keep the replies:
 
 > CureAvo (Awin publisher 3147062) is a furniture discovery app that recommends your products and links to your store through Awin. We would like to improve recommendations by analysing the product photos in your Awin feed, as follows:
 > 1. We show your photos (loaded from your image CDN) to a small private panel of 3–4 people, who rate how similar products look.

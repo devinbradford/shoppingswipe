@@ -1,4 +1,6 @@
-import { aggregateGrade, checkTestLock, evaluate, judgmentsFromExports, type TestRun } from '../evaluate';
+import { aggregateGrade, checkTestLock, evaluate, judgmentsFromExports, testScoringBlockers, type TestRun } from '../evaluate';
+import { crossRetailerCandidates, groupingCorrections } from '../corrections';
+import { findLeaks, groupRelated } from '../grouping';
 import { ART_COLOURS, drawSvg, makeCalibrationPack, randomDesign } from '../fixtureArt';
 import { makeFixturePack, makeFixtureWorld, simulateRaters } from '../fixtures';
 import { canonicalJson, checkManifest, manifestBody, pageKey, productNameKey, retailerPage, snapshotRowToItem } from '../manifest';
@@ -183,5 +185,73 @@ describe('evaluate', () => {
     expect(checkTestLock([run], { manifestHash: 'h', systems: ['dinov2'], force: false, reason: 'new system' }).ok).toBe(true);
     expect(checkTestLock([run], { manifestHash: 'other', systems: ['siglip2'], force: false, reason: 'new manifest' }).ok).toBe(true);
     expect(checkTestLock([run], { manifestHash: 'h', systems: ['siglip2'], force: true, reason: 'bug fix in scorer' }).ok).toBe(true);
+  });
+});
+
+describe('manifest v2 grouping', () => {
+  const it2 = (id: string, over: Partial<import('../schema').CatalogItem> = {}) => ({
+    id,
+    retailerId: 'r1',
+    subcategoryId: 'coffee-tables',
+    categoryId: 'living-room',
+    styleTags: [],
+    material: '',
+    color: 'grey',
+    photoUrl: `https://img.example.com/${id}.jpg`,
+    pagePath: `shop.example.com/products/${id}`,
+    ...over,
+  });
+
+  it('new rules are opt-in, so v1 grouping is unchanged by default', () => {
+    const items = [it2('a', { nameKey: 'stria coffee table alder' }), it2('b', { nameKey: 'stria coffee table alder' })];
+    expect(groupRelated(items).map((g) => g.members)).toEqual([['a'], ['b']]);
+    expect(groupRelated(items, [], { nameFamily: true }).map((g) => g.members)).toEqual([['a', 'b']]);
+  });
+
+  it('joins near-identical pages and same-name families within one store only', () => {
+    const items = [
+      it2('a', { pagePath: 'shop.example.com/products/stria-round-coffee-tables-fluted' }),
+      it2('b', { pagePath: 'shop.example.com/products/stria-round-coffee-table-fluted' }),
+      it2('c', { pagePath: 'shop.example.com/products/stria-round-coffee-table-fluted', retailerId: 'r2' }),
+      it2('d', { nameKey: 'cas tv cabinet door alder' }),
+      it2('e', { nameKey: 'cas tv cabinet door alder', retailerId: 'r2' }),
+    ];
+    const g = groupRelated(items, [], { nameFamily: true, pageFamily: true });
+    expect(g.find((x) => x.members.includes('a'))!.members).toEqual(['a', 'b']);
+    expect(g.find((x) => x.members.includes('a'))!.reasons).toEqual(['near-identical-page']);
+    expect(g.find((x) => x.members.includes('d'))!.members).toEqual(['d']); // other store: not joined
+  });
+
+  it('records every correction, flags fixed leaks, and lists cross-store candidates without merging', () => {
+    const items = [it2('a', { nameKey: 'k one two' }), it2('b', { nameKey: 'k one two' }), it2('c')];
+    const old = groupRelated(items);
+    const neu = groupRelated(items, [], { nameFamily: true });
+    const c = groupingCorrections(old, neu, [{ id: 'a', split: 'dev' }, { id: 'b', split: 'test' }], [{ id: 'a', split: 'test' }, { id: 'b', split: 'test' }]);
+    expect(c).toEqual([{ group: 'g:a', merged: ['g:a', 'g:b'], reasons: ['same-name-family'], members: 2, sampled: [{ id: 'a', before: 'dev', after: 'test' }, { id: 'b', before: 'test', after: 'test' }], fixesLeak: true }]);
+    const cross = crossRetailerCandidates(
+      [it2('x', { nameKey: 'oak bench three', photoUrl: 'https://cdn.example.com/a/9ef1f764fe674f7aa585.jpg?v=1' }), it2('y', { retailerId: 'r2', nameKey: 'oak bench three', photoUrl: 'https://cdn.example.com/b/9ef1f764fe674f7aa585.png' }), it2('z', { retailerId: 'r2', photoUrl: 'https://cdn.example.com/b/1.jpg' }), it2('w', { photoUrl: 'https://cdn.example.com/a/1.jpg' })],
+      new Set(['x']),
+    );
+    expect(cross.map((x) => x.signal)).toEqual(['same-name-other-store', 'same-photo-file-other-store']); // "1.jpg" too generic to count
+  });
+
+  it('protected test scoring is blocked until grouping is final', () => {
+    expect(testScoringBlockers({ version: 1 })).toEqual(['manifest v1 has known grouping leaks; use manifest v2 or later']);
+    const g = { rules: [], imageHashCheck: 'not-run' as const, crossRetailerReview: 'done' as const };
+    expect(testScoringBlockers({ version: 2, grouping: g })).toHaveLength(1);
+    expect(testScoringBlockers({ version: 2, grouping: { ...g, imageHashCheck: 'done' } })).toEqual([]);
+  });
+
+  it('the committed manifests: v1 kept as is, v2 valid with no leaks and grouping marked not final', () => {
+    const fs = require('node:fs') as typeof import('node:fs');
+    const v1 = JSON.parse(fs.readFileSync('data/vision-eval/manifest.json', 'utf8')) as Manifest;
+    const v2 = JSON.parse(fs.readFileSync('data/vision-eval/manifest-v2.json', 'utf8')) as Manifest;
+    expect(v1.hash).toBe('d711082b606a1c571b1400037afee57d9e9f4c4f0968d66a6dd7a6ba65a73140');
+    expect(v2.version).toBe(2);
+    expect(v2.grouping!.supersedes).toBe(v1.hash);
+    expect(v2.items).toHaveLength(200);
+    expect(new Set(v2.items.map((i) => i.id))).toEqual(new Set(v1.items.map((i) => i.id)));
+    expect(findLeaks(v2.groups, new Map(v2.items.map((i) => [i.id, i.split])))).toEqual([]);
+    expect(testScoringBlockers(v2).length).toBeGreaterThan(0);
   });
 });

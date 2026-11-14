@@ -6,7 +6,7 @@
  *       End to end on SYNTHETIC data only (fake catalog, fake embeddings, simulated raters):
  *       proves the pipeline, metrics and split handling work. Numbers mean nothing about real models.
  *
- *   npm run vision:evaluate -- --split dev --manifest data/vision-eval/manifest.json \
+ *   npm run vision:evaluate -- --split dev [--manifest data/vision-eval/manifest-v2.json] \
  *       --pack packs/dev.json [--pack …] --labels <dir of rater exports> \
  *       --embeddings siglip2=emb/siglip2.json [--embeddings …] [--judgments judgments.json] [--out report.json]
  *
@@ -21,7 +21,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { checkTestLock, evaluate, judgmentsFromExports, type EvalProduct, type EvalReport, type TestRun } from '../../src/vision/evaluate';
+import { checkTestLock, evaluate, judgmentsFromExports, testScoringBlockers, type EvalProduct, type EvalReport, type TestRun } from '../../src/vision/evaluate';
 import { makeFixturePack, makeFixtureWorld, simulateRaters, simulatedGrade } from '../../src/vision/fixtures';
 import { hashSeed } from '../../src/recommendation/random';
 import { canonicalJson } from '../../src/vision/manifest';
@@ -103,7 +103,7 @@ function fixture() {
 
 function real() {
   const split = value('split') as Split;
-  const manifestPath = value('manifest') ?? 'data/vision-eval/manifest.json';
+  const manifestPath = value('manifest') ?? 'data/vision-eval/manifest-v2.json';
   const manifest = readJson<Manifest>(manifestPath);
   const packs = values('pack').map((p) => readJson<QuestionPack>(p));
   const labelDir = value('labels');
@@ -130,6 +130,11 @@ function real() {
     : undefined;
 
   if (split === 'test') {
+    const blockers = testScoringBlockers(manifest);
+    if (blockers.length) {
+      console.error(`REFUSED: grouping is not final for ${manifestPath}:\n  - ${blockers.join('\n  - ')}`);
+      process.exit(3);
+    }
     if (!thresholds) {
       console.error('test runs need --thresholds <dev report.json>: thresholds are chosen on dev only.');
       process.exit(2);

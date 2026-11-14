@@ -20,7 +20,7 @@ import {
   type RetrievalReport,
   type TripletResult,
 } from './metrics';
-import type { Dimension, LabelExport, QuestionPack, SameAnswer, Split } from './schema';
+import type { Dimension, LabelExport, Manifest, QuestionPack, SameAnswer, Split } from './schema';
 import { estimate, type Estimate } from '@/recommendation/lab/metrics';
 
 export interface EvalProduct {
@@ -212,6 +212,21 @@ export function evaluate(input: EvalInput): EvalReport {
 }
 
 // --- Protected test split ------------------------------------------------------------------------
+
+/**
+ * Why the protected test split may not be scored against this manifest yet (empty = allowed).
+ * Requires a v2+ manifest whose grouping is final: the image-hash duplicate check and the human
+ * cross-retailer review must both be done, so no related designs can straddle dev and test.
+ */
+export function testScoringBlockers(manifest: Pick<Manifest, 'version' | 'grouping'>): string[] {
+  const out: string[] = [];
+  if (manifest.version < 2 || !manifest.grouping) out.push('manifest v1 has known grouping leaks; use manifest v2 or later');
+  else {
+    if (manifest.grouping.imageHashCheck !== 'done') out.push('image-hash duplicate check not run (needs image permissions P2/P3)');
+    if (manifest.grouping.crossRetailerReview !== 'done') out.push('cross-retailer duplicate review not done');
+  }
+  return out;
+}
 
 export interface TestRun {
   at: string;

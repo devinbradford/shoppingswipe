@@ -1,0 +1,5763 @@
+{
+ "version": 2,
+ "createdFrom": {
+  "snapshot": "part0.json+part1000.json",
+  "snapshotDate": "2026-11-09",
+  "products": 1937
+ },
+ "seed": 20261113,
+ "quotas": {
+  "nightstands": 40,
+  "dining-tables": 28,
+  "tv-stands": 24,
+  "dressers": 18,
+  "coffee-tables": 20,
+  "rugs": 16,
+  "sofas": 18,
+  "accent-chairs": 7,
+  "dining-chairs": 4,
+  "bar-stools": 4,
+  "bed-frames": 3
+ },
+ "testShare": 0.6,
+ "items": [
+  {
+   "id": "awin-108888-102lf0rfh6e49",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/8bc2f0321d3c9764f669e2381e66df32.webp?v=1775183292",
+   "pagePath": "welaxhome.com/products/dionysus-compressed-loveseat",
+   "photoKind": "cutout",
+   "nameKey": "thalia high saturation compressed loveseat sofa burnt orange",
+   "groupId": "g:awin-108888-102lf0rfh6e49",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-10iquta1i78ms8",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "leather",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/cs7z_3.webp?v=1792046140",
+   "pagePath": "welaxhome.com/products/recliner-lounge-chair-mesa",
+   "photoKind": "cutout",
+   "nameKey": "omidi mesa recliner lounge chair ottoman",
+   "groupId": "g:awin-108888-10iquta1i78ms8",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-11s1izr1twxcpt",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/m6w-b_1.webp?v=1791954805",
+   "pagePath": "welaxhome.com/products/nephele-modular-sofa",
+   "photoKind": null,
+   "nameKey": "nephele modular sectional compressed sofa",
+   "groupId": "g:awin-108888-11s1izr1twxcpt",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-13sgse7ifsv79",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "steel",
+   "color": "sage",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_000ed227-7be7-4ad9-b6ca-9d55606699c6.webp?v=1784600592",
+   "pagePath": "welaxhome.com/products/sofa-m3",
+   "photoKind": "cutout",
+   "nameKey": "welax compressed modular sofa",
+   "groupId": "g:awin-108888-13sgse7ifsv79",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-16raze41jzun9i",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "navy",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_8d5133e0-abbe-42a3-93aa-8c00bda052c2.webp?v=1775183292",
+   "pagePath": "welaxhome.com/products/dionysus-compressed-loveseat",
+   "photoKind": null,
+   "nameKey": "thalia high saturation compressed loveseat sofa",
+   "groupId": "g:awin-108888-102lf0rfh6e49",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-17ieeu411hfx2m",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "boucle",
+   "color": "sage",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_8_e00457a3-ea6a-48c1-bb89-e3aac7abbb2d.webp?v=1779674736",
+   "pagePath": "welaxhome.com/products/cloud-nest-modern-boucle-accent-chair-with-wood-frame",
+   "photoKind": "cutout",
+   "nameKey": "cloud nest modern boucle accent chair wood frame",
+   "groupId": "g:awin-108888-17ieeu411hfx2m",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1bmyhre1abqnnc",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "maximalist",
+    "modern"
+   ],
+   "material": "faux fur",
+   "color": "blush",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/370278211a9acd96f1990d201109abbe.webp?v=1775183848",
+   "pagePath": "welaxhome.com/products/a1-giant-bean-bag-sofa",
+   "photoKind": null,
+   "nameKey": "hypno plush feel compressed single sofa",
+   "groupId": "g:awin-108888-1bmyhre1abqnnc",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1gac7sw1n7a2u2",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "maximalist",
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/9f5b240c37754bd0620193cd5b222cc1_8b60639f-0be4-4f86-a635-a78ae7481b2f.webp?v=1783410401",
+   "pagePath": "welaxhome.com/products/eos-lounge-compressed-chair",
+   "photoKind": "cutout",
+   "nameKey": "eos color block compressed single sofa",
+   "groupId": "g:awin-108888-1gac7sw1n7a2u2",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1js2a77wyh4cp",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "sage",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/8f73ec77df762ee3bcdecaa76c379351_1ebc8933-ff10-4ee3-95f8-c37565aaf864.webp?v=1775183973",
+   "pagePath": "welaxhome.com/products/morpheus-lounge-chair",
+   "photoKind": "cutout",
+   "nameKey": "morpheu oversized compressed single sofa",
+   "groupId": "g:awin-108888-1js2a77wyh4cp",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1jzl9f917aia3j",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "boucle",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_9ef1f764-fe67-4f7a-a585-6bfcb26e886c.png?v=1781085604",
+   "pagePath": "welaxhome.com/products/cove-swivel-accent-chair-with-360-free-rotatable-base",
+   "photoKind": "cutout",
+   "nameKey": "cove swivel accent chair free rotatable base",
+   "groupId": "g:awin-108888-1jzl9f917aia3j",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1nhu14y1dvvx50",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/c3bb88688cf5172985e24aa1ea1cab82.webp?v=1776238897",
+   "pagePath": "welaxhome.com/products/m5-modular-sectional-sofa",
+   "photoKind": "cutout",
+   "nameKey": "hestia compressed modular sofa cup holder storage orange",
+   "groupId": "g:awin-108888-13ezljq1iz3az8",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1w4m797937gal",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/M11R_11.webp?v=1787120289",
+   "pagePath": "welaxhome.com/products/dionysus-compressed-loveseat",
+   "photoKind": null,
+   "nameKey": "thalia high saturation compressed loveseat sofa red",
+   "groupId": "g:awin-108888-102lf0rfh6e49",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1xv2pom1s6u0fw",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_187dcf2e-1c8e-40ef-ab19-7d419679f9da.webp?v=1785483377",
+   "pagePath": "welaxhome.com/products/barrel-accent-chair-with-360-swivel-foldable-backrest",
+   "photoKind": "cutout",
+   "nameKey": "barrel accent chair swivel foldable backrest",
+   "groupId": "g:awin-108888-1xv2pom1s6u0fw",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-1ybxwn8439xtu",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "classic",
+    "industrial",
+    "vintage"
+   ],
+   "material": "leather",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_ad331ab8-7a1c-4187-97a6-f0bda8d63ecc.webp?v=1785482969",
+   "pagePath": "welaxhome.com/products/p7-criss-cross-chair-with-adjustable-height-swivel",
+   "photoKind": "cutout",
+   "nameKey": "p7 criss cross chair adjustable height swivel",
+   "groupId": "g:awin-108888-1ybxwn8439xtu",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-94tnwh12z7ee7",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/7_af0d392e-735a-45e5-b241-5b04df9411ad.webp?v=1783388997",
+   "pagePath": "welaxhome.com/products/sofa-m3",
+   "photoKind": "scene",
+   "nameKey": "welax compressed modular sofa",
+   "groupId": "g:awin-108888-13sgse7ifsv79",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-b6iaz6x5aocg",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "leather",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/CS8B_2.webp?v=1792042158",
+   "pagePath": "welaxhome.com/products/recliner-lounge-chair-miro",
+   "photoKind": "cutout",
+   "nameKey": "omidi miro recliner lounge chair ottoman",
+   "groupId": "g:awin-108888-b6iaz6x5aocg",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-bfkvwe1ltauvo",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "classic",
+    "industrial",
+    "vintage"
+   ],
+   "material": "leather",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_8_f1ccb1b5-e0a0-42ba-90bd-0bf5f7a62257.webp?v=1785482987",
+   "pagePath": "welaxhome.com/products/p7-criss-cross-chair-with-adjustable-height-swivel",
+   "photoKind": "cutout",
+   "nameKey": "p7 criss cross chair adjustable height swivel burnt orange",
+   "groupId": "g:awin-108888-1ybxwn8439xtu",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-ffe8jx16fq0sf",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "leather",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/cs7b_5.webp?v=1792046125",
+   "pagePath": "welaxhome.com/products/recliner-lounge-chair-mesa",
+   "photoKind": "cutout",
+   "nameKey": "omidi mesa recliner lounge chair ottoman",
+   "groupId": "g:awin-108888-10iquta1i78ms8",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-gmxlv81dy6nxa",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "maximalist",
+    "modern"
+   ],
+   "material": "faux fur",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/9f5b240c37754bd0620193cd5b222cc1.webp?v=1775183848",
+   "pagePath": "welaxhome.com/products/a1-giant-bean-bag-sofa",
+   "photoKind": null,
+   "nameKey": "hypno plush feel compressed single sofa",
+   "groupId": "g:awin-108888-1bmyhre1abqnnc",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-nxbccghc542q",
+   "retailerId": "awin-108888",
+   "subcategoryId": "accent-chairs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/1_8_4e98a79f-8cf9-4b37-852c-5cbdc663ae61.webp?v=1785483387",
+   "pagePath": "welaxhome.com/products/barrel-accent-chair-with-360-swivel-foldable-backrest",
+   "photoKind": "cutout",
+   "nameKey": "barrel accent chair swivel foldable backrest",
+   "groupId": "g:awin-108888-1xv2pom1s6u0fw",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-108888-zm8afvnptjft",
+   "retailerId": "awin-108888",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0776/0563/4341/files/18fc763a1eb32879496731063e47b0b7_6118848f-e062-40de-8dc3-3d81a0c4dc69.webp?v=1775122568",
+   "pagePath": "welaxhome.com/products/morpheus-lounge-chair",
+   "photoKind": null,
+   "nameKey": "morpheu oversized compressed single sofa",
+   "groupId": "g:awin-108888-1js2a77wyh4cp",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-10y6a533osj2d",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_8d380c41-be3e-40bf-a6aa-ae2b6566fa9b.jpg?v=1787812398",
+   "pagePath": "sicotas.com/products/stria-dresser-and-nightstands-set-large-storage-bedroom-furniture",
+   "photoKind": null,
+   "nameKey": "stria dresser nightstand large storage alder",
+   "groupId": "g:awin-110532-10y6a533osj2d",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-140im8lvolcin",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND129A1XBNY1694.jpg?v=1785489408",
+   "pagePath": "sicotas.com/products/zura-rattan-nightstand-with-drawer-bedside-table-with-drawers-sicotas",
+   "photoKind": null,
+   "nameKey": "zura rattan nightstand drawer amber",
+   "groupId": "g:awin-110532-140im8lvolcin",
+   "split": "dev",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-14ckojf1qnpoix",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_c8e7e7cb-e4e5-4376-afc5-6d6a83b46a6e.jpg?v=1791962716",
+   "pagePath": "sicotas.com/products/terra-black-dresser-6-drawers-set-of-2-obsidian",
+   "photoKind": null,
+   "nameKey": "terra dresser drawer obsidian",
+   "groupId": "g:awin-110532-14ckojf1qnpoix",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-151g4q8fe4392",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/2_bb977590-3650-42c6-9160-98d158a08adc.jpg?v=1792480339",
+   "pagePath": "sicotas.com/products/savanna-tv-console-with-doors-tv-stand-with-cabinet-storage-sicotas-set-of-2-black-oak",
+   "photoKind": null,
+   "nameKey": "savanna rattan tv console door",
+   "groupId": "g:awin-110532-13oebcx1se3gan",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-15ry7lwcpp7qi",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260618-153707.jpg?v=1781776645",
+   "pagePath": "sicotas.com/products/savanna-nightstands-with-drawer",
+   "photoKind": null,
+   "nameKey": "savanna nightstand charge station reclaimed caramel",
+   "groupId": "g:awin-110532-10whp2y1rwl8pk",
+   "split": "dev",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-171pbl5t0dkbn"
+  },
+  {
+   "id": "awin-110532-16cc9iy17pimto",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_f544e92f-d85a-4180-933c-b4a03db59f17.jpg?v=1762966965",
+   "pagePath": "sicotas.com/products/stria-coffee-table-new-fashion-design",
+   "photoKind": "cutout",
+   "nameKey": "stria coffee table alder",
+   "groupId": "g:awin-110532-16cc9iy17pimto",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-171pbl5t0dkbn",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260618-153707.jpg?v=1781776645",
+   "pagePath": "sicotas.com/products/savanna-nightstands-with-drawer",
+   "photoKind": null,
+   "nameKey": "savanna nightstand charge station reclaimed",
+   "groupId": "g:awin-110532-10whp2y1rwl8pk",
+   "split": "dev",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-17u91vg1r9cqj6",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260420-135816_0e951bc3-6e94-41f4-a536-3e254ff9990f.jpg?v=1788424350",
+   "pagePath": "sicotas.com/products/crescent-9-drawer-modular-dressers-for-bedroom-storage",
+   "photoKind": null,
+   "nameKey": "crescent bedroom modular dresser drawer storage greige",
+   "groupId": "g:awin-110532-17u91vg1r9cqj6",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-18aet4v1ny04jd",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dining-chairs",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/12_ad2614a1-9d4e-4172-a44f-121184a45ec7.jpg?v=1773741717",
+   "pagePath": "sicotas.com/products/cas-solid-wood-dining-chair-set-of-2-modern-fluted-design",
+   "photoKind": "scene",
+   "nameKey": "cas modern solid wood dining chair fluted style alder",
+   "groupId": "g:awin-110532-18aet4v1ny04jd",
+   "split": "test",
+   "hard": [
+    "no-material",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1dvr8s6nb3kgw",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "rattan",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_9139b9df-ed01-4917-b946-dff931653e68.jpg?v=1762971090",
+   "pagePath": "sicotas.com/products/terra-rattan-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "terra rattan dresser nightstand carbon",
+   "groupId": "g:awin-110532-1dvr8s6nb3kgw",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1fm4o01c7hz9y",
+   "retailerId": "awin-110532",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "cotton",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DomusSA113A1NWTY1642.jpg?v=1777446400",
+   "pagePath": "sicotas.com/products/sicotas-eira-deep-seat-sofa-comfortable-living-room-couch-for-home",
+   "photoKind": "cutout",
+   "nameKey": "eira feather down cushion sofa deep seat off",
+   "groupId": "g:awin-110532-1fm4o01c7hz9y",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1gca9981d55lt6",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND020A2XBNY1245_5eea7c8d-7465-4f47-9c4a-2e67be159fbd.jpg?v=1785486278",
+   "pagePath": "sicotas.com/products/helio-nightstands-set-26-inch-wide",
+   "photoKind": null,
+   "nameKey": "helio nightstand wide midnight",
+   "groupId": "g:awin-110532-1gca9981d55lt6",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-vb55pfb0417h"
+  },
+  {
+   "id": "awin-110532-1gm9i67y6zm99",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a-1_20422eff-d49c-41f6-ae70-ad895cbcb09c.jpg?v=1762962180",
+   "pagePath": "sicotas.com/products/savanna-nightstand-wardrobe-and-7-drawer-dresser-set-living-room",
+   "photoKind": null,
+   "nameKey": "savanna wardrobe closet dresser nightstand",
+   "groupId": "g:awin-110532-1gm9i67y6zm99",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1i0yfwr13gus19",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DR006A1XBKY1383.jpg?v=1783657495",
+   "pagePath": "sicotas.com/products/savanna-6-drawers-dresser-for-bedroom",
+   "photoKind": null,
+   "nameKey": "savanna drawer dresser bedroom reclaimed caramel",
+   "groupId": "g:awin-110532-11m8ap3vil92d",
+   "split": "test",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1i5ilw0eonnbm",
+   "retailerId": "awin-110532",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "cotton",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DomusSA113A1NGYY1643.jpg?v=1777446400",
+   "pagePath": "sicotas.com/products/sicotas-eira-deep-seat-sofa-comfortable-living-room-couch-for-home",
+   "photoKind": "cutout",
+   "nameKey": "eira feather down cushion sofa deep seat cloud",
+   "groupId": "g:awin-110532-1fm4o01c7hz9y",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1il64bj1f75oa5",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/27_ad620890-c8b5-4335-be23-00c8fb86b9d4_6caf2a0d-446a-46ce-9921-711b2f9515a9.jpg?v=1791455945",
+   "pagePath": "sicotas.com/products/stria-buffet-cabinet-with-3-doors-set-of-3-dark-grey-alder",
+   "photoKind": null,
+   "nameKey": "stria buffet cabinet door alder",
+   "groupId": "g:awin-110532-19wq3dg11ymube",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1iqxkyhgn8z3r",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "vintage"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/6_89f7b9f9-69de-4252-b369-4f0bab5408c9.jpg?v=1781683534",
+   "pagePath": "sicotas.com/products/andy-end-table-with-storage",
+   "photoKind": null,
+   "nameKey": "andy nightstand storage",
+   "groupId": "g:awin-110532-1iqxkyhgn8z3r",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1iu4gc7nr88sd",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND004A2XBKY1504.jpg?v=1785408022",
+   "pagePath": "sicotas.com/products/night-stand-bedside-table-rattan-style",
+   "photoKind": null,
+   "nameKey": "savanna nightstand drawer reclaimed caramel",
+   "groupId": "g:awin-110532-10whp2y1rwl8pk",
+   "split": "dev",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-7pe2umepx9ww"
+  },
+  {
+   "id": "awin-110532-1mg9jp8232x2e",
+   "retailerId": "awin-110532",
+   "subcategoryId": "bed-frames",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "rattan",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/Savanna2BF111A1O04Y2265.jpg?v=1789898905",
+   "pagePath": "sicotas.com/products/savanna-rattan-bed-frame-queen-size-boho-platform-bed",
+   "photoKind": "cutout",
+   "nameKey": "savanna rattan bed frame queen size",
+   "groupId": "g:awin-110532-1mg9jp8232x2e",
+   "split": "dev",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1mx8wvu1exqm74",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "bohemian"
+   ],
+   "material": "steel",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20261104-135135.jpg?v=1793772338",
+   "pagePath": "sicotas.com/products/terra-boho-6-drawer-bedroom-dresser-33-7-inch-tall-stylish-storage",
+   "photoKind": null,
+   "nameKey": "terra boho drawer bedroom dresser tall carbon",
+   "groupId": "g:awin-110532-1mx8wvu1exqm74",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1ncra21tgeucz",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dining-chairs",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_60e29209-5616-4047-964f-d05a7157547d.jpg?v=1773741584",
+   "pagePath": "sicotas.com/products/cas-solid-wood-dining-chair-set-of-2-modern-wooden-chairs",
+   "photoKind": "scene",
+   "nameKey": "cas round dining chair solid wood alder",
+   "groupId": "g:awin-110532-18aet4v1ny04jd",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1ne1il846y0gu",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DR115A1CBKY1810.jpg?v=1783656968",
+   "pagePath": "sicotas.com/products/cas-horizontal-chest-with-open-drawers-modern-storage-cabinet",
+   "photoKind": null,
+   "nameKey": "cas horizontal chest open drawer alder",
+   "groupId": "g:awin-110532-1ne1il846y0gu",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1nfec3818kvaom",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "rattan",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260730-150722.jpg?v=1785400343",
+   "pagePath": "sicotas.com/products/savanna-rattan-tv-stand-with-arched-doors",
+   "photoKind": null,
+   "nameKey": "savanna rattan tv stand arched door",
+   "groupId": "g:awin-110532-1d3ap6favx2nh",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1ocnrs6c52cpg",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_c6a709e1-a735-4be2-9b50-f825fc190ed8_23dde538-c5ce-4dbb-9877-7f4afd044df1.jpg?v=1789716496",
+   "pagePath": "sicotas.com/products/crescent-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "crescent modular tall dresser nightstand",
+   "groupId": "g:awin-110532-1ocnrs6c52cpg",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1pi1g629sof30",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DR117A1ELTY1393.jpg?v=1783662401",
+   "pagePath": "sicotas.com/products/terra-6-drawer-dresser-51-2-inch-wide",
+   "photoKind": "cutout",
+   "nameKey": "terra drawer dresser golden handle carbon",
+   "groupId": "g:awin-110532-1987qll1wbrjxb",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1psc7cj1njd3jx",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_c261fb08-e347-43b7-909d-221eb0434787.jpg?v=1792643123",
+   "pagePath": "sicotas.com/products/helio-modern-dresser-with-6-drawer-for-bedroom-set-of-2",
+   "photoKind": "scene",
+   "nameKey": "helio modern dresser drawer bedroom",
+   "groupId": "g:awin-110532-1psc7cj1njd3jx",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1qwzzcm1m9sw1g",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "bohemian"
+   ],
+   "material": "oak",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND129A1XLTY1693.jpg?v=1785489408",
+   "pagePath": "sicotas.com/products/zura-1-drawer-nightstand-boho-style-rattan-bedroom-side-table",
+   "photoKind": null,
+   "nameKey": "zura drawer nightstand boho style amber",
+   "groupId": "g:awin-110532-1qwzzcm1m9sw1g",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1r21e2h18563jb",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_235d5725-bdaa-4169-b918-dc174e241c4d.jpg?v=1791451103",
+   "pagePath": "sicotas.com/products/cas-tv-cabinet-with-3-doors-set-of-2-white-alder",
+   "photoKind": null,
+   "nameKey": "cas tv cabinet door alder",
+   "groupId": "g:awin-110532-1g4qkq6ov6pj4",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1t2k4ed1n1cqzb",
+   "retailerId": "awin-110532",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "cotton",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DomusSA113A1NGYY1643.jpg?v=1777446400",
+   "pagePath": "sicotas.com/products/eira-3-seater-sofa-modern-comfortable-couch-for-living-room-seating",
+   "photoKind": "cutout",
+   "nameKey": "eira down filled seater sofa cloud",
+   "groupId": "g:awin-110532-1fm4o01c7hz9y",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1tgs4rendwbd",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_dcf3250b-41ed-4623-98bc-79722fadc0e4.jpg?v=1792481457",
+   "pagePath": "sicotas.com/products/savanna-tv-console-with-doors-tv-stand-with-cabinet-storage-sicotas-set-of-3-black-oak",
+   "photoKind": null,
+   "nameKey": "savanna rattan tv console door",
+   "groupId": "g:awin-110532-13oebcx1se3gan",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1tyzti11fo4ae3",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_aeb0ae02-1a50-43dc-9c12-f6fb46afd812.jpg?v=1762971395",
+   "pagePath": "sicotas.com/products/terra-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "terra dresser nightstand",
+   "groupId": "g:awin-110532-1tyzti11fo4ae3",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-rupj1l1o37dg7"
+  },
+  {
+   "id": "awin-110532-1uzqgc61pz8e3c",
+   "retailerId": "awin-110532",
+   "subcategoryId": "bed-frames",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_497da624-e2c1-41c3-be6c-b86ebc06c765.jpg?v=1766735692",
+   "pagePath": "sicotas.com/products/savanna-queen-bed-frame-with-headboard",
+   "photoKind": "cutout",
+   "nameKey": "savanna queen bed frame headboard",
+   "groupId": "g:awin-110532-1uzqgc61pz8e3c",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material",
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1vilvz31l5ivm5",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/2_670296a1-03c7-4324-8926-0d66c18945bb_cc62eb3d-addb-44fe-9c1e-c945e4b413be.jpg?v=1789723382",
+   "pagePath": "sicotas.com/products/stria-fluted-tv-stand-with-2-doors-fits-up-to-100-tvs",
+   "photoKind": null,
+   "nameKey": "stria modular tv stand tv up to alder",
+   "groupId": "g:awin-110532-1vilvz31l5ivm5",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1w2ncba161s46c",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_6c93d1ba-d795-4447-bf79-7e216edfac91.jpg?v=1762972156",
+   "pagePath": "sicotas.com/products/savanna-wardrobes-and-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "savanna wardrobe dresser nightstand reclaimed",
+   "groupId": "g:awin-110532-1w2ncba161s46c",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1w7way2bol5u0",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/SC113A1CLTY0766_ff9fa519-e81e-4e80-a360-e1a60c63c13d.jpg?v=1784699769",
+   "pagePath": "sicotas.com/products/cas-tv-console-table-with-2-doors-television-entertainment-center",
+   "photoKind": null,
+   "nameKey": "cas tv console door coastal",
+   "groupId": "g:awin-110532-108x3ih1fmi3dr",
+   "split": "dev",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1wpybsy4b8asw",
+   "retailerId": "awin-110532",
+   "subcategoryId": "bed-frames",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_94a88c02-83d5-498f-b0d4-c4493ef84034.jpg?v=1790241241",
+   "pagePath": "sicotas.com/products/savanna-queen-bedroom-set-with-bed-frame-rattan-storage",
+   "photoKind": "cutout",
+   "nameKey": "savanna bedroom bed frame queen size",
+   "groupId": "g:awin-110532-1wpybsy4b8asw",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1wx33gu14jxsx4",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_482bb485-5640-4860-9502-eeb250443bd1.jpg?v=1787804124",
+   "pagePath": "sicotas.com/products/sicotas-stria-modular-9-drawers-dresser-and-nightstands-bedroom-set",
+   "photoKind": null,
+   "nameKey": "stria modular drawer dresser bedroom coastal",
+   "groupId": "g:awin-110532-1wx33gu14jxsx4",
+   "split": "dev",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1x2pi5b1t29nhp",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/14_7791e5e0-80f1-4a6e-a8c5-ca3a60a83f61.jpg?v=1789557576",
+   "pagePath": "sicotas.com/products/terra-tv-stand-4-doors-white-cream-oak-set-of-2",
+   "photoKind": null,
+   "nameKey": "terra tv stand door",
+   "groupId": "g:awin-110532-1x2pi5b1t29nhp",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-1x7rqzy1pu85uo",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DR113A1XLTY1194_6632e6dc-29af-4312-b776-cfefa1b44499.jpg?v=1783657640",
+   "pagePath": "sicotas.com/products/savanna-talldresser-7-drawers-chest",
+   "photoKind": null,
+   "nameKey": "savanna rattan dresser drawer",
+   "groupId": "g:awin-110532-1cfm6931yjw7ht",
+   "split": "dev",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-2a0w6t17ddz5r",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/3_54ed3e13-9a70-4bd5-823d-df615afc23ab_1d2556aa-e158-400b-be74-0b6882cdc63e.jpg?v=1789821896",
+   "pagePath": "sicotas.com/products/zura-2-piece-modular-tv-console-set-with-doors-modern-entertainment-center",
+   "photoKind": null,
+   "nameKey": "zura modular tv console door sand",
+   "groupId": "g:awin-110532-2a0w6t17ddz5r",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-2f3xiy1ms0bmk",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_f544e92f-d85a-4180-933c-b4a03db59f17.jpg?v=1762966965",
+   "pagePath": "sicotas.com/products/stria-coffee-table-new-fashion-design",
+   "photoKind": "cutout",
+   "nameKey": "stria coffee table alder",
+   "groupId": "g:awin-110532-16cc9iy17pimto",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-2r64ay13zgzzg",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "rattan",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND116A2HBKY1415.jpg?v=1785489014",
+   "pagePath": "sicotas.com/products/terra-rattan-night-table",
+   "photoKind": null,
+   "nameKey": "terra rattan night table carbon",
+   "groupId": "g:awin-110532-2r64ay13zgzzg",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-4xofng1gta4n6",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260420-135809_55c79603-daa5-45ad-b1e2-525384025476.jpg?v=1788424271",
+   "pagePath": "sicotas.com/products/crescent-9-drawer-modular-dresser-93-9-inch-wide-bedroom-storage",
+   "photoKind": "cutout",
+   "nameKey": "crescent wide modular dresser drawer",
+   "groupId": "g:awin-110532-4xofng1gta4n6",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-5385ym1av9trs",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20_6db721ba-08fb-43d1-a6c6-775584fd1281_38996c7b-8837-4f8a-9eb4-116d478ae5e8.jpg?v=1790506050",
+   "pagePath": "sicotas.com/products/zura-rattan-nightstand-with-drawer-set-of-2-amber-oak",
+   "photoKind": null,
+   "nameKey": "zura rattan nightstand drawer amber",
+   "groupId": "g:awin-110532-140im8lvolcin",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-5wfgteha8jw4",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "bohemian"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_e6ed25b6-288c-4c09-a429-f0ed006dd75d_d9e5e6d1-e20e-40cc-b6e5-77348b0d9449.jpg?v=1792070601",
+   "pagePath": "sicotas.com/products/savanna-nightstand-with-charger-and-dresser-set-sicotas-reclaimed-light-oak-1-set",
+   "photoKind": null,
+   "nameKey": "savanna boho nightstand charger dresser",
+   "groupId": "g:awin-110532-5wfgteha8jw4",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-7pe2umepx9ww",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND004A2XBKY1504.jpg?v=1785408022",
+   "pagePath": "sicotas.com/products/night-stand-bedside-table-rattan-style",
+   "photoKind": null,
+   "nameKey": "savanna nightstand drawer reclaimed",
+   "groupId": "g:awin-110532-10whp2y1rwl8pk",
+   "split": "dev",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-999yn8g2y1jm",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/7_c10e8a60-4b68-46bd-9dc5-a69bd36b4efd.jpg?v=1776305239",
+   "pagePath": "sicotas.com/products/zura-sectional-tv-stand-set-with-doors-modular-tv-console",
+   "photoKind": null,
+   "nameKey": "zura sectional tv stand door amber",
+   "groupId": "g:awin-110532-469kklf0b6on",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-ckk6647x9x0",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_9139b9df-ed01-4917-b946-dff931653e68.jpg?v=1762971090",
+   "pagePath": "sicotas.com/products/terra-rattan-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "terra rattan dresser nightstand",
+   "groupId": "g:awin-110532-1dvr8s6nb3kgw",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-d3z8z150kqqr",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_71ddaac5-ec8f-4d91-9b12-cd6550be7d04.jpg?v=1793772060",
+   "pagePath": "sicotas.com/products/terra-rattan-white-6-drawer-dressers-set-of-2-boho-bedroom-storage",
+   "photoKind": null,
+   "nameKey": "terra rattan h dresser",
+   "groupId": "g:awin-110532-d3z8z150kqqr",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-d5aka2uf78fs",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND116A2HBKY1415.jpg?v=1785489014",
+   "pagePath": "sicotas.com/products/terra-rattan-night-table",
+   "photoKind": "cutout",
+   "nameKey": "terra rattan night table",
+   "groupId": "g:awin-110532-2r64ay13zgzzg",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-drvj1j1r3tc3x",
+   "retailerId": "awin-110532",
+   "subcategoryId": "sofas",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "cotton",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/DomusSA113A1NWTY1642.jpg?v=1777446400",
+   "pagePath": "sicotas.com/products/eira-3-seater-sofa-modern-comfortable-couch-for-living-room-seating",
+   "photoKind": "cutout",
+   "nameKey": "eira down filled seater sofa off",
+   "groupId": "g:awin-110532-1fm4o01c7hz9y",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-eh0sumq39b9s",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20261104-135130.jpg?v=1793771513",
+   "pagePath": "sicotas.com/products/terra-rattan-6-drawer-dresser-33-7-inch-wide-boho-bedroom-storage",
+   "photoKind": null,
+   "nameKey": "terra rattan h dresser drawer",
+   "groupId": "g:awin-110532-eh0sumq39b9s",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-en84v3n91j7p",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/c_c0995159-049b-4573-816f-1d130b328751.jpg?v=1765952309",
+   "pagePath": "sicotas.com/products/domus-minimalist-nightstand-large-storage",
+   "photoKind": null,
+   "nameKey": "domu minimalist nightstand large storage",
+   "groupId": "g:awin-110532-en84v3n91j7p",
+   "split": "dev",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-fwupv91ft2wrz",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/3_8a980313-81ba-457d-8662-d12c30f3f04d.jpg?v=1790780038",
+   "pagePath": "sicotas.com/products/cas-tv-stand-with-storage-modern-entertainment-center-set-of-3",
+   "photoKind": null,
+   "nameKey": "cas tv stand door storage coastal",
+   "groupId": "g:awin-110532-1ht0wg217v71vw",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-gag2yf16o4c09",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "bohemian"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_12001b00-4a15-408e-b17d-28fc7396ea4b.jpg?v=1793174770",
+   "pagePath": "sicotas.com/products/savanna-boho-7-drawer-dresser-set-of-2-rattan-bedroom-storage",
+   "photoKind": null,
+   "nameKey": "savanna boho drawer dresser bedroom storage",
+   "groupId": "g:awin-110532-gag2yf16o4c09",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-hli0hlqlagyf",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dining-chairs",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_60e29209-5616-4047-964f-d05a7157547d.jpg?v=1773741584",
+   "pagePath": "sicotas.com/products/cas-solid-wood-dining-chair-set-of-2-modern-fluted-design",
+   "photoKind": "scene",
+   "nameKey": "cas modern solid wood dining chair fluted style alder",
+   "groupId": "g:awin-110532-18aet4v1ny04jd",
+   "split": "test",
+   "hard": [
+    "no-material",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-i1k7g3v72ybp",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_3f4bc978-d40e-4319-bd6d-830900a057e1.jpg?v=1762957741",
+   "pagePath": "sicotas.com/products/stria-round-coffee-tables-living-room-mid-century-fluted-center-table",
+   "photoKind": "cutout",
+   "nameKey": "stria round coffee table alder",
+   "groupId": "g:awin-110532-16cc9iy17pimto",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-i5hbwp3iyrsj",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20260327-172436.jpg?v=1774603633",
+   "pagePath": "sicotas.com/products/cas-dining-table-and-chairs-set-for-6-solid-wood",
+   "photoKind": "scene",
+   "nameKey": "cas dining table chair solid wood alder",
+   "groupId": "g:awin-110532-i5hbwp3iyrsj",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-ikjoiiue6n50",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/c_b80959a5-3211-436c-a38e-5df57c29ca82.jpg?v=1773286482",
+   "pagePath": "sicotas.com/products/savanna-dresser-and-nightstands-bedroom-set",
+   "photoKind": null,
+   "nameKey": "savanna dresser nightstand bedroom",
+   "groupId": "g:awin-110532-ikjoiiue6n50",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-n532vm1wsxt7w",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/5-1_55002283-30c4-4dae-8c50-c5033dfbd61d_ae6c14d8-30a0-40c0-9cb5-e08a0c747530.jpg?v=1790500195",
+   "pagePath": "sicotas.com/products/terra-white-rattan-nightstand-set-of-2-white-cream-oak",
+   "photoKind": null,
+   "nameKey": "terra rattan nightstand",
+   "groupId": "g:awin-110532-n532vm1wsxt7w",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-ogzdxrwliikl",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dining-chairs",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/12_ad2614a1-9d4e-4172-a44f-121184a45ec7.jpg?v=1773741717",
+   "pagePath": "sicotas.com/products/cas-solid-wood-dining-chair-set-of-2-modern-wooden-chairs",
+   "photoKind": "scene",
+   "nameKey": "cas round dining chair solid wood alder",
+   "groupId": "g:awin-110532-18aet4v1ny04jd",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-qrvyt3qhc6zx",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/2_92cc635a-ff99-4bee-8e14-5d70ed9123c4_397b126d-1020-4d5d-82e7-c30c2fbf5d47.jpg?v=1789715855",
+   "pagePath": "sicotas.com/products/cas-dresser-and-nightstand-set-with-drawers-bedroom-set-dressers-set",
+   "photoKind": null,
+   "nameKey": "cas dresser nightstand alder",
+   "groupId": "g:awin-110532-qrvyt3qhc6zx",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-rhh5zw13uw1mi",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_75c91ac8-1773-43ab-8d1d-fc85c1839ac3.jpg?v=1789120714",
+   "pagePath": "sicotas.com/products/crescent-90-wide-tv-stand-large-storage-set-of-3-medium-brown-1-piece",
+   "photoKind": null,
+   "nameKey": "crescent tv cabinet large storage medium",
+   "groupId": "g:awin-110532-1tuvab3u7kutd",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-rtezrd15h264v",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20251118-161245.jpg?v=1776240885",
+   "pagePath": "sicotas.com/products/stria-dresser-with-large-drawers-buffet-cabinet-with-storage",
+   "photoKind": null,
+   "nameKey": "stria modular tall drawer dresser alder",
+   "groupId": "g:awin-110532-1gftxbfzx4gsl",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-rupj1l1o37dg7",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/b_aeb0ae02-1a50-43dc-9c12-f6fb46afd812.jpg?v=1762971395",
+   "pagePath": "sicotas.com/products/terra-dresser-and-nightstands-set",
+   "photoKind": null,
+   "nameKey": "terra dresser nightstand carbon",
+   "groupId": "g:awin-110532-1tyzti11fo4ae3",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-sgfe4x1bp8t7f",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/20251118-161245.jpg?v=1776240885",
+   "pagePath": "sicotas.com/products/stria-dresser-with-large-drawers-buffet-cabinet-with-storage",
+   "photoKind": null,
+   "nameKey": "stria modular tall drawer dresser alder",
+   "groupId": "g:awin-110532-1gftxbfzx4gsl",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-sgzang1t30686",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_05690b99-0a3b-4b99-b948-b741e064550e.jpg?v=1762957675",
+   "pagePath": "sicotas.com/products/stria-round-coffee-table-living-room-mid-century-fluted-center-table",
+   "photoKind": "cutout",
+   "nameKey": "stria coffee table alder",
+   "groupId": "g:awin-110532-16cc9iy17pimto",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-sp8wr41wt75va",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_f544e92f-d85a-4180-933c-b4a03db59f17.jpg?v=1762966965",
+   "pagePath": "sicotas.com/products/stria-coffee-table-new-fashion-design",
+   "photoKind": "cutout",
+   "nameKey": "stria coffee table alder",
+   "groupId": "g:awin-110532-16cc9iy17pimto",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-t77w8w1egq8hm",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/15_40c15713-220a-4ff9-9eee-2396fee1ed5a_6b39ba9e-5a1f-4b56-ae41-e2ae0ba038a4.jpg?v=1791455653",
+   "pagePath": "sicotas.com/products/stria-sideboard-cabinet-with-storage-set-of-2-white-alder",
+   "photoKind": null,
+   "nameKey": "stria sideboard cabinet storage alder",
+   "groupId": "g:awin-110532-14sux2f10tdred",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-ta45ky1mw3c40",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "oak",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/a_def9eb9a-22c8-4d82-9f1e-27dc85f04acd.jpg?v=1767170590",
+   "pagePath": "sicotas.com/products/terra-4-door-sideboard-entertainment-center-with-storage-and-shelves",
+   "photoKind": null,
+   "nameKey": "terra tv stand tvs up to open storage shelf",
+   "groupId": "g:awin-110532-1fn0nht14ei1t3",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-tsk6g012t2che",
+   "retailerId": "awin-110532",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal",
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/3_d899f2c9-d6d8-4cdb-8c6b-3807e390ee2d.jpg?v=1786011798",
+   "pagePath": "sicotas.com/products/sicotas-savanna-coffee-table-light-oak",
+   "photoKind": "scene",
+   "nameKey": "savanna rattan coffee table reclaimed",
+   "groupId": "g:awin-110532-tsk6g012t2che",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-uqunex1hawcbr",
+   "retailerId": "awin-110532",
+   "subcategoryId": "dressers",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_5dd74a9f-9a63-435c-9f80-77518be69b0f_5f55cfe5-72d8-401c-8276-34e9af12e78f.jpg?v=1789716035",
+   "pagePath": "sicotas.com/products/crescent-modular-9-drawer-dresser-bedroom-set-modern-furniture",
+   "photoKind": null,
+   "nameKey": "crescent modular tall dresser bedroom greige",
+   "groupId": "g:awin-110532-uqunex1hawcbr",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-vb55pfb0417h",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "oak",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND020A2XBNY1245_5eea7c8d-7465-4f47-9c4a-2e67be159fbd.jpg?v=1785486278",
+   "pagePath": "sicotas.com/products/helio-nightstands-set-26-inch-wide",
+   "photoKind": null,
+   "nameKey": "helio nightstand wide coastal",
+   "groupId": "g:awin-110532-1gca9981d55lt6",
+   "split": "test",
+   "hard": [
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-y5255t163y86z",
+   "retailerId": "awin-110532",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/1_a7084223-b9cd-40a4-bcfe-69864a0e8235.jpg?v=1790779133",
+   "pagePath": "sicotas.com/products/cas-tv-cabinet-set-of-2-modern-entertainment-center-with-storage",
+   "photoKind": null,
+   "nameKey": "cas tv cabinet door alder",
+   "groupId": "g:awin-110532-1g4qkq6ov6pj4",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-110532-yjphxo15dkl9q",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/c_b80959a5-3211-436c-a38e-5df57c29ca82.jpg?v=1773286482",
+   "pagePath": "sicotas.com/products/savanna-dresser-and-nightstands-bedroom-set",
+   "photoKind": null,
+   "nameKey": "savanna dresser nightstand bedroom",
+   "groupId": "g:awin-110532-ikjoiiue6n50",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-ikjoiiue6n50"
+  },
+  {
+   "id": "awin-110532-zwaqe116laoj3",
+   "retailerId": "awin-110532",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "rattan",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0464/1030/1595/files/ND116A2HBKY1415.jpg?v=1785489014",
+   "pagePath": "sicotas.com/products/terra-rattan-night-table",
+   "photoKind": null,
+   "nameKey": "terra rattan night table obsidian",
+   "groupId": "g:awin-110532-2r64ay13zgzzg",
+   "split": "test",
+   "hard": [
+    "multi-colour",
+    "shared-photo"
+   ],
+   "reason": "same-photo-partner",
+   "partnerOf": "awin-110532-2r64ay13zgzzg"
+  },
+  {
+   "id": "awin-92307-139mrhg1uy25xy",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse"
+   ],
+   "material": "wool",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/57-1_b7104122-8469-4fbf-944e-e0bf21cac0ad.jpg?v=1793413927",
+   "pagePath": "tribesigns.com/products/cute-cat-floral-runner-rug-non-slip-washable-soft-low-pile-carpet",
+   "photoKind": null,
+   "nameKey": "cute cat floral runner rug non slip washable soft low pile carpet",
+   "groupId": "g:awin-92307-139mrhg1uy25xy",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1531uy16npnwj",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "minimal",
+    "modern"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_1cff0c66-29bf-422e-8534-02d099c25685.jpg?v=1789976357",
+   "pagePath": "tribesigns.com/products/71-inch-mid-century-tv-stand-fluted-sliding-doors",
+   "photoKind": null,
+   "nameKey": "tv stand fluted sliding door storage mid century media console living room",
+   "groupId": "g:awin-92307-1531uy16npnwj",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1652enh170jndb",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "classic",
+    "modern"
+   ],
+   "material": "",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_81ea88f8-587e-4e94-899a-33584beb15cd.jpg?v=1775541172",
+   "pagePath": "tribesigns.com/products/tribesigns-round-bar-table-31-5-pub-table-dining-table-for-dining-room",
+   "photoKind": null,
+   "nameKey": "round bar table pub table dining table dining room kitchen",
+   "groupId": "g:awin-92307-1652enh170jndb",
+   "split": "test",
+   "hard": [
+    "no-material",
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-16bbdcafmt6rk",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_905620f6-b0ac-4ae5-a7d5-af56397888a8.jpg?v=1785746311",
+   "pagePath": "tribesigns.com/products/high-top-cocktail-pub-table-31-5-inch-square-bar-table-with-led-lights-for-2-4-people",
+   "photoKind": null,
+   "nameKey": "square bar table high top cocktail pub table led people",
+   "groupId": "g:awin-92307-16bbdcafmt6rk",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-16mcf3wd1fgj2",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/9_0744a6ad-be4c-44f7-ae31-ba9b2cc97d1f.jpg?v=1776224658",
+   "pagePath": "tribesigns.com/products/tribesigns-modern-c-table-end-side-table-with-metal-frame",
+   "photoKind": "scene",
+   "nameKey": "narrow c table modern end table bedside table metal frame",
+   "groupId": "g:awin-92307-16mcf3wd1fgj2",
+   "split": "test",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-9acaexpnnair"
+  },
+  {
+   "id": "awin-92307-16rkqhu1yv5kvo",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_489c9949-bd61-4232-82ba-75bf104f9427.jpg?v=1775015725",
+   "pagePath": "tribesigns.com/products/tribesigns-63-bar-table-2-tier-bar-unit-counter-height-pub-table-with-shelves",
+   "photoKind": null,
+   "nameKey": "bar table tier bar unit counter height pub table storage shelve",
+   "groupId": "g:awin-92307-16rkqhu1yv5kvo",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-171ujpi1itzjcw",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "marble",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/faux-marble-dining-table-63-kitchen-table-for-4-to-6-people-304473.jpg?v=1751960405",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-faux-marble-dining-table-kitchen-table-for-4-to-6-people",
+   "photoKind": null,
+   "nameKey": "faux marble dining table rectangular kitchen table to people",
+   "groupId": "g:awin-92307-171ujpi1itzjcw",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-jn194813z7b7m"
+  },
+  {
+   "id": "awin-92307-17erbd2zx2y1k",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "minimal"
+   ],
+   "material": "marble",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/products/1_20884b1a-8caa-4afd-be9a-b83e4d19864d.jpg?v=1673429253",
+   "pagePath": "tribesigns.com/products/tribesigns-47-inch-faux-marble-coffee-table",
+   "photoKind": null,
+   "nameKey": "faux marble coffee table geometric frame",
+   "groupId": "g:awin-92307-17erbd2zx2y1k",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-195xb3i193zauw",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/5_1da5f66a-b884-4bbe-855d-b7e96f006e8d.jpg?v=1791971871",
+   "pagePath": "tribesigns.com/products/tribesigns-63-bar-table-with-storage-3-tier-counter-height-pub-table-with-shelf-cabinet",
+   "photoKind": null,
+   "nameKey": "bar table storage tier counter height pub table shelf cabinet",
+   "groupId": "g:awin-92307-195xb3i193zauw",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-197uxa1dtiiqo",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/47.24_Dining_Table_Oval_Kitchen_Dinner_Table_With_Hollow_Base_for_4_People.jpg?v=1758868150",
+   "pagePath": "tribesigns.com/products/oval-kitchen-dinner-table-47-24-inch-dining-table-with-hollow-base-for-4-people",
+   "photoKind": null,
+   "nameKey": "dining table oval kitchen dinner table hollow base people",
+   "groupId": "g:awin-92307-197uxa1dtiiqo",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-19qmwbf1aakx5x",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "farmhouse",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_b1afb96a-43a7-4551-91f5-d292762135f3.jpg?v=1792747482",
+   "pagePath": "tribesigns.com/products/tribesigns-31-5-oversized-nightstand-bedside-table-with-3-drawers-mental-handles",
+   "photoKind": null,
+   "nameKey": "nightstand drawer oversized bedside table mental handle",
+   "groupId": "g:awin-92307-19qmwbf1aakx5x",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1bontx4nkefn",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_5b774267-741e-4e0e-9745-545332b7b323.jpg?v=1761030156",
+   "pagePath": "tribesigns.com/products/tribesigns-3-tier-end-table-narrow-side-table-nightstand-with-storage-shelves",
+   "photoKind": "scene",
+   "nameKey": "tier end table narrow side table nightstand storage shelve",
+   "groupId": "g:awin-92307-1bontx4nkefn",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1c34a5h169zvf3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse"
+   ],
+   "material": "jute",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/57-4_e372c991-504a-48f4-807b-3958b6f1947c.jpg?v=1793346620",
+   "pagePath": "tribesigns.com/products/2x6-3x5-scalloped-floral-easy-jute-washable-area-rug-farmhouse-soft-low-pile-carpet",
+   "photoKind": null,
+   "nameKey": "tribesign scalloped floral easy jute washable area rug farmhouse soft low pile carpet hallway entryway oeko tex certified",
+   "groupId": "g:awin-92307-1c34a5h169zvf3",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1c6iuo4og5qry",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "vintage"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/11_f62ccfc3-36d7-4c5e-adde-4decc511a238.jpg?v=1769493461",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-media-console-stand-vintage-entertainment-center-center-tv-stand",
+   "photoKind": null,
+   "nameKey": "center tv stand entertainment center media console stand",
+   "groupId": "g:awin-92307-1c6iuo4og5qry",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1cbzdya1pp9aig",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal",
+    "modern"
+   ],
+   "material": "wool",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6x9.jpg?v=1792028435",
+   "pagePath": "tribesigns.com/products/tribesigns-coastal-washable-runner-rug-2-5x8-kitchen-runners-for-hallways",
+   "photoKind": null,
+   "nameKey": "tribesign coastal washable runner rug kitchen runner hallway",
+   "groupId": "g:awin-92307-1cbzdya1pp9aig",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1cpryre5tl7x4",
+   "retailerId": "awin-92307",
+   "subcategoryId": "bar-stools",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Bistro_Sets_with_2_Barstools_Pub_Cocktail_Table_Bar_Table_with_Chairs_Tribesigns5.jpg?v=1780467052",
+   "pagePath": "tribesigns.com/products/tribesigns-pub-cocktail-table-with-2-barstools-bistro-sets-bar-table-with-chairs",
+   "photoKind": "scene",
+   "nameKey": "bistro barstool pub cocktail table bar table chair",
+   "groupId": "g:awin-92307-1cpryre5tl7x4",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1crinp4hlofvi",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "mid-century",
+    "scandinavian"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/47-coffee-table-lift-top-accent-table-with-hidden-compartment-and-storage-shelf-113222.jpg?v=1750248964",
+   "pagePath": "tribesigns.com/products/lift-top-accent-table-47-inch-coffee-table-with-hidden-compartment-and-storage-shelf",
+   "photoKind": null,
+   "nameKey": "lift top coffee table hidden storage",
+   "groupId": "g:awin-92307-1crinp4hlofvi",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1d8asi71s7c9z9",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "coastal"
+   ],
+   "material": "walnut",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_400adcb8-1b83-4db7-a8ac-ba494d00ae35.jpg?v=1781659692",
+   "pagePath": "tribesigns.com/products/tribesigns-square-bar-table-for-2-4-counter-height-pub-table-with-pedestal-base",
+   "photoKind": null,
+   "nameKey": "square bar table counter height pub table pedestal base home bar",
+   "groupId": "g:awin-92307-1d8asi71s7c9z9",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1dmn59n1peggu5",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "mid-century",
+    "scandinavian",
+    "vintage"
+   ],
+   "material": "oak",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_f862194b-e465-4d79-bb39-44729dae93c3.jpg?v=1793932733",
+   "pagePath": "tribesigns.com/products/95-inch-solid-wood-bar-height-table-extra-long-rectangular-pub-table",
+   "photoKind": "scene",
+   "nameKey": "solid wood bar height table counter height dining table kitchen",
+   "groupId": "g:awin-92307-1dmn59n1peggu5",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1e5lrvmnc0e10",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6391ace427ade714b70fb966024ae804_167f0518-165e-4656-b0b1-50bf0e8ab361.jpg?v=1760151143",
+   "pagePath": "tribesigns.com/products/tribesigns-63-rectangular-dining-table-with-double-pedestal-for-4-6-people",
+   "photoKind": null,
+   "nameKey": "dining table people rectangular kitchen table double pedestal",
+   "groupId": "g:awin-92307-1e5lrvmnc0e10",
+   "split": "dev",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1fcon0n1r7u2qp",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/extendable-coffee-table-center-table-cocktail-table-with-2-storage-drawers-176603.jpg?v=1721790905",
+   "pagePath": "tribesigns.com/products/tribesigns-extendable-center-table-coffee-table-cocktail-table-with-2-storage-drawers",
+   "photoKind": null,
+   "nameKey": "extendable coffee table storage drawer",
+   "groupId": "g:awin-92307-1fcon0n1r7u2qp",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1fdm68b53j8ph",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/4_3e395172-eb58-4360-a620-41a191911735.jpg?v=1778397907",
+   "pagePath": "tribesigns.com/products/tribesigns-31-5-bar-table-square-dining-table-with-metal-footrest",
+   "photoKind": null,
+   "nameKey": "bar table square dining table counter height table metal footrest",
+   "groupId": "g:awin-92307-1fdm68b53j8ph",
+   "split": "test",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-1n8ccld13o9bsn"
+  },
+  {
+   "id": "awin-92307-1g8ggz41e2p82e",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "bohemian",
+    "farmhouse",
+    "vintage"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Solid_Wood_Dining_Table_63_Farmhouse_Long_Kitchen_Table-1.jpg?v=1763092671",
+   "pagePath": "tribesigns.com/products/solid-wood-dining-table-63-farmhouse-long-kitchen-table",
+   "photoKind": null,
+   "nameKey": "solid wood dining table farmhouse long kitchen table",
+   "groupId": "g:awin-92307-1g8ggz41e2p82e",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1i7jtay10q56qc",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/modern-nightstand-bed-side-table-with-drawer-storage-569804.jpg?v=1747145041",
+   "pagePath": "tribesigns.com/products/tribesigns-bed-side-table-modern-nightstand-with-drawer-storage",
+   "photoKind": null,
+   "nameKey": "modern nightstand bed side table drawer storage",
+   "groupId": "g:awin-92307-1i7jtay10q56qc",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1i8uhfws4spgq",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/31800x1800_7a9af280-d1cb-4c03-a9be-c1eea64e5bc4.jpg?v=1791622398",
+   "pagePath": "tribesigns.com/products/71-sintered-stone-dining-table-rectangular-kitchen-table-with-fluted-mdf-pedestal-base-for-4-8",
+   "photoKind": null,
+   "nameKey": "matte sintered stone dining table rectangular kitchen table fluted mdf pedestal base",
+   "groupId": "g:awin-92307-14gnexqajjhj0",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-e0i1rxpn389v"
+  },
+  {
+   "id": "awin-92307-1ia2bwd15q9pn",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/61agZkfov-L._AC.jpg?v=1752482549",
+   "pagePath": "tribesigns.com/products/tribesigns-tv-stand-for-55-75-tv-entertainment-center-with-open-storage-shelves",
+   "photoKind": null,
+   "nameKey": "tv stand tv entertainment center open storage shelve",
+   "groupId": "g:awin-92307-1ia2bwd15q9pn",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1k3jhnq1bibj5o",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "classic",
+    "industrial",
+    "minimal"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/B0GFCYD5QF_coreimg05_20260113_c482ef51-7f47-4c43-9bb5-56c8415e7081.jpg?v=1768387155",
+   "pagePath": "tribesigns.com/products/rectangular-counter-height-pub-table-70-9-inch-long-bar-table-home-coffee-bar-unit",
+   "photoKind": null,
+   "nameKey": "long bar table rectangular counter height pub table home coffee bar unit",
+   "groupId": "g:awin-92307-1k3jhnq1bibj5o",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-a7up0yq720e8"
+  },
+  {
+   "id": "awin-92307-1kybx6gjlegr2",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "rustic"
+   ],
+   "material": "marble",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_e8097511-fb55-483e-8ec4-c23463fcaefc.jpg?v=1784708901",
+   "pagePath": "tribesigns.com/products/modern-70-8-tv-stand-with-storage-cabinet-doors-for-tv-up-to-80",
+   "photoKind": null,
+   "nameKey": "modern tv stand entertainment center storage cabinet door tv up to",
+   "groupId": "g:awin-92307-1kybx6gjlegr2",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1l6hf8loq6k0j",
+   "retailerId": "awin-92307",
+   "subcategoryId": "bar-stools",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/bistro-sets-with-2-barstools-pub-cocktail-table-bar-table-with-chairs-427754.jpg?v=1745363094",
+   "pagePath": "tribesigns.com/products/tribesigns-pub-cocktail-table-with-2-barstools-bistro-sets-bar-table-with-chairs",
+   "photoKind": "scene",
+   "nameKey": "bistro barstool pub cocktail table bar table chair",
+   "groupId": "g:awin-92307-1cpryre5tl7x4",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1m7cbxxo1lnqn",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "vintage"
+   ],
+   "material": "wool",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Vintage_Botanical_Animal_Rug.jpg?v=1786084255",
+   "pagePath": "tribesigns.com/products/washable-low-pile-area-rug-vintage-botanical-animal-rug-with-non-slip-backing",
+   "photoKind": null,
+   "nameKey": "botanical animal rug washable low pile area rug non slip backing indoor use",
+   "groupId": "g:awin-92307-1m7cbxxo1lnqn",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1mo1z3f1ih9vud",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/81saaEdWKUL._AC_SL1500.jpg?v=1770703988",
+   "pagePath": "tribesigns.com/products/tribesigns-3-drawer-nightstand-with-acrylic-metal-legs",
+   "photoKind": null,
+   "nameKey": "drawer nightstand bedside table acrylic metal leg",
+   "groupId": "g:awin-92307-1mo1z3f1ih9vud",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1n8ccld13o9bsn",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/4_3493028d-15ac-44e0-8119-8a93c4900c77.jpg?v=1763688591",
+   "pagePath": "tribesigns.com/products/tribesigns-31-5-bar-table-square-dining-table-with-metal-footrest",
+   "photoKind": null,
+   "nameKey": "bar table square dining table counter height table metal footrest",
+   "groupId": "g:awin-92307-1fdm68b53j8ph",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1ne6jh41wo4ffa",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6391ace427ade714b70fb966024ae804_a42a8d9f-67e5-427b-8a98-102d78689ffe.jpg?v=1765519500",
+   "pagePath": "tribesigns.com/products/solid-wood-round-bar-table-37-4-bistro-pub-table-with-metal-footrest",
+   "photoKind": null,
+   "nameKey": "solid wood round bar table h bistro pub table metal footrest",
+   "groupId": "g:awin-92307-1ne6jh41wo4ffa",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1nvc8d6hiobtc",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "minimal",
+    "rustic"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/47-coffee-table-farmhouse-2-tier-center-table-with-storage-805044.jpg?v=1744070851",
+   "pagePath": "tribesigns.com/products/tribesigns-2-tier-center-table-farmhouse-47-inch-coffee-table-with-storage",
+   "photoKind": null,
+   "nameKey": "farmhouse tier coffee table storage shelf rectangular coffee table",
+   "groupId": "g:awin-92307-1nvc8d6hiobtc",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1o6lf18lno34y",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "polypropylene",
+   "color": "sage",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/150X210-6_3a3fa87d-6998-408e-acc7-c9b3926845fd.jpg?v=1786089835",
+   "pagePath": "tribesigns.com/products/non-slip-washable-area-rug-morris-jungle-leopard-print-rug",
+   "photoKind": null,
+   "nameKey": "morri jungle leopard print rug non slip washable area rug living room bedroom",
+   "groupId": "g:awin-92307-1o6lf18lno34y",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1obqr8x1i7svx3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "farmhouse",
+    "rustic",
+    "vintage"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_c471ad80-9a55-45df-aa83-cd4632c5c7a7.jpg?v=1786094196",
+   "pagePath": "tribesigns.com/products/tribesigns-narrow-end-table-2-tier-side-table-nightstand-with-shelf-for-small-spaces",
+   "photoKind": null,
+   "nameKey": "narrow end table tier side table nightstand storage shelf small space",
+   "groupId": "g:awin-92307-1obqr8x1i7svx3",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1pspxaf1xq1wat",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "classic",
+    "farmhouse",
+    "rustic"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/813tUBWKCnL._AC_SL1500.jpg?v=1767165669",
+   "pagePath": "tribesigns.com/products/47-24-wooden-low-coffee-table-rustic-rectangular-center-table-with-solid-base",
+   "photoKind": null,
+   "nameKey": "coffee table chunky solid base",
+   "groupId": "g:awin-92307-19liwq7cbiqy1",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1q3e6q91d1zarz",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "minimal"
+   ],
+   "material": "steel",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/11_a9bc14ff-9b90-41e5-8cff-a47803ab1043.jpg?v=1773369066",
+   "pagePath": "tribesigns.com/products/tribesigns-modern-c-table-end-side-table-with-metal-frame",
+   "photoKind": null,
+   "nameKey": "narrow c table modern end table bedside table metal frame",
+   "groupId": "g:awin-92307-16mcf3wd1fgj2",
+   "split": "test",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-vrbf40ad9z6"
+  },
+  {
+   "id": "awin-92307-1qd0x8w1xgdayi",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/71-dining-table-for-6-to-8-people-modern-wood-kitchen-dinner-table-555169.jpg?v=1752042256",
+   "pagePath": "tribesigns.com/products/tribesigns-71-inch-wood-dining-table-for-6-to-8-people",
+   "photoKind": null,
+   "nameKey": "dining table to people modern wood kitchen dinner table",
+   "groupId": "g:awin-92307-1qd0x8w1xgdayi",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-cq0te8yeovne"
+  },
+  {
+   "id": "awin-92307-1r72w26ndevnc",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/71-dining-table-for-6-to-8-people-modern-wood-kitchen-dinner-table-630442.jpg?v=1752042256",
+   "pagePath": "tribesigns.com/products/tribesigns-71-inch-wood-dining-table-for-6-to-8-people",
+   "photoKind": null,
+   "nameKey": "dining table to people modern wood kitchen dinner table",
+   "groupId": "g:awin-92307-1qd0x8w1xgdayi",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1s36d3f5kfeet",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/tribesigns-55-console-table-sofa-table-tv-stand-with-3-tier-storage-shelves-721958.jpg?v=1756275243",
+   "pagePath": "tribesigns.com/products/tribesigns-55-inches-console-sofa-table-3-tiers-industrial-narrow-long-sofa-table-tv-stand",
+   "photoKind": null,
+   "nameKey": "console table sofa table tv stand tier storage shelve",
+   "groupId": "g:awin-92307-1s36d3f5kfeet",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1scogwg1b5cm1e",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "minimal"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_ccbf771f-0b50-46a7-bef9-139dbf46c7a3.jpg?v=1775799836",
+   "pagePath": "tribesigns.com/products/tribesigns-63-tv-stand-tv-media-console-with-open-shelf-for-tvs-up-to-65",
+   "photoKind": null,
+   "nameKey": "tv stand tv media console open storage shelf tvs up to",
+   "groupId": "g:awin-92307-1scogwg1b5cm1e",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1tjl9p110xryv7",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "classic",
+    "mid-century",
+    "minimal"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Wood_Slim_End_Table_Fully_Assembled_Side_Table_Nightstand_with_3-Drawers-9.jpg?v=1780298745",
+   "pagePath": "tribesigns.com/products/slim-wood-end-table-fully-assembled-nightstand-side-table-with-3-drawers",
+   "photoKind": null,
+   "nameKey": "wood slim end table fully assembled side table nightstand drawer",
+   "groupId": "g:awin-92307-1tjl9p110xryv7",
+   "split": "dev",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-9fvjz51do9vkr"
+  },
+  {
+   "id": "awin-92307-1tzytnlsr98u7",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "marble",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_77b1af39-c662-4ceb-a959-5f6179345008.jpg?v=1751017526",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-modern-dining-table-with-faux-marble-tabletop",
+   "photoKind": null,
+   "nameKey": "modern dining table faux marble tabletop people",
+   "groupId": "g:awin-92307-1iyseqk1b93w7y",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1uinkcz1pmxzd",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "glass",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_ffa69263-6c91-49b9-8cb8-583914ff2223.jpg?v=1761964279",
+   "pagePath": "tribesigns.com/products/tribesigns-2-tier-nightstand-wooden-bedside-table-with-trapezoid-base",
+   "photoKind": null,
+   "nameKey": "tier nightstand narrow bedside table trapezoid base bedroom wood color",
+   "groupId": "g:awin-92307-1uinkcz1pmxzd",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1uqy9os12iz7cu",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "industrial"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_f9d07d77-584b-4af7-9397-cede424d4094.jpg?v=1759837626",
+   "pagePath": "tribesigns.com/products/tribesigns-round-bar-table-for-2-37-4-h-cocktail-table-with-curved-metal-base",
+   "photoKind": null,
+   "nameKey": "h round bar table farmhouse cocktail table curved metal base",
+   "groupId": "g:awin-92307-1uqy9os12iz7cu",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1vdef1i1mbvqw0",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_a63385d8-a3bf-4fa2-8ee1-b39564be9a63.jpg?v=1770260601",
+   "pagePath": "tribesigns.com/products/2-tier-round-end-table-19-6-inch-side-table-bedside-table",
+   "photoKind": null,
+   "nameKey": "side table tier round end table bedside table",
+   "groupId": "g:awin-92307-1vdef1i1mbvqw0",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1x4hsjq1d58rjs",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "industrial"
+   ],
+   "material": "steel",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_93d5a92f-ca2c-419b-9186-c93abae7fecd.jpg?v=1781575096",
+   "pagePath": "tribesigns.com/products/tribesigns-round-bar-table-for-2-37-4-h-cocktail-table-with-curved-metal-base",
+   "photoKind": null,
+   "nameKey": "h round bar table farmhouse cocktail table curved metal base",
+   "groupId": "g:awin-92307-1uqy9os12iz7cu",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1x7bp1g1dj2xa6",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "wool",
+   "color": "navy",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/20260820-173538.jpg?v=1787251989",
+   "pagePath": "tribesigns.com/products/soft-washable-area-rug-animal-floral-rug-with-non-slip-backing",
+   "photoKind": null,
+   "nameKey": "animal floral rug soft washable area rug non slip backing living room bedroom",
+   "groupId": "g:awin-92307-1x7bp1g1dj2xa6",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1xbrs0219vf0cs",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1800x1800_1_bb92830e-69d5-4f2b-8453-829de86c171d.jpg?v=1770972272",
+   "pagePath": "tribesigns.com/products/solid-wood-end-table-narrow-side-table-nightstand-with-2-tier-storage",
+   "photoKind": null,
+   "nameKey": "solid wood end table narrow side table nightstand tier storage",
+   "groupId": "g:awin-92307-1xbrs0219vf0cs",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1xi5jvx1k9vzp3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "polypropylene",
+   "color": "navy",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/150X210-1_2b7b7b84-f46d-4d52-a8a2-1b12d4172550.jpg?v=1786121948",
+   "pagePath": "tribesigns.com/products/non-slip-washable-area-rug-morris-jungle-leopard-print-rug",
+   "photoKind": null,
+   "nameKey": "morri jungle leopard print rug non slip washable area rug living room bedroom",
+   "groupId": "g:awin-92307-1o6lf18lno34y",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1yi4tawbgck8q",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1-2_63642f3e-610c-4a4b-827f-c6ca5c86367e.jpg?v=1791973630",
+   "pagePath": "tribesigns.com/products/tribesigns-47-round-dining-table-for-4-6-farmhouse-kitchen-table-with-cross-pedestal-base",
+   "photoKind": null,
+   "nameKey": "round dining table people farmhouse kitchen table cross pedestal base",
+   "groupId": "g:awin-92307-1yi4tawbgck8q",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-1ymq1sh97dvu",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "minimal",
+    "rustic"
+   ],
+   "material": "pine",
+   "color": "cream",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/products/carved-nightstand-white-bedside-table-end-table-with-2-drawers-929896.jpg?v=1698123223",
+   "pagePath": "tribesigns.com/products/tribesigns-carved-nightstand-with-2-drawers",
+   "photoKind": null,
+   "nameKey": "carved nightstand bedside table end table drawer",
+   "groupId": "g:awin-92307-1ymq1sh97dvu",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-27dl5ec4aju4",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "minimal",
+    "vintage"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/square-coffee-table-315-inch-wood-center-table-cocktail-table-585392.jpg?v=1762398603",
+   "pagePath": "tribesigns.com/products/tribesigns-square-coffee-table-wood-center-table",
+   "photoKind": null,
+   "nameKey": "mid century square coffee table",
+   "groupId": "g:awin-92307-27dl5ec4aju4",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-2amipgy1w3za",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "mid-century",
+    "scandinavian",
+    "vintage"
+   ],
+   "material": "pine",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/B0H3YS1SHF_coreimg04_20260608.jpg?v=1781071571",
+   "pagePath": "tribesigns.com/products/95-inch-solid-wood-bar-height-table-extra-long-rectangular-pub-table",
+   "photoKind": null,
+   "nameKey": "solid wood bar height table counter height dining table kitchen",
+   "groupId": "g:awin-92307-1dmn59n1peggu5",
+   "split": "test",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-1dmn59n1peggu5"
+  },
+  {
+   "id": "awin-92307-308mb77yp2lp",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/c-shaped-end-table-wood-side-table-nightstand-bedside-table-998949.jpg?v=1725379358",
+   "pagePath": "tribesigns.com/products/tribesigns-wood-c-shaped-end-table-side-table-nightstand-bedside-table",
+   "photoKind": "scene",
+   "nameKey": "c shaped end table wood side table nightstand bedside table",
+   "groupId": "g:awin-92307-308mb77yp2lp",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-3k7zx91ibsrx3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "farmhouse",
+    "mid-century",
+    "minimal"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/3_bfc777e2-000e-4935-8cda-62d71b1b73ff.jpg?v=1782284660",
+   "pagePath": "tribesigns.com/products/23-6-inch-round-nightstand-wooden-bedside-table-with-sturdy-support",
+   "photoKind": null,
+   "nameKey": "round nightstand wooden bedside table sturdy support",
+   "groupId": "g:awin-92307-3k7zx91ibsrx3",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-4b7szhk0jcy3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "industrial",
+    "mid-century"
+   ],
+   "material": "jute",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/76x305-1_9c1387a4-3973-4acb-9d3d-e90cdb28313d.jpg?v=1793842807",
+   "pagePath": "tribesigns.com/products/3x5-5x7-checkered-easy-jute-area-rug-farmhouse-non-slip-washable-carpet",
+   "photoKind": "scene",
+   "nameKey": "3x5 5x7 checkered easy jute area rug farmhouse non slip washable carpet oeko tex certified",
+   "groupId": "g:awin-92307-4b7szhk0jcy3",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-4iernnz76ffp",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6391ace427ade714b70fb966024ae804_ac022460-cacf-4e5e-a413-e6ce398f2d7d.jpg?v=1770789177",
+   "pagePath": "tribesigns.com/products/47-24-rectangular-coffee-table-with-2-tier-storage-wood-center-table",
+   "photoKind": null,
+   "nameKey": "rectangular coffee table tier storage",
+   "groupId": "g:awin-92307-4iernnz76ffp",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-4n9ddm1x5yvng",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "farmhouse",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_50c06225-3137-4d56-96a7-15e177f014d3.jpg?v=1756800075",
+   "pagePath": "tribesigns.com/products/tribesigns-31-5-oversized-nightstand-bedside-table-with-3-drawers-mental-handles",
+   "photoKind": null,
+   "nameKey": "nightstand drawer oversized bedside table mental handle",
+   "groupId": "g:awin-92307-19qmwbf1aakx5x",
+   "split": "dev",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-19qmwbf1aakx5x"
+  },
+  {
+   "id": "awin-92307-5j1ys815n2qfu",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/81K6IXzzoqL._AC_SL1500.jpg?v=1770972272",
+   "pagePath": "tribesigns.com/products/solid-wood-end-table-narrow-side-table-nightstand-with-2-tier-storage",
+   "photoKind": null,
+   "nameKey": "solid wood end table narrow side table nightstand tier storage",
+   "groupId": "g:awin-92307-1xbrs0219vf0cs",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-5o5p3mvuvu8",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "vintage"
+   ],
+   "material": "wool",
+   "color": "sage",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Vintage_Botanical_Animal_Rug30.jpg?v=1786084536",
+   "pagePath": "tribesigns.com/products/washable-low-pile-area-rug-vintage-botanical-animal-rug-with-non-slip-backing",
+   "photoKind": null,
+   "nameKey": "botanical animal rug washable low pile area rug non slip backing indoor use",
+   "groupId": "g:awin-92307-1m7cbxxo1lnqn",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-940msgdcgoda",
+   "retailerId": "awin-92307",
+   "subcategoryId": "bar-stools",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Bistro_Sets_with_2_Barstools_Pub_Cocktail_Table_Bar_Table_with_Chairs_Tribesigns13.jpg?v=1780467222",
+   "pagePath": "tribesigns.com/products/tribesigns-pub-cocktail-table-with-2-barstools-bistro-sets-bar-table-with-chairs",
+   "photoKind": "scene",
+   "nameKey": "bistro barstool pub cocktail table bar table chair",
+   "groupId": "g:awin-92307-1cpryre5tl7x4",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-9acaexpnnair",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "minimal"
+   ],
+   "material": "steel",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/narrow-c-table-modern-end-table-bedside-table-with-metal-frame-717440.jpg?v=1761710526",
+   "pagePath": "tribesigns.com/products/tribesigns-modern-c-table-end-side-table-with-metal-frame",
+   "photoKind": null,
+   "nameKey": "narrow c table modern end table bedside table metal frame",
+   "groupId": "g:awin-92307-16mcf3wd1fgj2",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-9bt6dk1v606ua",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1800x1800-6_c951c559-8515-4821-8f92-3bcd8ae4fa07.jpg?v=1791776328",
+   "pagePath": "tribesigns.com/products/63-solid-wood-tv-stand-for-up-to-70-tvs-2-tier-tv-console-table-with-open-shelf",
+   "photoKind": null,
+   "nameKey": "solid wood tv stand up to tvs tier tv console table open shelf",
+   "groupId": "g:awin-92307-9bt6dk1v606ua",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-9fvjz51do9vkr",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "classic",
+    "mid-century",
+    "minimal"
+   ],
+   "material": "walnut",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Wood_Slim_End_Table_Fully_Assembled_Side_Table_Nightstand_with_3-Drawers-11.jpg?v=1780298766",
+   "pagePath": "tribesigns.com/products/slim-wood-end-table-fully-assembled-nightstand-side-table-with-3-drawers",
+   "photoKind": null,
+   "nameKey": "wood slim end table fully assembled side table nightstand drawer",
+   "groupId": "g:awin-92307-1tjl9p110xryv7",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-a7up0yq720e8",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "classic",
+    "industrial",
+    "rustic"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_fdfb1176-d78a-4eae-8fc8-b1e2d11cb469.jpg?v=1781506013",
+   "pagePath": "tribesigns.com/products/rectangular-counter-height-pub-table-70-9-inch-long-bar-table-home-coffee-bar-unit",
+   "photoKind": null,
+   "nameKey": "long bar table rectangular counter height pub table home coffee bar unit",
+   "groupId": "g:awin-92307-1k3jhnq1bibj5o",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ae89softad06",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "mid-century",
+    "vintage"
+   ],
+   "material": "steel",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/4_14441c2a-c144-46f4-b035-3a16d2518004.jpg?v=1790152682",
+   "pagePath": "tribesigns.com/products/tribesigns-47-24-farmhouse-bar-table-with-metal-footrest-adjustable-feet",
+   "photoKind": null,
+   "nameKey": "bar table farmhouse high top pub table metal footrest adjustable feet",
+   "groupId": "g:awin-92307-ae89softad06",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ciw5uq1xx8jis",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "farmhouse",
+    "rustic"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_f587ded0-304c-4a46-9fc0-e13f63843f43.jpg?v=1769758487",
+   "pagePath": "tribesigns.com/products/tribesigns-square-coffee-table-39-37-center-tea-accent-table-with-sturdy-legs",
+   "photoKind": null,
+   "nameKey": "square coffee table chunky leg color",
+   "groupId": "g:awin-92307-82x6x0fapefe",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-cq0te8yeovne",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/products/71-dining-table-for-6-to-8-people-modern-wood-kitchen-dinner-table-542425.jpg?v=1697950202",
+   "pagePath": "tribesigns.com/products/tribesigns-71-inch-wood-dining-table-for-6-to-8-people",
+   "photoKind": null,
+   "nameKey": "dining table to people modern wood kitchen dinner table",
+   "groupId": "g:awin-92307-1qd0x8w1xgdayi",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-e0i1rxpn389v",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "steel",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/white_glove3.jpg?v=1785421868",
+   "pagePath": "tribesigns.com/products/71-sintered-stone-dining-table-rectangular-kitchen-table-with-fluted-mdf-pedestal-base-for-4-8",
+   "photoKind": null,
+   "nameKey": "matte sintered stone dining table rectangular kitchen table fluted mdf pedestal base glove",
+   "groupId": "g:awin-92307-14gnexqajjhj0",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "shared-photo"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-em9eigq25d3m",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "bohemian",
+    "classic",
+    "mid-century"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/31.5_Square_Dining_Table_Mid-Century_Modern_Kitchen_Table_with_Pedestal_Base.jpg?v=1778749294",
+   "pagePath": "tribesigns.com/products/mid-century-modern-kitchen-table-31-5-inch-square-dining-table-with-pedestal-base",
+   "photoKind": null,
+   "nameKey": "square dining table mid century modern kitchen table pedestal base",
+   "groupId": "g:awin-92307-em9eigq25d3m",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-g71e4m1kwa9so",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "steel",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1800x1800_01_3aa021f2-3507-49b8-958c-8f2f5d365386.jpg?v=1792389397",
+   "pagePath": "tribesigns.com/products/63-sintered-stone-dining-table-luxury-kitchen-table-with-v-shape-steel-base-for-4-6-people",
+   "photoKind": "scene",
+   "nameKey": "sintered stone dining table luxury kitchen table v shape steel base people",
+   "groupId": "g:awin-92307-g71e4m1kwa9so",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-hm45eh3orqvb",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "classic",
+    "vintage"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/57-1-2_2a296cf9-fa08-4396-9374-728f21d99637.jpg?v=1787716713",
+   "pagePath": "tribesigns.com/products/beige-floral-cherry-blossom-oriental-rug-soft-non-slip-washable-carpet-for-living-room-bedroom-oeko-tex-certified",
+   "photoKind": null,
+   "nameKey": "floral blossom oriental rug soft non slip washable carpet living room bedroom oeko tex certified",
+   "groupId": "g:awin-92307-71gbhf1tkmd49",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-itt4fykpjhpk",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "classic",
+    "farmhouse",
+    "mid-century"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/round-end-table-narrow-side-table-nightstand-with-stable-pedestal-670073.jpg?v=1741079506",
+   "pagePath": "tribesigns.com/products/tribesigns-narrow-side-table-round-end-table-nightstand-with-stable-pedestal",
+   "photoKind": null,
+   "nameKey": "round end table narrow side table nightstand stable pedestal",
+   "groupId": "g:awin-92307-itt4fykpjhpk",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-iuqc431jr5o3x",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/63_Solid_Wood_Bar_Table_Rectangular_Counter_Height_Pub_Table_Home_Bar_Table.jpg?v=1767669781",
+   "pagePath": "tribesigns.com/products/rectangular-counter-height-pub-table-63-inch-solid-wood-bar-table-home-bar-table",
+   "photoKind": null,
+   "nameKey": "solid wood bar table rectangular counter height pub table home bar table",
+   "groupId": "g:awin-92307-iuqc431jr5o3x",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-jcl99j1lcyrel",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "marble",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_bd4ecc07-ade6-4c19-a2ee-5f85de476296.jpg?v=1781583231",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-modern-dining-table-with-faux-marble-tabletop",
+   "photoKind": null,
+   "nameKey": "modern dining table faux marble tabletop people",
+   "groupId": "g:awin-92307-1iyseqk1b93w7y",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-jg18acw1mf8",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "maximalist",
+    "modern"
+   ],
+   "material": "marble",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_d4ebcac6-3748-4153-811c-64c3a80aa878.jpg?v=1792050608",
+   "pagePath": "tribesigns.com/products/tribesigns-31-5-round-coffee-table-2-tier-modern-center-table-with-faux-marble-top-metal-base",
+   "photoKind": null,
+   "nameKey": "round coffee table tier modern center table faux marble top metal base",
+   "groupId": "g:awin-92307-jg18acw1mf8",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-jn194813z7b7m",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "marble",
+   "color": "white",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/faux-marble-dining-table-63-kitchen-table-for-4-to-6-people-584038.jpg?v=1751960405",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-faux-marble-dining-table-kitchen-table-for-4-to-6-people",
+   "photoKind": null,
+   "nameKey": "faux marble dining table rectangular kitchen table to people",
+   "groupId": "g:awin-92307-171ujpi1itzjcw",
+   "split": "test",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-jynj561nxkd20",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "vintage"
+   ],
+   "material": "wool",
+   "color": "blush",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/3x5_5x7_Swan_Lake_in_oil_painting_style_Area_Rugs20.jpg?v=1780115198",
+   "pagePath": "tribesigns.com/products/3x5-5x7-washable-living-room-runner-swan-lake-in-oil-painting-style-area-rugs-soft-non-slip-carpet",
+   "photoKind": null,
+   "nameKey": "3x5 5x7 swan lake oil painting style area rug washable living room runner soft non slip carpet oeko tex certified purple",
+   "groupId": "g:awin-92307-11z1f70zgvzrq",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-l43jvi1ax1et8",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_b6e2181c-3317-4668-8d16-6be1d72e4f34.jpg?v=1792505708",
+   "pagePath": "tribesigns.com/products/63-inch-solid-wood-l-shaped-bar-table-corner-dining-table-for-kitchen",
+   "photoKind": null,
+   "nameKey": "solid wood l shaped bar table corner dining table kitchen",
+   "groupId": "g:awin-92307-l43jvi1ax1et8",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ldfzxu1scovf4",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "minimal"
+   ],
+   "material": "pine",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_c959fd40-88ea-448d-ac37-1960bd4b3ab5.jpg?v=1769221985",
+   "pagePath": "tribesigns.com/products/63-solid-wood-tv-stand-entertainment-center-for-up-to-70-tvs",
+   "photoKind": null,
+   "nameKey": "solid wood tv stand up to tv",
+   "groupId": "g:awin-92307-1fszgmypllm8c",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ny39x77shoa1",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "vintage"
+   ],
+   "material": "",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/7_972f9b50-6e01-4216-a191-29feb3ae2730.jpg?v=1769493461",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-media-console-stand-vintage-entertainment-center-center-tv-stand",
+   "photoKind": null,
+   "nameKey": "center tv stand entertainment center media console stand wood",
+   "groupId": "g:awin-92307-1c6iuo4og5qry",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-o4qn6t5pjz7n",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "rustic"
+   ],
+   "material": "",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/36_Oversized_Nightstand_Large_Bedside_Table_with_3_Drawers_Storage-1.jpg?v=1753491984",
+   "pagePath": "tribesigns.com/products/36-inch-bedside-table-oversized-nightstand-with-3-drawers-storage",
+   "photoKind": null,
+   "nameKey": "oversized nightstand large bedside table drawer storage",
+   "groupId": "g:awin-92307-o4qn6t5pjz7n",
+   "split": "test",
+   "hard": [
+    "no-material",
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ph0oh91f6tlfr",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse",
+    "rustic",
+    "vintage"
+   ],
+   "material": "pine",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_b221cb04-d4a8-46dc-99bc-fceeb8bae635.jpg?v=1793944485",
+   "pagePath": "tribesigns.com/products/solid-wood-2-tier-square-coffee-table-31-5-inch-accent-center-cocktail-table",
+   "photoKind": null,
+   "nameKey": "solid wood square coffee table slatted storage shelf",
+   "groupId": "g:awin-92307-1y23ghm1r3n62w",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-pm7j041uhn0yy",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "coastal",
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/76x244-4_ed3c734a-9053-4a45-b0dd-379670151c55.jpg?v=1791860384",
+   "pagePath": "tribesigns.com/products/minimalist-washable-runner-rug-non-slip-ultra-thin-carpet-for-kitchen-hallway",
+   "photoKind": null,
+   "nameKey": "minimalist washable runner rug non slip ultra thin carpet kitchen hallway",
+   "groupId": "g:awin-92307-1kn4ybt19xvrfj",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-q1oyz1cdmch3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "industrial",
+    "minimal",
+    "modern"
+   ],
+   "material": "",
+   "color": "black",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/modern-kitchen-table-63-dining-table-dinner-table-for-4-6-797321.jpg?v=1745568248",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-dining-table-modern-kitchen-table-dinner-table-for-4-6",
+   "photoKind": null,
+   "nameKey": "modern kitchen table dining table dinner table",
+   "groupId": "g:awin-92307-q1oyz1cdmch3",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-qxq6xa2rmseo",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "vintage"
+   ],
+   "material": "walnut",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/6391ace427ade714b70fb966024ae804_33eb80c5-d6d4-45db-b75d-a9976ae998ef.jpg?v=1774584399",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-media-console-stand-vintage-entertainment-center-center-tv-stand",
+   "photoKind": null,
+   "nameKey": "center tv stand entertainment center media console stand",
+   "groupId": "g:awin-92307-1c6iuo4og5qry",
+   "split": "dev",
+   "hard": [],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-1c6iuo4og5qry"
+  },
+  {
+   "id": "awin-92307-r14pdxmqsd4f",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern",
+    "rustic"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1-1_354d36ec-1ea5-4103-8e04-ca47e64bbcb0.jpg?v=1779090552",
+   "pagePath": "tribesigns.com/products/2-tier-round-end-table-19-6-inch-side-table-bedside-table",
+   "photoKind": null,
+   "nameKey": "side table tier round end table bedside table",
+   "groupId": "g:awin-92307-1vdef1i1mbvqw0",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "colour-variant-partner",
+   "partnerOf": "awin-92307-1vdef1i1mbvqw0"
+  },
+  {
+   "id": "awin-92307-sebba21k4ajxg",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "glass",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_d8d8e213-4029-4c6b-b1e0-bb058695bf38.jpg?v=1761964524",
+   "pagePath": "tribesigns.com/products/tribesigns-2-tier-nightstand-wooden-bedside-table-with-trapezoid-base",
+   "photoKind": null,
+   "nameKey": "tier nightstand narrow bedside table trapezoid base bedroom",
+   "groupId": "g:awin-92307-1uinkcz1pmxzd",
+   "split": "dev",
+   "hard": [
+    "default-modern"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-suiatb17wgs1p",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "modern"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/wood-coffee-table-round-2-tier-accent-center-table-901700.jpg?v=1723230819",
+   "pagePath": "tribesigns.com/products/tribesigns-2-tier-wood-coffee-table-round-accent-center-table",
+   "photoKind": null,
+   "nameKey": "round coffee table storage l shaped leg",
+   "groupId": "g:awin-92307-suiatb17wgs1p",
+   "split": "test",
+   "hard": [
+    "default-modern",
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-sx9xwr1mzepph",
+   "retailerId": "awin-92307",
+   "subcategoryId": "bar-stools",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "farmhouse",
+    "industrial",
+    "rustic"
+   ],
+   "material": "steel",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Round_Bar_Table_Set_Pub_Cocktail_Table_Bistro_Sets_with_2_Barstools1.jpg?v=1753671075",
+   "pagePath": "tribesigns.com/products/pub-cocktail-table-bistro-sets-rund-bar-table-set-with-2-barstools",
+   "photoKind": "scene",
+   "nameKey": "round bar table pub cocktail table bistro barstool",
+   "groupId": "g:awin-92307-sx9xwr1mzepph",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-tvwph8cs3jn2",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "farmhouse",
+    "vintage"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_689f20ad-d7a9-477f-8fdf-7379e9d8b316.jpg?v=1793945500",
+   "pagePath": "tribesigns.com/products/tribesigns-63-tv-stand-for-up-to-70-tvs-arched-media-console-with-storage-for-living-room",
+   "photoKind": null,
+   "nameKey": "tv stand up to tvs arched media console storage living room",
+   "groupId": "g:awin-92307-tvwph8cs3jn2",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-ul4wmyndta0k",
+   "retailerId": "awin-92307",
+   "subcategoryId": "tv-stands",
+   "categoryId": "living-room",
+   "styleTags": [
+    "mid-century",
+    "vintage"
+   ],
+   "material": "",
+   "color": "charcoal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_d54e8b4f-733c-4c72-8ef0-07bc282348bc.jpg?v=1793931099",
+   "pagePath": "tribesigns.com/products/tribesigns-63-inch-media-console-stand-vintage-entertainment-center-center-tv-stand",
+   "photoKind": null,
+   "nameKey": "center tv stand entertainment center media console stand",
+   "groupId": "g:awin-92307-1c6iuo4og5qry",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-uweyct1v3teif",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "farmhouse"
+   ],
+   "material": "wool",
+   "color": "blush",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/57-2_a3a86bf3-2a00-4aec-8c6d-4ebd7cbd1266.jpg?v=1793339902",
+   "pagePath": "tribesigns.com/products/cute-cat-floral-runner-rug-non-slip-washable-soft-low-pile-carpet",
+   "photoKind": null,
+   "nameKey": "cute cat floral runner rug non slip washable soft low pile carpet",
+   "groupId": "g:awin-92307-139mrhg1uy25xy",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-uxp1ikxxrh7q",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "rustic",
+    "vintage"
+   ],
+   "material": "pine",
+   "color": "multi",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/5x7-0.jpg?v=1784860093",
+   "pagePath": "tribesigns.com/products/vintage-bear-area-rug-low-pile-vintage-wildlife-indoor-carpet-for-room-decor",
+   "photoKind": null,
+   "nameKey": "bear area rug low pile wildlife indoor carpet room decor",
+   "groupId": "g:awin-92307-uxp1ikxxrh7q",
+   "split": "test",
+   "hard": [
+    "multi-colour"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-vrbf40ad9z6",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "industrial",
+    "maximalist",
+    "minimal"
+   ],
+   "material": "steel",
+   "color": "rust",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Narrow_C_Table_Modern_End_Table_Bedside_Table_with_Metal_Frame-3.jpg?v=1761710721",
+   "pagePath": "tribesigns.com/products/tribesigns-modern-c-table-end-side-table-with-metal-frame",
+   "photoKind": null,
+   "nameKey": "narrow c table modern end table bedside table metal frame",
+   "groupId": "g:awin-92307-16mcf3wd1fgj2",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-vzaoj4tj0quy",
+   "retailerId": "awin-92307",
+   "subcategoryId": "coffee-tables",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "mid-century",
+    "rustic"
+   ],
+   "material": "oak",
+   "color": "oatmeal",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_b6ae52b5-d3c5-43f9-bdfb-913728fdabcd.jpg?v=1787687230",
+   "pagePath": "tribesigns.com/products/solid-wood-round-coffee-table-31-5-center-tea-table-with-metal-frame",
+   "photoKind": null,
+   "nameKey": "solid wood tray coffee table storage",
+   "groupId": "g:awin-92307-vzaoj4tj0quy",
+   "split": "test",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-x00evdeee74b",
+   "retailerId": "awin-92307",
+   "subcategoryId": "nightstands",
+   "categoryId": "bedroom",
+   "styleTags": [
+    "bohemian",
+    "classic",
+    "farmhouse"
+   ],
+   "material": "pine",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_4b157efd-d2b7-425d-ae3f-c4984812fa06.jpg?v=1793351871",
+   "pagePath": "tribesigns.com/products/23-6-solid-wood-nightstand-with-3-tier-shelf-narrow-bedside-table-with-arched-legs",
+   "photoKind": null,
+   "nameKey": "solid wood nightstand tier shelf narrow bedside table arched leg",
+   "groupId": "g:awin-92307-x00evdeee74b",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-xdpblt4yjwp7",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "industrial",
+    "rustic"
+   ],
+   "material": "glass",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/1_0d856aaf-b0f8-47ce-895e-33299464367d.jpg?v=1779086729",
+   "pagePath": "tribesigns.com/products/tribesigns-39-4-bar-table-3-tier-counter-height-pub-table-with-glass-holder",
+   "photoKind": null,
+   "nameKey": "bar table storage tier counter height pub table glass holder wine rack",
+   "groupId": "g:awin-92307-xdpblt4yjwp7",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-xfy6vl10f15vv",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "farmhouse",
+    "vintage"
+   ],
+   "material": "",
+   "color": "navy",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/57-4_cf26da65-6166-4fc9-bade-2443da0dde9c.jpg?v=1786608987",
+   "pagePath": "tribesigns.com/products/floral-bird-area-rug-machine-washable-boho-rug-in-green-blue-5x7-8x10",
+   "photoKind": null,
+   "nameKey": "floral bird area rug machine washable boho rug 5x7 8x10 non slip indoor outdoor living room",
+   "groupId": "g:awin-92307-6rt63k1i3xek6",
+   "split": "test",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-zbymbsajhkx",
+   "retailerId": "awin-92307",
+   "subcategoryId": "dining-tables",
+   "categoryId": "kitchen-dining",
+   "styleTags": [
+    "minimal"
+   ],
+   "material": "",
+   "color": "walnut",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/2_0d223a47-15c8-4804-85b7-0065461ac004.jpg?v=1793778847",
+   "pagePath": "tribesigns.com/products/tribesigns-3-piece-dining-table-set-55-rectangle-dining-table-with-2-benches-for-kitchen",
+   "photoKind": null,
+   "nameKey": "dining table rectangle dining table benche kitchen",
+   "groupId": "g:awin-92307-zbymbsajhkx",
+   "split": "dev",
+   "hard": [
+    "no-material"
+   ],
+   "reason": "quota"
+  },
+  {
+   "id": "awin-92307-zchx3d2mr5j3",
+   "retailerId": "awin-92307",
+   "subcategoryId": "rugs",
+   "categoryId": "living-room",
+   "styleTags": [
+    "bohemian",
+    "modern",
+    "rustic"
+   ],
+   "material": "wool",
+   "color": "terracotta",
+   "photoUrl": "https://cdn.shopify.com/s/files/1/0506/8963/8555/files/Boho_Southwestern_Area_Rug22.jpg?v=1783673365",
+   "pagePath": "tribesigns.com/products/2-5x8-5x7-boho-southwestern-area-rug-soft-washable-aztec-tribal-indoor-carpet",
+   "photoKind": "scene",
+   "nameKey": "5x8 5x7 boho southwestern area rug soft washable non skid runner rug aztec tribal indoor carpet home decor red balck",
+   "groupId": "g:awin-92307-13jpumnt81zi9",
+   "split": "dev",
+   "hard": [],
+   "reason": "quota"
+  }
+ ],
+ "groups": [
+  {
+   "id": "g:awin-108888-102lf0rfh6e49",
+   "members": [
+    "awin-108888-102lf0rfh6e49",
+    "awin-108888-16raze41jzun9i",
+    "awin-108888-1w4m797937gal"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-10iquta1i78ms8",
+   "members": [
+    "awin-108888-10iquta1i78ms8",
+    "awin-108888-ffe8jx16fq0sf"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-11s1izr1twxcpt",
+   "members": [
+    "awin-108888-11s1izr1twxcpt",
+    "awin-108888-78owctckqkgv",
+    "awin-108888-mv3bxw1xi5gem"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-13ezljq1iz3az8",
+   "members": [
+    "awin-108888-13ezljq1iz3az8",
+    "awin-108888-1nhu14y1dvvx50",
+    "awin-108888-jtw47fdz0n0d"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-13sgse7ifsv79",
+   "members": [
+    "awin-108888-13sgse7ifsv79",
+    "awin-108888-17hityv19ahtvl",
+    "awin-108888-1fb4zi1hqsw00",
+    "awin-108888-1loocs710pmeex",
+    "awin-108888-94tnwh12z7ee7",
+    "awin-108888-f5nvqmfvs2sc"
+   ],
+   "reasons": [
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-17ieeu411hfx2m",
+   "members": [
+    "awin-108888-17ieeu411hfx2m"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-108888-1bmyhre1abqnnc",
+   "members": [
+    "awin-108888-1bmyhre1abqnnc",
+    "awin-108888-f2k0dp1dh0azb",
+    "awin-108888-gmxlv81dy6nxa"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-1gac7sw1n7a2u2",
+   "members": [
+    "awin-108888-1gac7sw1n7a2u2",
+    "awin-108888-cw2bd2cepxic",
+    "awin-108888-jeqnixqczro3",
+    "awin-108888-kc278t1ekycc7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-1js2a77wyh4cp",
+   "members": [
+    "awin-108888-1js2a77wyh4cp",
+    "awin-108888-zm8afvnptjft"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-1jzl9f917aia3j",
+   "members": [
+    "awin-108888-1jzl9f917aia3j"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-108888-1xv2pom1s6u0fw",
+   "members": [
+    "awin-108888-1xv2pom1s6u0fw",
+    "awin-108888-nxbccghc542q"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-1ybxwn8439xtu",
+   "members": [
+    "awin-108888-1ybxwn8439xtu",
+    "awin-108888-bfkvwe1ltauvo"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-108888-b6iaz6x5aocg",
+   "members": [
+    "awin-108888-b6iaz6x5aocg"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-108x3ih1fmi3dr",
+   "members": [
+    "awin-110532-108x3ih1fmi3dr",
+    "awin-110532-159cquf15y7hel",
+    "awin-110532-1goc4ny1f9foek",
+    "awin-110532-1krakr1bur76t",
+    "awin-110532-1mpbg4opk58d2",
+    "awin-110532-1w7way2bol5u0",
+    "awin-110532-7vils1rx3pt7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-10whp2y1rwl8pk",
+   "members": [
+    "awin-110532-10whp2y1rwl8pk",
+    "awin-110532-15ry7lwcpp7qi",
+    "awin-110532-171pbl5t0dkbn",
+    "awin-110532-1d7qki93il94f",
+    "awin-110532-1iu4gc7nr88sd",
+    "awin-110532-1ugbfazevaxth",
+    "awin-110532-1wjg4xl1ail80n",
+    "awin-110532-29rxtd15zt8xv",
+    "awin-110532-7pe2umepx9ww",
+    "awin-110532-e39ltnhuw9yh",
+    "awin-110532-er9clu1qtdj0k",
+    "awin-110532-pd7emwuo6r5u",
+    "awin-110532-zofn381y4mqt2"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-10y6a533osj2d",
+   "members": [
+    "awin-110532-10y6a533osj2d",
+    "awin-110532-a5hf2b1tdt1a5"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-11m8ap3vil92d",
+   "members": [
+    "awin-110532-11m8ap3vil92d",
+    "awin-110532-1ebzn1d44x8bb",
+    "awin-110532-1hc7ocy5qo3q8",
+    "awin-110532-1i0yfwr13gus19",
+    "awin-110532-8tho3x4gdr2b"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-13oebcx1se3gan",
+   "members": [
+    "awin-110532-13oebcx1se3gan",
+    "awin-110532-151g4q8fe4392",
+    "awin-110532-16o52n21vbgcjc",
+    "awin-110532-17b3djirxv4ik",
+    "awin-110532-18nqwvf1h5j31",
+    "awin-110532-1amjn3e1au42s8",
+    "awin-110532-1nzuq6vyuhx4p",
+    "awin-110532-1oaksyq149i0cg",
+    "awin-110532-1tgs4rendwbd",
+    "awin-110532-1we6yiyiwczp0",
+    "awin-110532-8aih0n1e0spsl",
+    "awin-110532-8n0a2p1vhw3ov",
+    "awin-110532-n5z38b11xcqbt",
+    "awin-110532-rs36mj1t3oht9",
+    "awin-110532-yh612ruvez"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-140im8lvolcin",
+   "members": [
+    "awin-110532-140im8lvolcin",
+    "awin-110532-5385ym1av9trs",
+    "awin-110532-kfcs1a1gso6w4"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-14ckojf1qnpoix",
+   "members": [
+    "awin-110532-14ckojf1qnpoix",
+    "awin-110532-14dwvg9cu2e5n",
+    "awin-110532-1o08mck21ngby",
+    "awin-110532-1y22fvumu74dc",
+    "awin-110532-5ft4xtv1hnj",
+    "awin-110532-ewhj8hxu80er",
+    "awin-110532-qiah6omrdpyq"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-14sux2f10tdred",
+   "members": [
+    "awin-110532-14sux2f10tdred",
+    "awin-110532-heal57sx2271",
+    "awin-110532-t77w8w1egq8hm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-16cc9iy17pimto",
+   "members": [
+    "awin-110532-16cc9iy17pimto",
+    "awin-110532-2f3xiy1ms0bmk",
+    "awin-110532-i1k7g3v72ybp",
+    "awin-110532-sgzang1t30686",
+    "awin-110532-sp8wr41wt75va"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-17u91vg1r9cqj6",
+   "members": [
+    "awin-110532-17u91vg1r9cqj6"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-18aet4v1ny04jd",
+   "members": [
+    "awin-110532-18aet4v1ny04jd",
+    "awin-110532-1ncra21tgeucz",
+    "awin-110532-hli0hlqlagyf",
+    "awin-110532-ogzdxrwliikl"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1987qll1wbrjxb",
+   "members": [
+    "awin-110532-1987qll1wbrjxb",
+    "awin-110532-1gfemcy1s9apr8",
+    "awin-110532-1pi1g629sof30"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-19wq3dg11ymube",
+   "members": [
+    "awin-110532-19wq3dg11ymube",
+    "awin-110532-1il64bj1f75oa5"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1cfm6931yjw7ht",
+   "members": [
+    "awin-110532-1cfm6931yjw7ht",
+    "awin-110532-1x7rqzy1pu85uo",
+    "awin-110532-itx2vi1vg7b0c"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1d3ap6favx2nh",
+   "members": [
+    "awin-110532-1d3ap6favx2nh",
+    "awin-110532-1n6rmd1aqkbkf",
+    "awin-110532-1n9bcc6x1mwk8",
+    "awin-110532-1nfec3818kvaom",
+    "awin-110532-1qhgq081ulu78e",
+    "awin-110532-m0f6klsq72db",
+    "awin-110532-p92w2v1xoyba5",
+    "awin-110532-r2hba8llvsxa",
+    "awin-110532-z2kltx1nmrep3"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1dvr8s6nb3kgw",
+   "members": [
+    "awin-110532-1dvr8s6nb3kgw",
+    "awin-110532-ckk6647x9x0"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1fm4o01c7hz9y",
+   "members": [
+    "awin-110532-1fm4o01c7hz9y",
+    "awin-110532-1i5ilw0eonnbm",
+    "awin-110532-1t2k4ed1n1cqzb",
+    "awin-110532-drvj1j1r3tc3x"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1fn0nht14ei1t3",
+   "members": [
+    "awin-110532-1fn0nht14ei1t3",
+    "awin-110532-ta45ky1mw3c40"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1g4qkq6ov6pj4",
+   "members": [
+    "awin-110532-1g4qkq6ov6pj4",
+    "awin-110532-1r21e2h18563jb",
+    "awin-110532-ezreud1jz8j0z",
+    "awin-110532-l8qiy71ywsmll",
+    "awin-110532-y5255t163y86z"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1gca9981d55lt6",
+   "members": [
+    "awin-110532-1gca9981d55lt6",
+    "awin-110532-1gtpfema5vga8",
+    "awin-110532-1rx1zti1sopyno",
+    "awin-110532-1tfrha91rnsb13",
+    "awin-110532-1ynxjqex5k9n8",
+    "awin-110532-54zr7bu7yro1",
+    "awin-110532-r6elahee7e67",
+    "awin-110532-vb55pfb0417h",
+    "awin-110532-wll9ss10vzn22",
+    "awin-110532-yygnco1i2jybu"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1gftxbfzx4gsl",
+   "members": [
+    "awin-110532-1gftxbfzx4gsl",
+    "awin-110532-1pzgkz3gfhp2d",
+    "awin-110532-cfxqh27wv3d4",
+    "awin-110532-rtezrd15h264v",
+    "awin-110532-sgfe4x1bp8t7f"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1gm9i67y6zm99",
+   "members": [
+    "awin-110532-1gm9i67y6zm99"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1ht0wg217v71vw",
+   "members": [
+    "awin-110532-1ht0wg217v71vw",
+    "awin-110532-1ker5ne1pfv5o4",
+    "awin-110532-fwupv91ft2wrz"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1iqxkyhgn8z3r",
+   "members": [
+    "awin-110532-1iqxkyhgn8z3r"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1mg9jp8232x2e",
+   "members": [
+    "awin-110532-1mg9jp8232x2e"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1mx8wvu1exqm74",
+   "members": [
+    "awin-110532-1mx8wvu1exqm74"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1ne1il846y0gu",
+   "members": [
+    "awin-110532-1ne1il846y0gu",
+    "awin-110532-1wya3rg1q1yivi",
+    "awin-110532-32nspy1p3jnjo",
+    "awin-110532-idaepw17m3gkm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1ocnrs6c52cpg",
+   "members": [
+    "awin-110532-1ocnrs6c52cpg"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1psc7cj1njd3jx",
+   "members": [
+    "awin-110532-1psc7cj1njd3jx"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1qwzzcm1m9sw1g",
+   "members": [
+    "awin-110532-1qwzzcm1m9sw1g"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1tuvab3u7kutd",
+   "members": [
+    "awin-110532-1tuvab3u7kutd",
+    "awin-110532-1yuwq2g1l9xoi",
+    "awin-110532-rhh5zw13uw1mi"
+   ],
+   "reasons": [
+    "near-identical-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1tyzti11fo4ae3",
+   "members": [
+    "awin-110532-1tyzti11fo4ae3",
+    "awin-110532-rupj1l1o37dg7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1uzqgc61pz8e3c",
+   "members": [
+    "awin-110532-1uzqgc61pz8e3c"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1vilvz31l5ivm5",
+   "members": [
+    "awin-110532-1vilvz31l5ivm5"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1w2ncba161s46c",
+   "members": [
+    "awin-110532-1w2ncba161s46c"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1wpybsy4b8asw",
+   "members": [
+    "awin-110532-1wpybsy4b8asw"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-1wx33gu14jxsx4",
+   "members": [
+    "awin-110532-1wx33gu14jxsx4",
+    "awin-110532-2sq47ftx4cot",
+    "awin-110532-2wfhof1wrvked"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-1x2pi5b1t29nhp",
+   "members": [
+    "awin-110532-1x2pi5b1t29nhp",
+    "awin-110532-e7ztif18l7yo1"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-2a0w6t17ddz5r",
+   "members": [
+    "awin-110532-2a0w6t17ddz5r",
+    "awin-110532-qp7lhu111jf44"
+   ],
+   "reasons": [
+    "same-name-family"
+   ]
+  },
+  {
+   "id": "g:awin-110532-2r64ay13zgzzg",
+   "members": [
+    "awin-110532-2r64ay13zgzzg",
+    "awin-110532-d5aka2uf78fs",
+    "awin-110532-zwaqe116laoj3"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-469kklf0b6on",
+   "members": [
+    "awin-110532-469kklf0b6on",
+    "awin-110532-999yn8g2y1jm"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-4xofng1gta4n6",
+   "members": [
+    "awin-110532-4xofng1gta4n6"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-5wfgteha8jw4",
+   "members": [
+    "awin-110532-5wfgteha8jw4"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-d3z8z150kqqr",
+   "members": [
+    "awin-110532-d3z8z150kqqr"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-eh0sumq39b9s",
+   "members": [
+    "awin-110532-eh0sumq39b9s"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-en84v3n91j7p",
+   "members": [
+    "awin-110532-en84v3n91j7p",
+    "awin-110532-oixjdbzfe96t"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-gag2yf16o4c09",
+   "members": [
+    "awin-110532-gag2yf16o4c09"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-i5hbwp3iyrsj",
+   "members": [
+    "awin-110532-i5hbwp3iyrsj"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-ikjoiiue6n50",
+   "members": [
+    "awin-110532-ikjoiiue6n50",
+    "awin-110532-yjphxo15dkl9q"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-110532-n532vm1wsxt7w",
+   "members": [
+    "awin-110532-n532vm1wsxt7w"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-qrvyt3qhc6zx",
+   "members": [
+    "awin-110532-qrvyt3qhc6zx"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-tsk6g012t2che",
+   "members": [
+    "awin-110532-tsk6g012t2che"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-110532-uqunex1hawcbr",
+   "members": [
+    "awin-110532-uqunex1hawcbr"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-11z1f70zgvzrq",
+   "members": [
+    "awin-92307-11z1f70zgvzrq",
+    "awin-92307-jynj561nxkd20",
+    "awin-92307-yo6kxfhnyh51"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-139mrhg1uy25xy",
+   "members": [
+    "awin-92307-139mrhg1uy25xy",
+    "awin-92307-uvnomrb3tav5",
+    "awin-92307-uweyct1v3teif"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-13jpumnt81zi9",
+   "members": [
+    "awin-92307-13jpumnt81zi9",
+    "awin-92307-mkpemu1hekjn8",
+    "awin-92307-zchx3d2mr5j3"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-14gnexqajjhj0",
+   "members": [
+    "awin-92307-14gnexqajjhj0",
+    "awin-92307-1gddo0a1jst0es",
+    "awin-92307-1i8uhfws4spgq",
+    "awin-92307-1nrypqv1q25s7h",
+    "awin-92307-1ogdzzr1lxho51",
+    "awin-92307-1ot3ke6pw2cfc",
+    "awin-92307-1s1rc5t1hv9bxb",
+    "awin-92307-1sr1ml0vbnc8i",
+    "awin-92307-1xk2a2f1p6hmsp",
+    "awin-92307-4twkqron426d",
+    "awin-92307-e0i1rxpn389v",
+    "awin-92307-qc83rm1mknh30",
+    "awin-92307-tarwuj1tk91zh",
+    "awin-92307-yvd8b2yzh3ss"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-photo-url",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1531uy16npnwj",
+   "members": [
+    "awin-92307-1531uy16npnwj"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1652enh170jndb",
+   "members": [
+    "awin-92307-1652enh170jndb"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-16bbdcafmt6rk",
+   "members": [
+    "awin-92307-16bbdcafmt6rk"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-16mcf3wd1fgj2",
+   "members": [
+    "awin-92307-16mcf3wd1fgj2",
+    "awin-92307-1q3e6q91d1zarz",
+    "awin-92307-1uyh4kwjd7qk2",
+    "awin-92307-9acaexpnnair",
+    "awin-92307-vrbf40ad9z6"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-16rkqhu1yv5kvo",
+   "members": [
+    "awin-92307-16rkqhu1yv5kvo"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-171ujpi1itzjcw",
+   "members": [
+    "awin-92307-171ujpi1itzjcw",
+    "awin-92307-jn194813z7b7m"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-17erbd2zx2y1k",
+   "members": [
+    "awin-92307-17erbd2zx2y1k"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-195xb3i193zauw",
+   "members": [
+    "awin-92307-195xb3i193zauw"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-197uxa1dtiiqo",
+   "members": [
+    "awin-92307-197uxa1dtiiqo"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-19liwq7cbiqy1",
+   "members": [
+    "awin-92307-19liwq7cbiqy1",
+    "awin-92307-1jlr7r21d4cv4s",
+    "awin-92307-1pspxaf1xq1wat"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-19qmwbf1aakx5x",
+   "members": [
+    "awin-92307-19qmwbf1aakx5x",
+    "awin-92307-4n9ddm1x5yvng",
+    "awin-92307-mmg4hw5teng6"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1bontx4nkefn",
+   "members": [
+    "awin-92307-1bontx4nkefn"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1c34a5h169zvf3",
+   "members": [
+    "awin-92307-1c34a5h169zvf3",
+    "awin-92307-cdqggkj9ik0u"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1c6iuo4og5qry",
+   "members": [
+    "awin-92307-1c6iuo4og5qry",
+    "awin-92307-ny39x77shoa1",
+    "awin-92307-qxq6xa2rmseo",
+    "awin-92307-ul4wmyndta0k",
+    "awin-92307-xxxhzf1kz9tpp"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1cbzdya1pp9aig",
+   "members": [
+    "awin-92307-1cbzdya1pp9aig"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1cpryre5tl7x4",
+   "members": [
+    "awin-92307-1cpryre5tl7x4",
+    "awin-92307-1l6hf8loq6k0j",
+    "awin-92307-940msgdcgoda"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1crinp4hlofvi",
+   "members": [
+    "awin-92307-1crinp4hlofvi"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1d8asi71s7c9z9",
+   "members": [
+    "awin-92307-1d8asi71s7c9z9"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1dmn59n1peggu5",
+   "members": [
+    "awin-92307-1dmn59n1peggu5",
+    "awin-92307-2amipgy1w3za"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1e5lrvmnc0e10",
+   "members": [
+    "awin-92307-1e5lrvmnc0e10"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1fcon0n1r7u2qp",
+   "members": [
+    "awin-92307-1fcon0n1r7u2qp",
+    "awin-92307-ghjsaf8a7oad",
+    "awin-92307-h2vjsp105uf6f"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1fdm68b53j8ph",
+   "members": [
+    "awin-92307-1fdm68b53j8ph",
+    "awin-92307-1n8ccld13o9bsn"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1fszgmypllm8c",
+   "members": [
+    "awin-92307-1fszgmypllm8c",
+    "awin-92307-ldfzxu1scovf4"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1g8ggz41e2p82e",
+   "members": [
+    "awin-92307-1g8ggz41e2p82e"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1i7jtay10q56qc",
+   "members": [
+    "awin-92307-1i7jtay10q56qc"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1ia2bwd15q9pn",
+   "members": [
+    "awin-92307-1ia2bwd15q9pn"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1iyseqk1b93w7y",
+   "members": [
+    "awin-92307-1iyseqk1b93w7y",
+    "awin-92307-1tzytnlsr98u7",
+    "awin-92307-gztj3j1uu4dyh",
+    "awin-92307-i08x671rcvxx",
+    "awin-92307-jcl99j1lcyrel",
+    "awin-92307-q10kk51h3l9lz",
+    "awin-92307-rtz92l1rb8fo7"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1k3jhnq1bibj5o",
+   "members": [
+    "awin-92307-1k3jhnq1bibj5o",
+    "awin-92307-a7up0yq720e8"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1kn4ybt19xvrfj",
+   "members": [
+    "awin-92307-1kn4ybt19xvrfj",
+    "awin-92307-1wkqrw377rfel",
+    "awin-92307-gt2yhal1u5os",
+    "awin-92307-pm7j041uhn0yy"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1kybx6gjlegr2",
+   "members": [
+    "awin-92307-1kybx6gjlegr2"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1m7cbxxo1lnqn",
+   "members": [
+    "awin-92307-1m7cbxxo1lnqn",
+    "awin-92307-1thd00qo3jjv4",
+    "awin-92307-5o5p3mvuvu8"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1mo1z3f1ih9vud",
+   "members": [
+    "awin-92307-1mo1z3f1ih9vud"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1ne6jh41wo4ffa",
+   "members": [
+    "awin-92307-1ne6jh41wo4ffa"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1nvc8d6hiobtc",
+   "members": [
+    "awin-92307-1nvc8d6hiobtc"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1o6lf18lno34y",
+   "members": [
+    "awin-92307-1o6lf18lno34y",
+    "awin-92307-1xi5jvx1k9vzp3"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1obqr8x1i7svx3",
+   "members": [
+    "awin-92307-1obqr8x1i7svx3"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1qd0x8w1xgdayi",
+   "members": [
+    "awin-92307-1qd0x8w1xgdayi",
+    "awin-92307-1r72w26ndevnc",
+    "awin-92307-cq0te8yeovne"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1s36d3f5kfeet",
+   "members": [
+    "awin-92307-1s36d3f5kfeet"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1scogwg1b5cm1e",
+   "members": [
+    "awin-92307-1scogwg1b5cm1e"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1tjl9p110xryv7",
+   "members": [
+    "awin-92307-1tjl9p110xryv7",
+    "awin-92307-9fvjz51do9vkr"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1uinkcz1pmxzd",
+   "members": [
+    "awin-92307-1uinkcz1pmxzd",
+    "awin-92307-sebba21k4ajxg"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1uqy9os12iz7cu",
+   "members": [
+    "awin-92307-1uqy9os12iz7cu",
+    "awin-92307-1x4hsjq1d58rjs"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1vdef1i1mbvqw0",
+   "members": [
+    "awin-92307-1vdef1i1mbvqw0",
+    "awin-92307-r14pdxmqsd4f"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1x7bp1g1dj2xa6",
+   "members": [
+    "awin-92307-1x7bp1g1dj2xa6"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1xbrs0219vf0cs",
+   "members": [
+    "awin-92307-1xbrs0219vf0cs",
+    "awin-92307-5j1ys815n2qfu"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1y23ghm1r3n62w",
+   "members": [
+    "awin-92307-1y23ghm1r3n62w",
+    "awin-92307-ph0oh91f6tlfr"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-1yi4tawbgck8q",
+   "members": [
+    "awin-92307-1yi4tawbgck8q"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-1ymq1sh97dvu",
+   "members": [
+    "awin-92307-1ymq1sh97dvu"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-27dl5ec4aju4",
+   "members": [
+    "awin-92307-27dl5ec4aju4"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-308mb77yp2lp",
+   "members": [
+    "awin-92307-308mb77yp2lp"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-3k7zx91ibsrx3",
+   "members": [
+    "awin-92307-3k7zx91ibsrx3"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-4b7szhk0jcy3",
+   "members": [
+    "awin-92307-4b7szhk0jcy3"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-4iernnz76ffp",
+   "members": [
+    "awin-92307-4iernnz76ffp"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-6rt63k1i3xek6",
+   "members": [
+    "awin-92307-6rt63k1i3xek6",
+    "awin-92307-xfy6vl10f15vv"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-71gbhf1tkmd49",
+   "members": [
+    "awin-92307-71gbhf1tkmd49",
+    "awin-92307-hm45eh3orqvb"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-82x6x0fapefe",
+   "members": [
+    "awin-92307-82x6x0fapefe",
+    "awin-92307-ciw5uq1xx8jis",
+    "awin-92307-nto2iw1e59j5u",
+    "awin-92307-v73yqj6a1n21"
+   ],
+   "reasons": [
+    "near-identical-page",
+    "same-name-family",
+    "same-retailer-page"
+   ]
+  },
+  {
+   "id": "g:awin-92307-9bt6dk1v606ua",
+   "members": [
+    "awin-92307-9bt6dk1v606ua"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-ae89softad06",
+   "members": [
+    "awin-92307-ae89softad06"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-em9eigq25d3m",
+   "members": [
+    "awin-92307-em9eigq25d3m"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-g71e4m1kwa9so",
+   "members": [
+    "awin-92307-g71e4m1kwa9so"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-itt4fykpjhpk",
+   "members": [
+    "awin-92307-itt4fykpjhpk"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-iuqc431jr5o3x",
+   "members": [
+    "awin-92307-iuqc431jr5o3x"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-jg18acw1mf8",
+   "members": [
+    "awin-92307-jg18acw1mf8"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-l43jvi1ax1et8",
+   "members": [
+    "awin-92307-l43jvi1ax1et8"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-o4qn6t5pjz7n",
+   "members": [
+    "awin-92307-o4qn6t5pjz7n"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-q1oyz1cdmch3",
+   "members": [
+    "awin-92307-q1oyz1cdmch3"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-suiatb17wgs1p",
+   "members": [
+    "awin-92307-suiatb17wgs1p"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-sx9xwr1mzepph",
+   "members": [
+    "awin-92307-sx9xwr1mzepph"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-tvwph8cs3jn2",
+   "members": [
+    "awin-92307-tvwph8cs3jn2"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-uxp1ikxxrh7q",
+   "members": [
+    "awin-92307-uxp1ikxxrh7q"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-vzaoj4tj0quy",
+   "members": [
+    "awin-92307-vzaoj4tj0quy"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-x00evdeee74b",
+   "members": [
+    "awin-92307-x00evdeee74b"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-xdpblt4yjwp7",
+   "members": [
+    "awin-92307-xdpblt4yjwp7"
+   ],
+   "reasons": []
+  },
+  {
+   "id": "g:awin-92307-zbymbsajhkx",
+   "members": [
+    "awin-92307-zbymbsajhkx"
+   ],
+   "reasons": []
+  }
+ ],
+ "counts": {
+  "dev": 75,
+  "test": 125
+ },
+ "grouping": {
+  "rules": [
+   "same-photo-url",
+   "same-retailer-page",
+   "confirmed-duplicate",
+   "same-name-family",
+   "near-identical-page"
+  ],
+  "imageHashCheck": "not-run",
+  "crossRetailerReview": "not-run",
+  "supersedes": "d711082b606a1c571b1400037afee57d9e9f4c4f0968d66a6dd7a6ba65a73140",
+  "correctionsFile": "manifest-v2.corrections.json"
+ },
+ "hash": "d8ff09ffb4ff4190671b6571395f5254a1f558115d2ef342d317b8dc13130c8d"
+}

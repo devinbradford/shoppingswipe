@@ -13,7 +13,7 @@
  */
 import { createRng, hashSeed } from '@/recommendation/random';
 import { findLeaks, groupIndex, groupRelated, photoKey, splitByGroup } from './grouping';
-import type { CatalogItem, HardCase, ManifestItem, RelatedGroup } from './schema';
+import type { CatalogItem, GroupingRules, HardCase, ManifestItem, RelatedGroup } from './schema';
 
 export const DEFAULT_SEED = 20261113;
 export const DEFAULT_QUOTAS: Record<string, number> = {
@@ -46,6 +46,8 @@ export function hardCases(item: CatalogItem, photoUses: ReadonlyMap<string, numb
 export interface SampleResult {
   items: ManifestItem[];
   groups: RelatedGroup[];
+  /** Every related group in the whole catalog (for correction logs). */
+  allGroups: RelatedGroup[];
   leaks: ReturnType<typeof findLeaks>;
 }
 
@@ -57,16 +59,18 @@ export function sampleEvaluationSet(
     partners = DEFAULT_PARTNERS,
     testShare = TEST_SHARE,
     confirmedDuplicates = [],
+    rules = {},
   }: {
     seed?: number;
     quotas?: Record<string, number>;
     partners?: { colourVariant: number; samePhoto: number };
     testShare?: number;
     confirmedDuplicates?: readonly string[][];
+    rules?: GroupingRules;
   } = {},
 ): SampleResult {
   const products = [...catalog].sort((a, b) => (a.id < b.id ? -1 : 1));
-  const allGroups = groupRelated(products, confirmedDuplicates);
+  const allGroups = groupRelated(products, confirmedDuplicates, rules);
   const groupOf = groupIndex(allGroups);
   const photoUses = new Map<string, number>();
   for (const p of products) photoUses.set(photoKey(p.photoUrl), (photoUses.get(photoKey(p.photoUrl)) ?? 0) + 1);
@@ -158,5 +162,5 @@ export function sampleEvaluationSet(
       ...(partnerOf ? { partnerOf } : {}),
     }))
     .sort((a, b) => (a.id < b.id ? -1 : 1));
-  return { items, groups: touching, leaks: findLeaks(touching, split) };
+  return { items, groups: touching, allGroups, leaks: findLeaks(touching, split) };
 }

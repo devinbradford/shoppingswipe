@@ -7,6 +7,9 @@
  *   - same image content hash (once photos are hashed in Stage 2)
  *   - same retailer product page (colour and size variants of one design live on one page)
  *   - listed together in the confirmed-duplicates file (e.g. one design sold under two URLs)
+ *   - v2 (opt-in, `rules`): same store + same normalised product name (`productNameKey`), and
+ *     same store + near-identical page address (`pageKey`). Deliberately over-inclusive: grouping
+ *     too much only costs split balance; grouping too little leaks.
  *
  * The split assigns WHOLE groups to dev or test, stratified by product type: within each type,
  * groups are visited in a seeded order and go to test until that type's test share reaches the
@@ -14,7 +17,8 @@
  * Pure and deterministic.
  */
 import { createRng, hashSeed } from '@/recommendation/random';
-import type { CatalogItem, GroupReason, RelatedGroup, Split } from './schema';
+import { pageKey } from './names';
+import type { CatalogItem, GroupingRules, GroupReason, RelatedGroup, Split } from './schema';
 
 class UnionFind {
   private parent = new Map<string, string>();
@@ -44,7 +48,11 @@ export function photoKey(url: string): string {
  * Groups related products. `confirmedDuplicates` lists sets of ids people confirmed as the same
  * design (different URLs). Every product ends up in exactly one group (singletons included).
  */
-export function groupRelated(items: readonly CatalogItem[], confirmedDuplicates: readonly string[][] = []): RelatedGroup[] {
+export function groupRelated(
+  items: readonly CatalogItem[],
+  confirmedDuplicates: readonly string[][] = [],
+  rules: GroupingRules = {},
+): RelatedGroup[] {
   const uf = new UnionFind();
   const reasons = new Map<string, Set<GroupReason>>();
   const note = (a: string, b: string, why: GroupReason) => {
@@ -68,6 +76,14 @@ export function groupRelated(items: readonly CatalogItem[], confirmedDuplicates:
   byKey((i) => photoKey(i.photoUrl), 'same-photo-url');
   byKey((i) => i.imageHash, 'same-image-hash');
   byKey((i) => (i.pagePath ? `${i.retailerId}|${i.pagePath}` : undefined), 'same-retailer-page');
+  if (rules.nameFamily) byKey((i) => (i.nameKey ? `${i.retailerId}|${i.nameKey}` : undefined), 'same-name-family');
+  if (rules.pageFamily) {
+    const colours = [...new Set(items.map((i) => i.color))];
+    byKey((i) => {
+      const k = i.pagePath ? pageKey(i.pagePath, colours) : '';
+      return k ? `${i.retailerId}|${k}` : undefined;
+    }, 'near-identical-page');
+  }
   for (const set of confirmedDuplicates) {
     const present = set.filter((id) => ids.has(id));
     for (let k = 1; k < present.length; k++) note(present[0]!, present[k]!, 'confirmed-duplicate');

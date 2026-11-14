@@ -6,7 +6,8 @@
  * Ground truth comes only from human raters. Nothing a model produces is ever stored as a label.
  */
 
-export const MANIFEST_VERSION = 1;
+/** 2 (Stage 2): adds the same-name-family and near-identical-page grouping rules and a grouping record. */
+export const MANIFEST_VERSION = 2;
 /** 2 (Stage 1.5): triplets and pairs ask about structure, overall aesthetic, or both (no v1 labels were ever collected). */
 export const LABELS_VERSION = 2;
 
@@ -40,6 +41,8 @@ export interface CatalogItem {
   imageHash?: string;
   /** 'cutout' | 'scene' when the photo has been measured; null when not yet. */
   photoKind?: 'cutout' | 'scene' | null;
+  /** Normalised product name (`productNameKey`), manifest v2 only; never the full title. */
+  nameKey?: string;
 }
 
 export type HardCase = 'default-modern' | 'no-material' | 'multi-colour' | 'shared-photo';
@@ -62,7 +65,33 @@ export interface RelatedGroup {
   reasons: GroupReason[];
 }
 
-export type GroupReason = 'same-photo-url' | 'same-image-hash' | 'same-retailer-page' | 'confirmed-duplicate';
+export type GroupReason =
+  | 'same-photo-url'
+  | 'same-image-hash'
+  | 'same-retailer-page'
+  | 'confirmed-duplicate'
+  /** v2: same store + same normalised product name (one design family in several listings). */
+  | 'same-name-family'
+  /** v2: same store + near-identical page address (one product listed on two pages). */
+  | 'near-identical-page';
+
+export interface GroupingRules {
+  nameFamily?: boolean;
+  pageFamily?: boolean;
+}
+
+/** How far grouping has been checked (manifest v2). Test scoring requires every check done. */
+export interface GroupingRecord {
+  rules: GroupReason[];
+  /** Perceptual-hash duplicate check on the photos (needs image permission P2/P3). */
+  imageHashCheck: 'not-run' | 'done';
+  /** Human review of cross-retailer duplicate candidates. */
+  crossRetailerReview: 'not-run' | 'done';
+  /** Hash of the manifest this one replaces. */
+  supersedes?: string;
+  /** File listing every grouping correction relative to the superseded manifest. */
+  correctionsFile?: string;
+}
 
 export interface Manifest {
   version: number;
@@ -75,6 +104,8 @@ export interface Manifest {
   /** Related-product groups that touch the sample (whole groups, so leakage can be checked). */
   groups: RelatedGroup[];
   counts: { dev: number; test: number };
+  /** v2+: which grouping rules and checks this manifest reflects. */
+  grouping?: GroupingRecord;
   /** SHA-256 of the canonical JSON of everything above. */
   hash: string;
 }

@@ -3,7 +3,8 @@
  * node:crypto over `canonicalJson(manifestBody)`, so anyone can re-derive it.
  */
 import { findLeaks } from './grouping';
-import { MANIFEST_VERSION, type CatalogItem, type Manifest, type Split } from './schema';
+import { productNameKey } from './names';
+import { MANIFEST_VERSION, type CatalogItem, type GroupingRecord, type Manifest, type Split } from './schema';
 import type { SampleResult } from './sampling';
 
 /** JSON with object keys sorted at every level and no whitespace: stable across runs and machines. */
@@ -24,6 +25,7 @@ export interface SnapshotRow {
   retailer_id: string;
   image_urls: string[];
   product_url: string;
+  title?: string;
   style_tags: string[] | null;
   material: string | null;
   color: string | null;
@@ -47,7 +49,9 @@ export function retailerPage(productUrl: string): string {
   }
 }
 
-export function snapshotRowToItem(r: SnapshotRow, photoKind?: 'cutout' | 'scene' | null): CatalogItem {
+/** `nameColours` (manifest v2): when given, the item carries `nameKey` from its title. */
+export function snapshotRowToItem(r: SnapshotRow, photoKind?: 'cutout' | 'scene' | null, nameColours?: readonly string[]): CatalogItem {
+  const nameKey = nameColours && r.title ? productNameKey(r.title, nameColours) : '';
   return {
     id: r.id,
     retailerId: r.retailer_id,
@@ -59,6 +63,7 @@ export function snapshotRowToItem(r: SnapshotRow, photoKind?: 'cutout' | 'scene'
     photoUrl: r.image_urls[0] ?? '',
     pagePath: retailerPage(r.product_url),
     ...(photoKind !== undefined ? { photoKind } : {}),
+    ...(nameKey ? { nameKey } : {}),
   };
 }
 
@@ -66,12 +71,22 @@ export type ManifestBody = Omit<Manifest, 'hash'>;
 
 export function manifestBody(
   sample: SampleResult,
-  meta: { snapshot: string; snapshotDate: string; products: number; seed: number; quotas: Record<string, number>; testShare: number },
+  meta: {
+    snapshot: string;
+    snapshotDate: string;
+    products: number;
+    seed: number;
+    quotas: Record<string, number>;
+    testShare: number;
+    /** Defaults to MANIFEST_VERSION; 1 reproduces the original manifest exactly. */
+    version?: number;
+    grouping?: GroupingRecord;
+  },
 ): ManifestBody {
   const counts = { dev: 0, test: 0 };
   for (const i of sample.items) counts[i.split]++;
   return {
-    version: MANIFEST_VERSION,
+    version: meta.version ?? MANIFEST_VERSION,
     createdFrom: { snapshot: meta.snapshot, snapshotDate: meta.snapshotDate, products: meta.products },
     seed: meta.seed,
     quotas: meta.quotas,
@@ -79,6 +94,7 @@ export function manifestBody(
     items: sample.items,
     groups: sample.groups,
     counts,
+    ...(meta.grouping ? { grouping: meta.grouping } : {}),
   };
 }
 
@@ -108,37 +124,4 @@ export function checkManifest(m: Manifest, hashOf: (s: string) => string): strin
   return problems;
 }
 
-const NAME_STOPWORDS = new Set(['in', 'with', 'and', 'for', 'the', 'set', 'of', 'pcs', 'piece', 'a']);
-const NAME_COLOURS = new Set(['walnut', 'oak', 'black', 'white', 'grey', 'gray', 'brown', 'beige', 'cream', 'natural', 'rustic', 'espresso', 'navy', 'green', 'blue', 'pink', 'gold', 'silver', 'light', 'dark', 'vintage', 'cherry', 'teak', 'ivory', 'khaki', 'tan', 'taupe', 'charcoal', 'multi']);
-
-/**
- * A product name with colour, size, count and filler words removed, used to find listings of one
- * design family that the address rules can't see (same store, different pages). Returns '' when
- * fewer than 3 meaningful words remain (too generic to suggest the same design).
- * Example: "Cas TV Cabinet with 2-Door, Set of 2 in Grey Alder" → "cas tv cabinet door alder".
- */
-export function productNameKey(title: string, extraColours: Iterable<string> = []): string {
-  const colours = new Set([...NAME_COLOURS, ...[...extraColours].map((c) => c.toLowerCase())]);
-  const words = title
-    .toLowerCase()
-    .replace(/\(.*?\)/g, ' ')
-    .replace(/\b\d+(\.\d+)?\s*(in|inch|inches|ft|cm)\b/g, ' ')
-    .replace(/[^a-z0-9 ]+/g, ' ')
-    .split(/\s+/)
-    .map((w) => (w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w))
-    .filter((w) => w && !colours.has(w) && !/^\d+$/.test(w) && !NAME_STOPWORDS.has(w));
-  return words.length >= 3 ? words.join(' ') : '';
-}
-
-/**
- * A store page address reduced the same way as `productNameKey` (host kept, words singularised,
- * colour/size/count words dropped), to catch one product listed on two near-identical pages, e.g.
- * /products/stria-round-coffee-tables-… and /products/stria-round-coffee-table-….
- */
-export function pageKey(pagePath: string, extraColours: Iterable<string> = []): string {
-  const slash = pagePath.indexOf('/');
-  const host = slash > 0 ? pagePath.slice(0, slash) : '';
-  const slug = (slash > 0 ? pagePath.slice(slash + 1) : pagePath).split('/').pop() ?? '';
-  const key = productNameKey(slug.replace(/-/g, ' '), extraColours);
-  return key ? `${host}|${key}` : '';
-}
+export { pageKey, productNameKey } from './names';
