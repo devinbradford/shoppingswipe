@@ -1,0 +1,6 @@
+{
+ "siglip2-b": {"repo": "google/siglip2-base-patch16-224", "revision": "75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2", "licence_on_card": "apache-2.0"},
+ "marqo-ecom-b": {"repo": "Marqo/marqo-ecommerce-embeddings-B", "revision": "6854090aa39b2a9d70f390d83ae9e70cf9d9004e", "licence_on_card": "apache-2.0"},
+ "dinov2-b": {"repo": "facebook/dinov2-base", "revision": "f9e44c814b77203eaa57a6bdbbd535f21ede1415", "licence_on_card": "apache-2.0"},
+ "openclip-b32": {"repo": "laion/CLIP-ViT-B-32-laion2B-s34B-b79K", "revision": "1a25a446712ba5ee05982a381eed697ef9b435cf", "licence_on_card": "mit"}
+}

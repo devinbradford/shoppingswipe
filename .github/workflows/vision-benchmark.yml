@@ -23,7 +23,7 @@ jobs:
       - run: pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0 torchvision==0.29.2
       - run: pip install -r requirements.txt
       - run: python measure_models.py --self-test
-      - run: python measure_models.py --resolve-revisions
+      # Revisions are pinned in models.lock.json (resolved 16 Nov 2026); re-resolve only on purpose.
       - run: python measure_models.py --measure --yes-download --threads 4 --out results.json
       - if: always()
         uses: actions/upload-artifact@v4
