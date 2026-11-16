@@ -260,6 +260,17 @@ Discovery Engine V3 (plan: `docs/DISCOVERY_ENGINE_V3.md`; Devin approves each ph
   - Real-photo timing pack: `src/vision/pilotPack.ts`, `npm run vision:pilot-pack`; dev only, 512 px; the rater file needs `--release --approval-ref`.
   - Model harness: retrieval latency added. `tools/vision-models/fetch_images.py` (bounded fetch, provenance, dHash candidates, purge) is not run. Manual-only `.github/workflows/vision-benchmark.yml` is not started. Model hosts are still blocked in this session. No model run, no winner.
 - Checks passing: typecheck, lint, 442 unit tests
+- 16 Nov 2026:
+  - Synthetic benchmark run once on GitHub Actions (no cost; drawings only): all 4 models pass the technical bar; revisions pinned in `tools/vision-models/models.lock.json`; results in `docs/vision/BENCHMARK_SYNTHETIC.md`. No quality winner.
+  - Repo-private checklist: `docs/REPO_PRIVATE_CHECKLIST.md`. Short P1–P4 requests: `docs/vision/PERMISSION_REQUESTS.md`.
+  - Read-only MVP launch audit: `docs/LAUNCH_READINESS.md`. P0s:
+    - the Tribesigns import has failed nightly since 14 Nov (duplicate external_id 46641698341083);
+    - no eas.json or build setup, and a missing build env silently falls back to the sample catalog;
+    - never run on a real phone or against live Supabase;
+    - live sign-in untested;
+    - the privacy policy must be reachable and accurate;
+    - room-photo licences unconfirmed.
+    Also: the status bar is still "light" on cream screens (P1). Waiting for Devin's approval.
 
 ## Phase plan
 
