@@ -2,6 +2,8 @@
 # Manual only: Actions tab → "vision-benchmark" → Run workflow. Downloads the pinned open-source
 # model weights onto GitHub's runner, measures them, and uploads results.json + models.lock.json.
 # Nothing here touches the app, the database, secrets or any product photo.
+# Cost: standard ubuntu-latest runner, free and unlimited for public repositories; ~5 GB disk of the
+# runner's 14 GB; results artifact is a few KB and expires after 30 days.
 name: vision-benchmark
 on: workflow_dispatch
 permissions:
@@ -23,9 +25,12 @@ jobs:
       - run: python measure_models.py --self-test
       - run: python measure_models.py --resolve-revisions
       - run: python measure_models.py --measure --yes-download --threads 4 --out results.json
-      - uses: actions/upload-artifact@v4
+      - if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: vision-benchmark
+          retention-days: 30
+          if-no-files-found: warn
           path: |
             tools/vision-models/results.json
             tools/vision-models/models.lock.json
